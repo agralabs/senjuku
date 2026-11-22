@@ -3,19 +3,25 @@
 import { DatabaseSync } from 'node:sqlite';
 import path from 'node:path';
 import fs from 'node:fs';
+import { fileURLToPath } from 'node:url';
 
+const APP_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 let _dbInstance = null;
 
 export function getDb(customPath = null) {
   if (_dbInstance && !customPath) return _dbInstance;
 
-  const defaultDbFile = fs.existsSync(path.resolve(process.cwd(), 'data', 'senjuku.db'))
+  const defaultDbFile = fs.existsSync(path.resolve(APP_ROOT, 'data', 'senjuku.db'))
     ? 'senjuku.db'
-    : (fs.existsSync(path.resolve(process.cwd(), 'data', 'kirakira.db')) ? 'kirakira.db' : 'senjuku.db');
-  const dbPath = customPath || process.env.DB_PATH || path.resolve(process.cwd(), 'data', defaultDbFile);
-  const dir = path.dirname(dbPath);
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
+    : (fs.existsSync(path.resolve(APP_ROOT, 'data', 'kirakira.db')) ? 'kirakira.db' : 'senjuku.db');
+  const rawDbPath = customPath || (process.env.DB_PATH || '').trim() || path.resolve(APP_ROOT, 'data', defaultDbFile);
+  const dbPath = rawDbPath === ':memory:' ? ':memory:' : path.resolve(APP_ROOT, rawDbPath);
+  if (dbPath !== ':memory:') {
+    const dir = path.dirname(dbPath);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    console.log(`[Senjuku Nihongo] SQLite DB: ${dbPath}`);
   }
 
   const db = new DatabaseSync(dbPath);
