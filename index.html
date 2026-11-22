@@ -16,40 +16,71 @@
   <link rel="stylesheet" href="css/sumi-urushi.css">
 </head>
 <body class="light-theme">
-  <!-- Top Navigation Bar -->
+  <!-- Top Navigation Bar (Unified 1-Row Solid Urushi Header on Desktop; Compact 52px Bar on Mobile) -->
   <header class="app-header">
     <div class="header-left-group">
-      <button type="button" class="home-nav-btn" id="headerHomeBtn" title="Kembali ke Beranda (Home)" aria-label="Kembali ke Beranda">
-        <span class="home-icon">🏠</span>
-        <span class="home-label">Home</span>
+      <button type="button" class="header-brand-btn" id="headerHomeBtn" title="Kembali ke Beranda (Home)" aria-label="Senjuku Nihongo — Kembali ke Beranda">
+        <span class="brand-title">せんじゅく<span class="highlight">日本語</span></span>
+        <span class="brand-sub">Senjuku</span>
       </button>
-      <div class="header-brand">
-        <h1 class="brand-title">せんじゅく<span class="highlight">日本語</span> <span class="brand-sub">Senjuku</span></h1>
-      </div>
     </div>
+
+    <!-- App Main Navigation Tabs (Inline in Header on Desktop; Fixed 5-Tab Bottom Bar on Mobile) -->
+    <nav class="app-tab-nav" id="appTabNav" aria-label="Navigasi Utama">
+      <button type="button" class="nav-tab-btn active" data-tab="drill">
+        <span class="tab-emoji tab-kanji" aria-hidden="true">練</span>
+        <span class="tab-text">Latihan</span>
+      </button>
+      <button type="button" class="nav-tab-btn" data-tab="kana" id="navTabKana">
+        <span class="tab-emoji tab-kanji" aria-hidden="true">書</span>
+        <span class="tab-text">Tulis Kana</span>
+      </button>
+      <button type="button" class="nav-tab-btn" data-tab="explorer">
+        <span class="tab-emoji tab-kanji" aria-hidden="true">読</span>
+        <span class="tab-text">Transkrip</span>
+      </button>
+      <button type="button" class="nav-tab-btn" data-tab="scorecard">
+        <span class="tab-emoji tab-kanji" aria-hidden="true">進</span>
+        <span class="tab-text">Progres</span>
+      </button>
+      <button type="button" class="nav-tab-btn nav-tab-secondary" data-tab="weakness" id="navTabWeakness">
+        <span class="tab-emoji tab-kanji" aria-hidden="true">復</span>
+        <span class="tab-text">Perbaiki Skor</span>
+      </button>
+      <button type="button" class="nav-tab-btn nav-tab-secondary" data-tab="leaderboard" id="navTabLeaderboard">
+        <span class="tab-emoji tab-kanji" aria-hidden="true">位</span>
+        <span class="tab-text">Peringkat</span>
+      </button>
+      <button type="button" class="nav-tab-btn nav-tab-secondary" data-tab="admin" id="navTabAdmin" style="display:none;">
+        <span class="tab-emoji tab-kanji" aria-hidden="true">教</span>
+        <span class="tab-text">Sensei</span>
+      </button>
+      <button type="button" class="nav-tab-btn nav-tab-more-btn" id="navTabMore" aria-haspopup="dialog" aria-expanded="false" aria-controls="mobileMoreSheet">
+        <span class="tab-emoji tab-kanji" aria-hidden="true">⋯</span>
+        <span class="tab-text">Lainnya</span>
+      </button>
+    </nav>
 
     <!-- Quick Utilities -->
     <div class="header-actions">
-      <!-- Global Romaji & Translation Display Toggles -->
+      <!-- Global Romaji & Translation Display Toggles (Desktop; on Mobile these live in the More Sheet) -->
       <div class="display-toggle-group" id="headerDisplayToggleGroup" title="Opsi Tampilan Bacaan Global">
-        <button type="button" class="header-toggle-btn active" id="headerToggleRomajiBtn" title="Tampilkan / Sembunyikan Romaji [Shortcut: M]">
-          <span class="toggle-icon">🔤</span>
+        <button type="button" class="header-toggle-btn active" id="headerToggleRomajiBtn" aria-pressed="true" title="Tampilkan / Sembunyikan Romaji [Shortcut: M]">
           <span class="toggle-text">Romaji</span>
           <span class="toggle-badge">ON</span>
         </button>
-        <button type="button" class="header-toggle-btn active" id="headerToggleTransBtn" title="Tampilkan / Sembunyikan Terjemahan [Shortcut: T]">
-          <span class="toggle-icon">🌐</span>
+        <button type="button" class="header-toggle-btn active" id="headerToggleTransBtn" aria-pressed="true" title="Tampilkan / Sembunyikan Terjemahan [Shortcut: T]">
           <span class="toggle-text">Arti</span>
           <span class="toggle-badge">ON</span>
         </button>
       </div>
 
-      <button type="button" class="icon-toggle-btn" id="soundToggleBtn" title="Suara Audio (Efek Suara & Pelafalan)">
+      <button type="button" class="icon-toggle-btn header-icon-only" id="soundToggleBtn" title="Suara Audio (Efek Suara & Pelafalan)" aria-label="Suara Audio">
         <span class="sound-icon">🔊</span>
         <span class="sound-label">Sound On</span>
       </button>
 
-      <button type="button" class="icon-toggle-btn theme-btn" id="themeToggleBtn" title="Ganti Tema Gelap / Terang">
+      <button type="button" class="icon-toggle-btn theme-btn header-icon-only" id="themeToggleBtn" title="Ganti Tema Gelap / Terang" aria-label="Ganti Tema">
         <span class="theme-icon">☀️</span>
       </button>
 
@@ -58,50 +89,79 @@
     </div>
   </header>
 
-  <!-- App Main Navigation Tabs -->
-  <nav class="app-tab-nav" aria-label="Navigasi Utama">
-    <button type="button" class="nav-tab-btn active" data-tab="drill">
-      <span class="tab-emoji tab-kanji" aria-hidden="true">練</span>
-      <span class="tab-text">Daily Drill</span>
-    </button>
-    <button type="button" class="nav-tab-btn" data-tab="kana" id="navTabKana">
-      <span class="tab-emoji tab-kanji" aria-hidden="true">書</span>
-      <span class="tab-text">Tulis Kana</span>
-    </button>
-    <button type="button" class="nav-tab-btn" data-tab="explorer">
-      <span class="tab-emoji tab-kanji" aria-hidden="true">読</span>
-      <span class="tab-text">Audio Transcript</span>
-    </button>
-    <button type="button" class="nav-tab-btn" data-tab="scorecard">
-      <span class="tab-emoji tab-kanji" aria-hidden="true">進</span>
-      <span class="tab-text">My Progress</span>
-    </button>
-    <button type="button" class="nav-tab-btn" data-tab="weakness" id="navTabWeakness">
-      <span class="tab-emoji tab-kanji" aria-hidden="true">復</span>
-      <span class="tab-text">Perbaiki Skor Saya</span>
-    </button>
-    <button type="button" class="nav-tab-btn" data-tab="leaderboard" id="navTabLeaderboard">
-      <span class="tab-emoji tab-kanji" aria-hidden="true">位</span>
-      <span class="tab-text">Papan Peringkat</span>
-    </button>
-    <button type="button" class="nav-tab-btn" data-tab="admin" id="navTabAdmin" style="display:none;">
-      <span class="tab-emoji tab-kanji" aria-hidden="true">教</span>
-      <span class="tab-text">Dashboard Sensei</span>
-    </button>
-  </nav>
+  <!-- Mobile More Sheet (M-More-Sheet: Secondary Nav + Global Switches) -->
+  <div class="mobile-more-backdrop" id="mobileMoreBackdrop" hidden></div>
+  <section class="mobile-more-sheet" id="mobileMoreSheet" role="dialog" aria-modal="true" aria-label="Menu lainnya" hidden>
+    <div class="sheet-handle-row"><span class="sheet-handle"></span></div>
+
+    <div class="more-sheet-profile" id="moreSheetProfile">
+      <!-- Rendered dynamically from authUI.user & progress -->
+    </div>
+
+    <nav class="more-sheet-nav" id="moreSheetNav" aria-label="Menu lainnya">
+      <button type="button" class="more-sheet-nav-item" data-more-tab="weakness" id="moreNavWeakness">
+        <span class="more-item-kanji" aria-hidden="true">復</span>
+        <span class="more-item-body">
+          <span class="more-item-title">Perbaiki Skor Saya</span>
+          <span class="more-item-desc" id="moreWeaknessDesc">Latih ulang kata yang sering salah</span>
+        </span>
+        <span class="more-item-chevron" aria-hidden="true">›</span>
+      </button>
+      <button type="button" class="more-sheet-nav-item" data-more-tab="leaderboard" id="moreNavLeaderboard">
+        <span class="more-item-kanji" aria-hidden="true">位</span>
+        <span class="more-item-body">
+          <span class="more-item-title">Papan Peringkat</span>
+          <span class="more-item-desc">Lihat peringkat &amp; XP siswa</span>
+        </span>
+        <span class="more-item-chevron" aria-hidden="true">›</span>
+      </button>
+      <button type="button" class="more-sheet-nav-item" data-more-tab="admin" id="moreNavAdmin" hidden>
+        <span class="more-item-kanji" aria-hidden="true">教</span>
+        <span class="more-item-body">
+          <span class="more-item-title">Dashboard Sensei</span>
+          <span class="more-item-desc">Khusus admin</span>
+        </span>
+        <span class="more-item-chevron" aria-hidden="true">›</span>
+      </button>
+    </nav>
+
+    <div class="more-sheet-settings">
+      <span class="more-settings-heading">PENGATURAN</span>
+      <label class="more-switch-row">
+        <span>Romaji</span>
+        <input type="checkbox" role="switch" id="moreSwitchRomaji" class="more-switch-input" checked>
+        <span class="more-switch-track" aria-hidden="true"><span class="more-switch-knob"></span></span>
+      </label>
+      <label class="more-switch-row">
+        <span>Arti (terjemahan)</span>
+        <input type="checkbox" role="switch" id="moreSwitchTrans" class="more-switch-input" checked>
+        <span class="more-switch-track" aria-hidden="true"><span class="more-switch-knob"></span></span>
+      </label>
+      <label class="more-switch-row">
+        <span>Suara</span>
+        <input type="checkbox" role="switch" id="moreSwitchSound" class="more-switch-input" checked>
+        <span class="more-switch-track" aria-hidden="true"><span class="more-switch-knob"></span></span>
+      </label>
+      <label class="more-switch-row">
+        <span>Tema gelap</span>
+        <input type="checkbox" role="switch" id="moreSwitchDarkTheme" class="more-switch-input">
+        <span class="more-switch-track" aria-hidden="true"><span class="more-switch-knob"></span></span>
+      </label>
+    </div>
+  </section>
 
   <!-- Main Application Content -->
   <main class="app-main">
     
     <!-- ==================== TAB 1: 15-MINUTE DAILY DRILL ==================== -->
     <section class="tab-panel active" id="tab-drill">
-      <!-- Drill Setup Screen -->
-      <div class="card drill-hero-card" id="drillSetupCard">
-        <div class="hero-content">
+      <!-- Drill Setup Screen (Desktop 2-Column Workbench + Mobile Sticky Action Bar) -->
+      <div class="drill-hero-card drill-setup-workbench" id="drillSetupCard">
+        <div class="hero-content drill-setup-main">
           <div class="hero-heading-block">
             <h2 class="hero-title">Latihan Membaca Kana &amp; Kanji</h2>
             <p class="hero-desc">
-              Sesi terarah 15 menit dari <em>Minna no Nihongo</em> Bab 1–25. Pilih jenis latihan, tentukan bab, lalu mulai.
+              Sesi 15 menit dari <em>Minna no Nihongo</em> Bab 1–25. Tiga langkah, lalu mulai.
             </p>
           </div>
 
@@ -467,60 +527,82 @@
             </div>
           </div>
 
-          <div class="hero-actions-container">
+          <div class="hero-quick-modes-row" id="heroQuickModesRow">
+            <span class="quick-modes-label">Mode Cepat:</span>
+            <button type="button" class="action-chip-btn btn-booster-kana-chip" id="startBoosterKanaBtn" title="Vocab Booster Kana: Pasangkan 3 arti Indonesia dengan 3 Kana (1× kirim)">
+              <span class="chip-icon">🔗</span>
+              <span>Booster Kana</span>
+            </button>
+            <button type="button" class="action-chip-btn btn-booster-kanji-chip" id="startBoosterKanjiBtn" title="Vocab Booster Kanji: Pasangkan 3 arti Indonesia dengan 3 Kanji (1× kirim)">
+              <span class="chip-icon">🈳</span>
+              <span>Booster Kanji</span>
+            </button>
+            <button type="button" class="action-chip-btn btn-romaji-chip" id="startSentenceRomajiBtn" title="Tulis Kana dari kalimat penuh transkrip audio (batas waktu 45 detik)">
+              <span class="chip-icon">✍️</span>
+              <span>Ketik Kalimat (45s)</span>
+            </button>
+            <button type="button" class="action-chip-btn btn-cloze-chip" id="startClozeDrillBtn" title="Mode paling sulit (bobot tertinggi 2×, wajib 100%): Mengisi kata rumpang (Kana/Kanji saja)">
+              <span class="chip-icon">🔥</span>
+              <span>Kalimat Rumpang</span>
+            </button>
+            <button type="button" class="action-chip-btn btn-weakness-chip" id="startWeaknessDrillBtn" title="Drill kata-kata yang paling sering salah dalam 7 hari terakhir">
+              <span class="chip-icon">🎯</span>
+              <span>Perbaiki Skor Saya</span>
+            </button>
+            <button type="button" class="action-chip-btn btn-katakana-chip" id="startKatakanaDrillBtn" title="Latihan kilat membaca huruf Katakana">
+              <span class="chip-icon">🔤</span>
+              <span>Spesial Katakana</span>
+            </button>
+          </div>
+
+          <!-- Compatibility fallback triggers -->
+          <button type="button" id="startTypingDrillBtn" style="display: none;"></button>
+          <button type="button" id="startLearningModeBtn" style="display: none;"></button>
+        </div>
+
+        <!-- RIGHT COLUMN (Desktop): Sumi Summary Card + Single Primary CTA + Today's Goal + Collapsible Shortcuts -->
+        <!-- MOBILE: Collapses into Sticky Bottom Action Bar above the 64px Bottom Nav -->
+        <aside class="drill-setup-aside" aria-label="Ringkasan sesi">
+          <section class="session-summary-card" id="sessionSummaryCard">
+            <h3 class="summary-card-eyebrow">SESI ANDA</h3>
+            <dl class="summary-dl">
+              <dt>Jenis</dt><dd id="summarySessionType">Quiz Mode</dd>
+              <dt>Kategori</dt><dd id="summaryCategory">Tebak Bacaan (MCQ)</dd>
+              <dt>Bab</dt><dd id="summaryLessons">Belum dipilih</dd>
+              <dt>Durasi</dt><dd id="summaryDuration">15 menit · 8 soal</dd>
+            </dl>
+            <div class="mobile-sticky-summary" aria-hidden="true">
+              <span class="mobile-sticky-title" id="mobileStickyTitle">Tebak Bacaan</span>
+              <span class="mobile-sticky-sub" id="mobileStickySub">Pilih bab · 8 soal · 15 mnt</span>
+            </div>
             <div class="hero-primary-action">
               <button type="button" class="btn btn-primary btn-start-cta" id="startDrillBtn" disabled title="Pilih minimal 1 Bab untuk memulai">
                 <span class="btn-icon">▶</span>
-                <span id="startBtnLabel">START</span>
+                <span id="startBtnLabel">MULAI LATIHAN</span>
               </button>
             </div>
+          </section>
 
-            <div class="hero-quick-modes-row">
-              <span class="quick-modes-label">Mode Cepat:</span>
-              <button type="button" class="action-chip-btn btn-booster-kana-chip" id="startBoosterKanaBtn" title="Vocab Booster Kana: Pasangkan 3 arti Indonesia dengan 3 Kana (1× kirim)">
-                <span class="chip-icon">🔗</span>
-                <span>Booster Kana</span>
-              </button>
-              <button type="button" class="action-chip-btn btn-booster-kanji-chip" id="startBoosterKanjiBtn" title="Vocab Booster Kanji: Pasangkan 3 arti Indonesia dengan 3 Kanji (1× kirim)">
-                <span class="chip-icon">🈳</span>
-                <span>Booster Kanji</span>
-              </button>
-              <button type="button" class="action-chip-btn btn-romaji-chip" id="startSentenceRomajiBtn" title="Tulis Kana dari kalimat penuh transkrip audio (batas waktu 45 detik)">
-                <span class="chip-icon">✍️</span>
-                <span>Ketik Kalimat (45s)</span>
-              </button>
-              <button type="button" class="action-chip-btn btn-cloze-chip" id="startClozeDrillBtn" title="Mode paling sulit (bobot tertinggi 2×, wajib 100%): Mengisi kata rumpang (Kana/Kanji saja)">
-                <span class="chip-icon">🔥</span>
-                <span>Kalimat Rumpang</span>
-              </button>
-              <button type="button" class="action-chip-btn btn-weakness-chip" id="startWeaknessDrillBtn" title="Drill kata-kata yang paling sering salah dalam 7 hari terakhir">
-                <span class="chip-icon">🎯</span>
-                <span>Perbaiki Skor Saya</span>
-              </button>
-              <button type="button" class="action-chip-btn btn-katakana-chip" id="startKatakanaDrillBtn" title="Latihan kilat membaca huruf Katakana">
-                <span class="chip-icon">🔤</span>
-                <span>Spesial Katakana</span>
-              </button>
+          <section class="today-goal-card" id="todayGoalCard">
+            <h3 class="today-goal-title">Hari ini</h3>
+            <div class="today-goal-bar">
+              <div class="today-goal-bar-fill" id="todayGoalBarFill" style="width: 0%;"></div>
             </div>
+            <span class="today-goal-text" id="todayGoalText">0 / 15 menit · streak 0 hari</span>
+          </section>
 
-            <!-- Compatibility fallback triggers -->
-            <button type="button" id="startTypingDrillBtn" style="display: none;"></button>
-            <button type="button" id="startLearningModeBtn" style="display: none;"></button>
-          </div>
-
-          <div class="keyboard-tips-box" id="keyboardTipsBox">
-            <span class="kbd-title">💡 Pintasan Cepat:</span>
+          <details class="kbd-details-card" id="keyboardTipsBox">
+            <summary class="kbd-details-summary">Pintasan keyboard</summary>
             <div class="kbd-tags" id="kbdTagsContainer">
-              <span class="kbd-chip"><kbd>1</kbd> - <kbd>4</kbd> Pilihan Ganda</span>
-              <span class="kbd-chip"><kbd>Enter</kbd> Kirim Jawaban / Lanjut</span>
-              <span class="kbd-chip"><kbd>Spasi</kbd> Buka Kartu / Suara</span>
-              <span class="kbd-chip"><kbd>&rarr;</kbd> / <kbd>&larr;</kbd> Navigasi</span>
-              <span class="kbd-chip"><kbd>R</kbd> Ulang Suara</span>
-              <span class="kbd-chip"><kbd>M</kbd> Toggle Romaji</span>
-              <span class="kbd-chip"><kbd>T</kbd> Toggle Arti</span>
+              <span class="kbd-chip"><kbd>1</kbd>–<kbd>4</kbd> Pilih</span>
+              <span class="kbd-chip"><kbd>Enter</kbd> Kirim</span>
+              <span class="kbd-chip"><kbd>Spasi</kbd> Suara / Balik</span>
+              <span class="kbd-chip"><kbd>R</kbd> Ulang</span>
+              <span class="kbd-chip"><kbd>M</kbd> Romaji</span>
+              <span class="kbd-chip"><kbd>T</kbd> Arti</span>
             </div>
-          </div>
-        </div>
+          </details>
+        </aside>
       </div>
 
       <!-- Active Drill Arena (Hidden by default) -->
@@ -554,8 +636,11 @@
               <span>⏸ Jeda</span>
             </button>
             <button type="button" class="btn btn-danger-outline btn-sm" id="finishDrillBtn">
-              <span>Selesai Sesi</span>
+              <span>Keluar</span>
             </button>
+          </div>
+          <div class="hud-linear-progress" aria-hidden="true">
+            <div class="hud-linear-progress-fill" id="drillLinearProgressBar" style="width: 12.5%;"></div>
           </div>
         </div>
 
@@ -592,7 +677,12 @@
 
     <!-- ==================== TAB 3: SCORECARD & PROGRESS ==================== -->
     <section class="tab-panel" id="tab-scorecard">
-      <div id="aiAdvisorContainer">
+      <div class="progress-subtabs" id="progressSubtabs" role="tablist" aria-label="Bagian progres">
+        <button type="button" role="tab" class="progress-subtab-btn active" data-subtab="summary" aria-selected="true">Ringkasan</button>
+        <button type="button" role="tab" class="progress-subtab-btn" data-subtab="lessons" aria-selected="false">Per bab</button>
+        <button type="button" role="tab" class="progress-subtab-btn" data-subtab="advisor" aria-selected="false">AI Advisor</button>
+      </div>
+      <div id="aiAdvisorContainer" data-progress-panel="advisor" hidden>
         <!-- Rendered by ai-advisor.js -->
       </div>
       <div id="scorecardContainer">

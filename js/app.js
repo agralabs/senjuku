@@ -142,12 +142,41 @@ export class JapaneseApp {
       this.dom.headerHomeBtn.addEventListener('click', () => this.goHome());
     }
 
-    // Nav tab switching
+    // Nav tab switching (skip mobile "Lainnya" sheet trigger which has no data-tab)
     this.dom.navTabs.forEach(tab => {
+      const targetTab = tab.dataset.tab;
+      if (!targetTab) return;
       tab.addEventListener('click', () => {
-        const targetTab = tab.dataset.tab;
+        this.closeMoreSheet();
         this.switchTab(targetTab);
       });
+    });
+
+    // Mobile More Sheet ("⋯ Lainnya")
+    document.getElementById('navTabMore')?.addEventListener('click', () => this.toggleMoreSheet());
+    document.getElementById('mobileMoreBackdrop')?.addEventListener('click', () => this.closeMoreSheet());
+    document.querySelectorAll('[data-more-tab]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        this.closeMoreSheet();
+        this.switchTab(btn.dataset.moreTab);
+      });
+    });
+
+    document.getElementById('moreSwitchRomaji')?.addEventListener('change', () => {
+      this.dom.headerToggleRomajiBtn?.click();
+      this.syncMoreSheetSwitches();
+    });
+    document.getElementById('moreSwitchTrans')?.addEventListener('change', () => {
+      this.dom.headerToggleTransBtn?.click();
+      this.syncMoreSheetSwitches();
+    });
+    document.getElementById('moreSwitchSound')?.addEventListener('change', () => {
+      this.dom.soundToggleBtn?.click();
+      this.syncMoreSheetSwitches();
+    });
+    document.getElementById('moreSwitchDarkTheme')?.addEventListener('change', () => {
+      this.dom.themeToggleBtn?.click();
+      this.syncMoreSheetSwitches();
     });
 
     // Sound toggle
@@ -157,7 +186,11 @@ export class JapaneseApp {
         sound.setMuted(!isMuted);
         this.dom.soundToggleBtn.classList.toggle('muted', !isMuted);
         this.dom.soundToggleBtn.title = !isMuted ? "Suara Dimatikan" : "Suara Aktif";
-        this.dom.soundToggleBtn.querySelector('.sound-label').textContent = !isMuted ? "Muted" : "Sound On";
+        const iconEl = this.dom.soundToggleBtn.querySelector('.sound-icon');
+        if (iconEl) iconEl.textContent = !isMuted ? "🔇" : "🔊";
+        const labelEl = this.dom.soundToggleBtn.querySelector('.sound-label');
+        if (labelEl) labelEl.textContent = !isMuted ? "Muted" : "Sound On";
+        this.syncMoreSheetSwitches();
       });
     }
 
@@ -718,7 +751,7 @@ export class JapaneseApp {
     const isQuiz = (this.currentSessionType === 'quiz');
 
     if (this.dom.startBtnLabel) {
-      this.dom.startBtnLabel.textContent = 'START';
+      this.dom.startBtnLabel.textContent = 'MULAI LATIHAN';
     }
 
     if (this.dom.typingBtnLabel) {
@@ -726,6 +759,68 @@ export class JapaneseApp {
         'Mode Ketik Langsung (15 Mnt)' :
         'Latihan Ketik Santai (15 Mnt)';
     }
+
+    this.updateSessionSummaryCard();
+  }
+
+  updateSessionSummaryCard() {
+    const isQuiz = (this.currentSessionType !== 'learning');
+    const selected = this.getSelectedLessons();
+
+    const typeEl = document.getElementById('summarySessionType');
+    const catEl = document.getElementById('summaryCategory');
+    const babEl = document.getElementById('summaryLessons');
+    const mobTitle = document.getElementById('mobileStickyTitle');
+    const mobSub = document.getElementById('mobileStickySub');
+
+    let categoryLabel = 'Tebak Bacaan (MCQ)';
+    if (!isQuiz) {
+      if (this.currentInputFormat === 'booster') {
+        categoryLabel = this.learningBoosterSubtype === 'kanji' ? 'Vocab Booster: Kanji' : 'Vocab Booster: Kana';
+      } else if (this.currentInputFormat === 'typing') {
+        categoryLabel = this.learningTypingSubtype === 'sentence' ? 'Ketik Kalimat Santai' : 'Ketik Kosakata Santai';
+      } else {
+        categoryLabel = 'Kartu Bacaan (Flashcard)';
+      }
+    } else {
+      const activeCard = this.dom.quizCategoryCardsGrid?.querySelector('.quiz-cat-card.active');
+      const cardTitle = activeCard?.querySelector('.qcat-title')?.textContent?.trim();
+      if (cardTitle) categoryLabel = cardTitle;
+    }
+
+    let lessonsLabel = 'Belum dipilih';
+    if (selected.length === TOTAL_LESSONS) {
+      lessonsLabel = `Semua (1–${TOTAL_LESSONS})`;
+    } else if (selected.length > 0) {
+      lessonsLabel = selected.length <= 5
+        ? selected.join(', ')
+        : `${selected.length} bab (${selected[0]}–${selected[selected.length - 1]})`;
+    }
+
+    if (typeEl) typeEl.textContent = isQuiz ? 'Quiz Mode' : 'Learning Mode';
+    if (catEl) catEl.textContent = categoryLabel;
+    if (babEl) babEl.textContent = lessonsLabel;
+    if (mobTitle) mobTitle.textContent = categoryLabel;
+    if (mobSub) {
+      mobSub.textContent = selected.length > 0
+        ? `Bab ${lessonsLabel} · 8 soal · 15 mnt`
+        : 'Pilih minimal 1 bab · 8 soal';
+    }
+
+    this.updateTodayGoalCard();
+  }
+
+  updateTodayGoalCard() {
+    const barEl = document.getElementById('todayGoalBarFill');
+    const textEl = document.getElementById('todayGoalText');
+    if (!barEl && !textEl) return;
+    const todayKey = new Date().toISOString().slice(0, 10);
+    const todayHist = progress?.data?.history?.[todayKey];
+    const minsToday = Math.min(15, Math.round((todayHist?.minutes || 0) * 10) / 10);
+    const pct = Math.min(100, Math.round((minsToday / 15) * 100));
+    const streak = progress?.data?.streakDays || 0;
+    if (barEl) barEl.style.width = `${pct}%`;
+    if (textEl) textEl.textContent = `${minsToday} / 15 menit · streak ${streak} hari`;
   }
 
   initLessonTiles() {
@@ -969,6 +1064,7 @@ export class JapaneseApp {
     }
 
     this.renderLessonTagCloud();
+    this.updateSessionSummaryCard();
   }
 
   renderLessonTagCloud() {
@@ -1127,11 +1223,11 @@ export class JapaneseApp {
   applyAccessControl(user) {
     const isGuest = !user;
 
-    // 1. Navigation tabs visibility: anonymous only sees 'drill' & 'kana'
+    // 1. Navigation tabs visibility: anonymous only sees 'drill' & 'kana' (+ mobile 'Lainnya' settings sheet)
     this.dom.navTabs.forEach(btn => {
       const tab = btn.dataset.tab;
-      if (tab === 'admin') {
-        // Admin tab visibility handled by authUI.updateAdminTabVisibility()
+      if (!tab || tab === 'admin') {
+        // Mobile 'Lainnya' button has no data-tab; Admin tab visibility handled by authUI.updateAdminTabVisibility()
         return;
       }
       if (tab === 'drill' || tab === 'kana') {
@@ -1140,6 +1236,13 @@ export class JapaneseApp {
         btn.style.display = isGuest ? 'none' : '';
       }
     });
+
+    // Mobile More Sheet secondary links (respect Guest Registration Wall & Admin role)
+    const moreNav = document.getElementById('moreSheetNav');
+    const moreAdmin = document.getElementById('moreNavAdmin');
+    if (moreNav) moreNav.hidden = isGuest;
+    if (moreAdmin) moreAdmin.hidden = !(user && user.role === 'admin');
+    this.refreshMoreSheet();
 
     // If guest was on a hidden tab, redirect to daily drill
     if (isGuest && this.currentTab !== 'drill' && this.currentTab !== 'kana') {
@@ -1159,6 +1262,98 @@ export class JapaneseApp {
 
     // 4. Update lessons count / Start CTA state
     this.updateSelectedLessonsCount();
+  }
+
+  toggleMoreSheet() {
+    const sheet = document.getElementById('mobileMoreSheet');
+    if (!sheet) return;
+    if (sheet.hidden) this.openMoreSheet();
+    else this.closeMoreSheet();
+  }
+
+  openMoreSheet() {
+    const sheet = document.getElementById('mobileMoreSheet');
+    const backdrop = document.getElementById('mobileMoreBackdrop');
+    const trigger = document.getElementById('navTabMore');
+    if (!sheet || !backdrop) return;
+    this.refreshMoreSheet();
+    this.syncMoreSheetSwitches();
+    backdrop.hidden = false;
+    sheet.hidden = false;
+    if (trigger) {
+      trigger.setAttribute('aria-expanded', 'true');
+      trigger.classList.add('active');
+    }
+  }
+
+  closeMoreSheet() {
+    const sheet = document.getElementById('mobileMoreSheet');
+    const backdrop = document.getElementById('mobileMoreBackdrop');
+    const trigger = document.getElementById('navTabMore');
+    if (sheet) sheet.hidden = true;
+    if (backdrop) backdrop.hidden = true;
+    if (trigger) {
+      trigger.setAttribute('aria-expanded', 'false');
+      trigger.classList.remove('active');
+    }
+  }
+
+  refreshMoreSheet() {
+    const host = document.getElementById('moreSheetProfile');
+    if (!host) return;
+    const u = authUI.user;
+    if (!u) {
+      host.innerHTML = `
+        <span class="more-profile-avatar">🌸</span>
+        <div class="more-profile-meta">
+          <span class="more-profile-name">Mode Demo Tamu</span>
+          <span class="more-profile-sub">Daftar gratis untuk fitur lengkap</span>
+        </div>
+        <button type="button" class="btn btn-primary btn-sm" id="moreSheetGuestBtn">Daftar</button>
+      `;
+      host.querySelector('#moreSheetGuestBtn')?.addEventListener('click', () => {
+        this.closeMoreSheet();
+        authUI.openAuthModal('register');
+      });
+      return;
+    }
+    const tier = (u.membershipTier || 'free').toUpperCase();
+    const lv = progress?.data?.level || 1;
+    const xp = progress?.data?.xp || 0;
+    host.innerHTML = `
+      <span class="more-profile-avatar">${u.avatarEmoji || '🌸'}</span>
+      <div class="more-profile-meta">
+        <span class="more-profile-name"></span>
+        <span class="more-profile-sub">Lv. ${lv} · ${xp} XP</span>
+      </div>
+      <span class="more-profile-tier">${tier}</span>
+    `;
+    const nameEl = host.querySelector('.more-profile-name');
+    if (nameEl) nameEl.textContent = u.nickname || 'Siswa';
+    host.style.cursor = 'pointer';
+    host.onclick = () => {
+      this.closeMoreSheet();
+      authUI.openProfileModal();
+    };
+  }
+
+  syncMoreSheetSwitches() {
+    const swRomaji = document.getElementById('moreSwitchRomaji');
+    const swTrans = document.getElementById('moreSwitchTrans');
+    const swSound = document.getElementById('moreSwitchSound');
+    const swDark = document.getElementById('moreSwitchDarkTheme');
+    if (swRomaji && this.dom.headerToggleRomajiBtn) {
+      swRomaji.checked = this.dom.headerToggleRomajiBtn.classList.contains('active');
+    }
+    if (swTrans && this.dom.headerToggleTransBtn) {
+      swTrans.checked = this.dom.headerToggleTransBtn.classList.contains('active');
+    }
+    if (swSound) {
+      swSound.checked = !sound.isMuted();
+    }
+    if (swDark) {
+      swDark.checked = document.body.classList.contains('dark-theme');
+    }
   }
 
   updateTeaserLockStates(isGuest) {
@@ -1294,6 +1489,12 @@ export class JapaneseApp {
 
     this.dom.drillSetupCard.hidden = true;
     this.dom.drillActiveArea.hidden = false;
+    document.body.classList.add('drill-focus-mode');
+    this.syncDrillLinearProgress();
+    if (!this._progressObserver && this.dom.progressCount && typeof MutationObserver === 'function') {
+      this._progressObserver = new MutationObserver(() => this.syncDrillLinearProgress());
+      this._progressObserver.observe(this.dom.progressCount, { childList: true, characterData: true, subtree: true });
+    }
 
     // Enforce display toggle availability:
     // - Quiz Mode: NO Romaji/Translation switches
@@ -1307,6 +1508,18 @@ export class JapaneseApp {
       mode: mode,
       selectedLessons: selectedLessons
     });
+  }
+
+  syncDrillLinearProgress() {
+    const bar = document.getElementById('drillLinearProgressBar');
+    if (!bar || !this.dom.progressCount) return;
+    const text = this.dom.progressCount.textContent || '';
+    const match = text.match(/(\d+)\s*\/\s*(\d+)/);
+    if (match) {
+      const cur = Math.max(1, parseInt(match[1], 10));
+      const tot = Math.max(1, parseInt(match[2], 10));
+      bar.style.width = `${Math.min(100, Math.round((cur / tot) * 100))}%`;
+    }
   }
 
   goHome() {
@@ -1325,10 +1538,12 @@ export class JapaneseApp {
   resetDrillArea() {
     this.activeSessionType = null;
     this.isClozeActive = false;
+    document.body.classList.remove('drill-focus-mode');
     this.dom.drillSetupCard.hidden = false;
     this.dom.drillActiveArea.hidden = true;
     this.syncDisplayTogglesForContext();
     this.updateHeaderStats();
+    this.updateSessionSummaryCard();
   }
 
   handleSessionComplete(results) {

@@ -8,11 +8,40 @@ import { SENTENCE_ROMAJI_ITEMS } from '../data/sentence-romaji.js';
 export class ScorecardView {
   constructor() {
     this.container = null;
+    this.activeSubtab = 'summary';
   }
 
   init(containerElement) {
     this.container = containerElement;
+    this.bindSubtabs();
     this.render();
+  }
+
+  bindSubtabs() {
+    const bar = document.getElementById('progressSubtabs');
+    if (!bar || bar.dataset.bound) return;
+    bar.dataset.bound = '1';
+    bar.addEventListener('click', (e) => {
+      const btn = e.target.closest('.progress-subtab-btn');
+      if (!btn) return;
+      this.switchSubtab(btn.dataset.subtab || 'summary');
+    });
+  }
+
+  switchSubtab(subtab) {
+    this.activeSubtab = subtab;
+    document.querySelectorAll('#progressSubtabs .progress-subtab-btn').forEach(btn => {
+      const active = btn.dataset.subtab === subtab;
+      btn.classList.toggle('active', active);
+      btn.setAttribute('aria-selected', active ? 'true' : 'false');
+    });
+    const advisorEl = document.getElementById('aiAdvisorContainer');
+    if (advisorEl) advisorEl.hidden = subtab !== 'advisor';
+    if (this.container) {
+      this.container.querySelectorAll('[data-progress-panel]').forEach(panel => {
+        panel.hidden = panel.dataset.progressPanel !== subtab;
+      });
+    }
   }
 
   render() {
@@ -21,6 +50,7 @@ export class ScorecardView {
     const todayStats = progress.getTodayStats();
     const weeklyData = progress.getWeeklyData();
     const mastery = progress.getMasteryBreakdown(MASTER_DRILL_ITEMS);
+    const allCov = progress.getAllLessonsCoverage(MASTER_DRILL_ITEMS, CLOZE_SENTENCE_ITEMS, SENTENCE_ROMAJI_ITEMS);
 
     const todayMins = Math.round((todayStats.seconds / 60) * 10) / 10;
     const dailyTargetPercent = Math.min(100, Math.round((todayMins / 15) * 100));
@@ -28,14 +58,74 @@ export class ScorecardView {
     const accuracy = todayStats.cards > 0 ? Math.round((todayStats.correct / todayStats.cards) * 100) : (todayStats.learningCards > 0 ? 100 : 0);
 
     // Weak cards: cards answered wrongly more than correctly or wrong > 0 and streak == 0
-    const weakCards = MASTER_DRILL_ITEMS.filter(it => {
+    const allWeakCards = MASTER_DRILL_ITEMS.filter(it => {
       const c = progress.data.cards[it.id];
       return c && c.wrong > 0 && c.streak <= 1;
-    }).slice(0, 5);
+    });
+    const weakCards = allWeakCards.slice(0, 5);
+    const top4Lessons = [1, 2, 3, 4].map(num => ({
+      num,
+      score: allCov.lessons[num]?.score || 0
+    }));
 
     this.container.innerHTML = `
       <div class="scorecard-container">
-        <!-- TOP ROW: TODAY'S DAILY SCORECARD -->
+        <!-- SUB-TAB 1: RINGKASAN -->
+        <div class="progress-panel-stack" data-progress-panel="summary">
+          <!-- Sumi Dark Daily Target Hero Card (M-Progress) -->
+          <section class="sumi-daily-hero-card">
+            <div class="sumi-ring-wrap">
+              <svg width="88" height="88" viewBox="0 0 100 100" class="sumi-ring-svg">
+                <circle cx="50" cy="50" r="40" class="sumi-ring-bg"></circle>
+                <circle cx="50" cy="50" r="40" class="sumi-ring-bar" style="stroke-dasharray: 251.2; stroke-dashoffset: ${251.2 * (1 - dailyTargetPercent / 100)};"></circle>
+              </svg>
+              <span class="sumi-ring-val">${todayMins}/15</span>
+            </div>
+            <div class="sumi-daily-body">
+              <span class="sumi-daily-eyebrow">TARGET HARI INI</span>
+              <span class="sumi-daily-headline">${todayMins >= 15 ? '🎉 Target 15 menit tercapai!' : `${Math.max(1, Math.round(15 - todayMins))} menit lagi`}</span>
+              <button type="button" class="sumi-daily-link" id="scContinueDrillBtn">Lanjut latihan &rarr;</button>
+            </div>
+          </section>
+
+          <!-- 2x2 Compact KPI Grid -->
+          <div class="progress-kpi-grid">
+            <div class="progress-kpi-card">
+              <span class="kpi-val">${progress.data.streakDays} hari</span>
+              <span class="kpi-lbl">Streak</span>
+            </div>
+            <div class="progress-kpi-card">
+              <span class="kpi-val">Lv. ${progress.data.level}</span>
+              <span class="kpi-lbl">${progress.data.xp} XP</span>
+            </div>
+            <div class="progress-kpi-card">
+              <span class="kpi-val">${accuracy}%</span>
+              <span class="kpi-lbl">Akurasi hari ini</span>
+            </div>
+            <div class="progress-kpi-card">
+              <span class="kpi-val">${allWeakCards.length}</span>
+              <span class="kpi-lbl">Kata perlu diulang</span>
+            </div>
+          </div>
+
+          <!-- Compact Top-4 Lesson Mastery Preview -->
+          <section class="card progress-bab-preview-card">
+            <div class="bab-preview-header">
+              <h3>Penguasaan bab</h3>
+              <button type="button" class="bab-preview-all-btn" id="scJumpToAllBabBtn">Semua &rarr;</button>
+            </div>
+            <div class="bab-preview-bars">
+              ${top4Lessons.map(b => `
+                <div class="bab-bar-row">
+                  <span class="bab-bar-jp">第${b.num}課</span>
+                  <div class="bab-bar-track"><div class="bab-bar-fill ${b.score >= 70 ? 'good' : 'low'}" style="width: ${b.score}%"></div></div>
+                  <span class="bab-bar-pct">${b.score}%</span>
+                </div>
+              `).join('')}
+            </div>
+          </section>
+
+          <!-- TOP ROW: TODAY'S DAILY SCORECARD -->
         <section class="card daily-scorecard-card">
           <div class="card-header">
             <div>
@@ -168,10 +258,23 @@ export class ScorecardView {
           </section>
         </div>
 
+        <!-- EXPORT / RESET BACKUP CONTROLS -->
+        <div class="data-mgmt-bar">
+          <button type="button" class="btn btn-secondary btn-sm" id="exportProgressBtn">Ekspor Cadangan Progres (JSON)</button>
+          <label class="btn btn-secondary btn-sm import-label">
+            Impor Cadangan
+            <input type="file" id="importProgressFile" accept=".json" style="display:none;" />
+          </label>
+          <button type="button" class="btn btn-danger-outline btn-sm" id="resetProgressBtn">Reset Ulang Progres</button>
+        </div>
+        </div>
+
+        <!-- SUB-TAB 2: PER BAB -->
+        <div class="progress-panel-stack" data-progress-panel="lessons" hidden>
         <!-- TOTAL SCORE ACHIEVEMENT VS MAX SCORE + PATH CLUE & NEXT UNLOCK -->
         ${this.generatePathAchievementCardHtml()}
 
-        <!-- PER-LESSON PROGRESSION & QUESTION BANK COVERAGE (BAB 1 - 14) -->
+        <!-- PER-LESSON PROGRESSION & QUESTION BANK COVERAGE (BAB 1 - 25) -->
         <section class="card scorecard-lessons-card">
           <div class="card-header">
             <div>
@@ -179,7 +282,6 @@ export class ScorecardView {
               <h3 class="card-title">Skor Penguasaan per Bab (Bab 1 - 25)</h3>
             </div>
             <span class="badge badge-coverage-summary">${(() => {
-              const allCov = progress.getAllLessonsCoverage(MASTER_DRILL_ITEMS, CLOZE_SENTENCE_ITEMS, SENTENCE_ROMAJI_ITEMS);
               const totalScore = Object.values(allCov.lessons).reduce((s, st) => s + st.score, 0);
               return `🏆 ${totalScore.toLocaleString('id-ID')} / 2.500 Skor • ${allCov.fullScoreCount}/25 Bab Lulus`;
             })()}</span>
@@ -192,20 +294,18 @@ export class ScorecardView {
             ${this.generateLessonBreakdownHtml()}
           </div>
         </section>
-
-        <!-- EXPORT / RESET BACKUP CONTROLS -->
-        <div class="data-mgmt-bar">
-          <button type="button" class="btn btn-secondary btn-sm" id="exportProgressBtn">Ekspor Cadangan Progres (JSON)</button>
-          <label class="btn btn-secondary btn-sm import-label">
-            Impor Cadangan
-            <input type="file" id="importProgressFile" accept=".json" style="display:none;" />
-          </label>
-          <button type="button" class="btn btn-danger-outline btn-sm" id="resetProgressBtn">Reset Ulang Progres</button>
         </div>
       </div>
     `;
 
     this.bindEvents();
+    this.container.querySelector('#scContinueDrillBtn')?.addEventListener('click', () => {
+      window.japaneseApp?.switchTab('drill');
+    });
+    this.container.querySelector('#scJumpToAllBabBtn')?.addEventListener('click', () => {
+      this.switchSubtab('lessons');
+    });
+    this.switchSubtab(this.activeSubtab);
   }
 
   generateWeeklySvgChart(days) {

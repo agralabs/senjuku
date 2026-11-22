@@ -60,9 +60,61 @@ export class TranscriptExplorer {
   }
 
   setLesson(lessonId) {
-    this.currentLessonId = parseInt(lessonId, 10);
+    const id = Math.max(1, Math.min(ALL_LESSONS.length, parseInt(lessonId, 10) || 1));
+    this.currentLessonId = id;
     this.stopAutoPlay();
+    this.syncActiveChapterUI();
     this.renderContent();
+  }
+
+  syncActiveChapterUI() {
+    if (!this.container) return;
+    const lesson = ALL_LESSONS.find(l => l.id === this.currentLessonId) || ALL_LESSONS[0];
+    this.container.querySelectorAll('.lesson-nav-btn').forEach(btn => {
+      btn.classList.toggle('active', parseInt(btn.dataset.id, 10) === this.currentLessonId);
+    });
+    this.container.querySelectorAll('.chapter-sheet-num, .chapter-sheet-row').forEach(el => {
+      el.classList.toggle('active', parseInt(el.dataset.id, 10) === this.currentLessonId);
+    });
+    const mobJp = this.container.querySelector('#mobChapterJp');
+    const mobTitle = this.container.querySelector('#mobChapterTheme');
+    const mobPrev = this.container.querySelector('#mobPrevChapterBtn');
+    const mobNext = this.container.querySelector('#mobNextChapterBtn');
+    const miniLabel = this.container.querySelector('#mobShadowingLabel');
+    if (mobJp) mobJp.textContent = `第${lesson.id}課`;
+    if (mobTitle) mobTitle.textContent = lesson.theme || `Bab ${lesson.id}`;
+    if (mobPrev) mobPrev.disabled = this.currentLessonId <= 1;
+    if (mobNext) mobNext.disabled = this.currentLessonId >= ALL_LESSONS.length;
+    if (miniLabel) miniLabel.textContent = `Shadowing · Bab ${lesson.id}`;
+  }
+
+  openChapterSheet() {
+    const backdrop = this.container?.querySelector('#chapterSheetBackdrop');
+    const sheet = this.container?.querySelector('#chapterPickerSheet');
+    if (backdrop) backdrop.hidden = false;
+    if (sheet) sheet.hidden = false;
+  }
+
+  closeChapterSheet() {
+    const backdrop = this.container?.querySelector('#chapterSheetBackdrop');
+    const sheet = this.container?.querySelector('#chapterPickerSheet');
+    if (backdrop) backdrop.hidden = true;
+    if (sheet) sheet.hidden = true;
+  }
+
+  filterSidebarChapters() {
+    if (!this.container) return;
+    const q = (this.container.querySelector('#sidebarChapterSearch')?.value || '').trim().toLowerCase();
+    const range = this.activeRange || 'all';
+    const [minR, maxR] = range === 'all' ? [1, 25] : range.split('-').map(Number);
+
+    this.container.querySelectorAll('#lessonPickerList .lesson-nav-btn').forEach(btn => {
+      const id = parseInt(btn.dataset.id, 10);
+      const text = btn.textContent.toLowerCase();
+      const inRange = id >= minR && id <= maxR;
+      const matchesQ = !q || text.includes(q) || String(id) === q;
+      btn.style.display = (inRange && matchesQ) ? '' : 'none';
+    });
   }
 
   setSearchQuery(q) {
@@ -72,18 +124,42 @@ export class TranscriptExplorer {
 
   render() {
     if (!this.container) return;
+    const currentLesson = ALL_LESSONS.find(l => l.id === this.currentLessonId) || ALL_LESSONS[0];
+    this.activeRange = this.activeRange || 'all';
 
     this.container.innerHTML = `
-      <div class="explorer-layout">
-        <aside class="explorer-sidebar">
+      <!-- Mobile Sticky Chapter Bar (replaces 25-item sidebar on <= 900px) -->
+      <div class="mobile-chapter-bar" id="mobileChapterBar">
+        <button type="button" class="mob-chap-arrow" id="mobPrevChapterBtn" aria-label="Bab sebelumnya" ${this.currentLessonId <= 1 ? 'disabled' : ''}>‹</button>
+        <button type="button" class="mob-chap-picker-btn" id="mobOpenChapterSheetBtn" aria-haspopup="dialog">
+          <span class="mob-chap-jp" id="mobChapterJp">第${currentLesson.id}課</span>
+          <span class="mob-chap-theme" id="mobChapterTheme">${currentLesson.theme}</span>
+          <span class="mob-chap-caret" aria-hidden="true">⌄</span>
+        </button>
+        <button type="button" class="mob-chap-arrow" id="mobNextChapterBtn" aria-label="Bab berikutnya" ${this.currentLessonId >= ALL_LESSONS.length ? 'disabled' : ''}>›</button>
+      </div>
+
+      <div class="explorer-layout" id="explorerLayout">
+        <aside class="explorer-sidebar" aria-label="Daftar bab">
           <div class="sidebar-header">
-            <h3>Daftar Bab (Pelajaran)</h3>
-            <span class="badge">Bab 1 - 25</span>
+            <h3>Daftar Bab</h3>
+            <button type="button" class="sidebar-collapse-btn" id="explorerCollapseBtn" title="Ciutkan / Buka Sidebar" aria-label="Ciutkan sidebar">◧</button>
+          </div>
+          <div class="sidebar-filter-tools">
+            <input type="search" id="sidebarChapterSearch" class="sidebar-search-input" placeholder="Cari bab…" aria-label="Cari bab" />
+            <div class="sidebar-range-pills" id="sidebarRangePills">
+              <button type="button" class="range-pill active" data-range="all">Semua</button>
+              <button type="button" class="range-pill" data-range="1-5">1–5</button>
+              <button type="button" class="range-pill" data-range="6-10">6–10</button>
+              <button type="button" class="range-pill" data-range="11-15">11–15</button>
+              <button type="button" class="range-pill" data-range="16-20">16–20</button>
+              <button type="button" class="range-pill" data-range="21-25">21–25</button>
+            </div>
           </div>
           <div class="lesson-picker-list" id="lessonPickerList">
             ${ALL_LESSONS.map(l => `
               <button type="button" class="lesson-nav-btn ${l.id === this.currentLessonId ? 'active' : ''}" data-id="${l.id}">
-                <span class="lesson-num">${l.lessonNum}</span>
+                <span class="lesson-num">第${l.id}課</span>
                 <span class="lesson-theme">${l.theme}</span>
               </button>
             `).join('')}
@@ -91,43 +167,43 @@ export class TranscriptExplorer {
         </aside>
 
         <section class="explorer-main">
-          <div class="explorer-controls-bar">
+          <div class="explorer-controls-bar" role="toolbar" aria-label="Opsi tampilan bacaan">
             <div class="control-group">
               <label for="furiganaSelect">Furigana:</label>
               <select id="furiganaSelect" class="select-input">
-                <option value="all">Tampilkan Semua (Selalu Terlihat)</option>
-                <option value="hover">Sembunyikan (Muncul saat Disentuh/Hover)</option>
-                <option value="none">Tanpa Furigana (Uji Membaca Kanji Murni)</option>
+                <option value="all">Selalu tampil</option>
+                <option value="hover">Hover / sentuh</option>
+                <option value="none">Sembunyikan</option>
               </select>
             </div>
 
             <div class="control-group">
-              <label class="switch-label" title="Tampilkan atau sembunyikan ejaan Romaji">
+              <label class="switch-label explorer-pill-toggle" title="Tampilkan atau sembunyikan ejaan Romaji">
                 <input type="checkbox" id="toggleRomajiCheckbox" ${this.showRomaji ? 'checked' : ''}>
-                <span>🔤 Romaji</span>
+                <span>Romaji</span>
               </label>
             </div>
 
             <div class="control-group">
-              <label class="switch-label" title="Tampilkan atau sembunyikan terjemahan">
+              <label class="switch-label explorer-pill-toggle" title="Tampilkan atau sembunyikan terjemahan">
                 <input type="checkbox" id="toggleTransCheckbox" ${this.showTranslations ? 'checked' : ''}>
-                <span>🌐 Arti Terjemahan</span>
+                <span>Arti</span>
               </label>
             </div>
 
             <div class="control-group search-box">
-              <input type="text" id="transcriptSearch" placeholder="Cari kata (Jepang / Indonesia)..." class="text-input" />
+              <input type="search" id="transcriptSearch" placeholder="Cari kata di bab ini..." class="text-input" />
             </div>
 
             <div class="control-group actions-box">
               <button type="button" class="btn btn-secondary btn-sm" id="voiceSettingsToggleBtn" title="Atur & Tes Suara Pria / Wanita Jepang">
                 <span>🎙️ Suara</span>
               </button>
-              <button type="button" class="btn btn-secondary btn-sm" id="autoPlayBtn">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <button type="button" class="btn btn-primary btn-sm" id="autoPlayBtn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                   <polygon points="5 3 19 12 5 21 5 3"></polygon>
                 </svg>
-                <span>Putar Otomatis (Shadowing)</span>
+                <span>Putar semua (Shadowing)</span>
               </button>
             </div>
           </div>
@@ -139,6 +215,38 @@ export class TranscriptExplorer {
           </div>
         </section>
       </div>
+
+      <!-- Mobile Floating Shadowing Mini-Player -->
+      <div class="mobile-shadowing-player" id="mobileShadowingPlayer">
+        <span class="mob-shadow-label" id="mobShadowingLabel">Shadowing · Bab ${currentLesson.id}</span>
+        <button type="button" class="mob-shadow-play-btn" id="mobShadowPlayBtn" aria-label="Putar semua (Shadowing)">▶</button>
+      </div>
+
+      <!-- Mobile Chapter Picker Bottom Sheet (M-Chapter-Sheet) -->
+      <div class="chapter-sheet-backdrop" id="chapterSheetBackdrop" hidden></div>
+      <section class="chapter-picker-sheet" id="chapterPickerSheet" role="dialog" aria-modal="true" aria-label="Pilih bab" hidden>
+        <div class="sheet-handle-row"><span class="sheet-handle"></span></div>
+        <div class="chapter-sheet-header">
+          <h3>Pilih bab</h3>
+          <button type="button" class="chapter-sheet-close" id="closeChapterSheetBtn" aria-label="Tutup">&times;</button>
+        </div>
+        <div class="chapter-sheet-grid-wrap">
+          <span class="chapter-sheet-hint">Lompat cepat (Bab 1–25)</span>
+          <div class="chapter-sheet-num-grid">
+            ${ALL_LESSONS.map(l => `
+              <button type="button" class="chapter-sheet-num ${l.id === this.currentLessonId ? 'active' : ''}" data-id="${l.id}">${l.id}</button>
+            `).join('')}
+          </div>
+        </div>
+        <div class="chapter-sheet-list">
+          ${ALL_LESSONS.map(l => `
+            <button type="button" class="chapter-sheet-row ${l.id === this.currentLessonId ? 'active' : ''}" data-id="${l.id}">
+              <span class="chapter-row-jp">第${l.id}課</span>
+              <span class="chapter-row-theme">${l.theme}</span>
+            </button>
+          `).join('')}
+        </div>
+      </section>
 
       <!-- Kanji Detail Popup Modal -->
       <dialog id="kanjiDetailModal" class="app-modal">
@@ -160,12 +268,47 @@ export class TranscriptExplorer {
   }
 
   bindEvents() {
+    // Desktop sidebar collapse toggle
+    const collapseBtn = this.container.querySelector('#explorerCollapseBtn');
+    const layoutEl = this.container.querySelector('#explorerLayout');
+    if (collapseBtn && layoutEl) {
+      collapseBtn.onclick = () => layoutEl.classList.toggle('sidebar-collapsed');
+    }
+
+    // Sidebar chapter search & range pills
+    const sideSearch = this.container.querySelector('#sidebarChapterSearch');
+    if (sideSearch) {
+      sideSearch.oninput = () => this.filterSidebarChapters();
+    }
+    this.container.querySelectorAll('#sidebarRangePills .range-pill').forEach(pill => {
+      pill.onclick = () => {
+        this.container.querySelectorAll('#sidebarRangePills .range-pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        this.activeRange = pill.dataset.range;
+        this.filterSidebarChapters();
+      };
+    });
+
+    // Mobile Chapter Bar & Bottom Sheet
+    this.container.querySelector('#mobPrevChapterBtn')?.addEventListener('click', () => this.setLesson(this.currentLessonId - 1));
+    this.container.querySelector('#mobNextChapterBtn')?.addEventListener('click', () => this.setLesson(this.currentLessonId + 1));
+    this.container.querySelector('#mobOpenChapterSheetBtn')?.addEventListener('click', () => this.openChapterSheet());
+    this.container.querySelector('#closeChapterSheetBtn')?.addEventListener('click', () => this.closeChapterSheet());
+    this.container.querySelector('#chapterSheetBackdrop')?.addEventListener('click', () => this.closeChapterSheet());
+    this.container.querySelectorAll('.chapter-sheet-num, .chapter-sheet-row').forEach(btn => {
+      btn.onclick = () => {
+        this.setLesson(btn.dataset.id);
+        this.closeChapterSheet();
+      };
+    });
+
+    // Mobile Shadowing Mini-Player
+    this.container.querySelector('#mobShadowPlayBtn')?.addEventListener('click', () => this.toggleAutoPlay());
+
     // Lesson nav buttons
     const navBtns = this.container.querySelectorAll('.lesson-nav-btn');
     navBtns.forEach(btn => {
       btn.onclick = () => {
-        navBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
         this.setLesson(btn.dataset.id);
       };
     });
@@ -320,11 +463,10 @@ export class TranscriptExplorer {
                 <div class="dialogue-bubble ${dia.speakerType}" id="${lineId}">
                   <div class="bubble-header">
                     <span class="speaker-name">${dia.speaker}</span>
-                    <button type="button" class="play-line-btn" data-text="${dia.text}" data-speaker="${dia.speaker}" title="Dengarkan Baris Ini">
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                    <button type="button" class="play-line-btn" data-text="${dia.text}" data-speaker="${dia.speaker}" title="Dengarkan Baris Ini" aria-label="Dengarkan Baris Ini">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M7 4v16l13-8z"></path>
                       </svg>
-                      <span>Dengarkan</span>
                     </button>
                   </div>
                   <div class="bubble-japanese furigana-text" data-furigana="${this.furiganaMode}">
@@ -423,6 +565,11 @@ export class TranscriptExplorer {
       btn.classList.add('playing');
       btn.innerHTML = `<span>■ Berhenti Putar</span>`;
     }
+    const mobBtn = this.container.querySelector('#mobShadowPlayBtn');
+    if (mobBtn) {
+      mobBtn.classList.add('playing');
+      mobBtn.textContent = '■';
+    }
 
     this.playNextInQueue();
   }
@@ -488,11 +635,16 @@ export class TranscriptExplorer {
     if (btn) {
       btn.classList.remove('playing');
       btn.innerHTML = `
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <polygon points="5 3 19 12 5 21 5 3"></polygon>
         </svg>
-        <span>Putar Otomatis (Shadowing)</span>
+        <span>Putar semua (Shadowing)</span>
       `;
+    }
+    const mobBtn = this.container.querySelector('#mobShadowPlayBtn');
+    if (mobBtn) {
+      mobBtn.classList.remove('playing');
+      mobBtn.textContent = '▶';
     }
   }
 
