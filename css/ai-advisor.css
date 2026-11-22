@@ -1,0 +1,312 @@
+/* KiraKira Nihongo - AI Advisor One-Shot Report Card Styles */
+/* Uses existing CSS custom properties for full dark/light theme parity */
+
+#aiAdvisorContainer {
+  max-width: 960px;
+  margin: 0 auto 1.5rem auto;
+}
+
+.ai-advisor-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-card);
+}
+
+.ai-advisor-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.ai-advisor-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.ai-advisor-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.ai-locale-toggle {
+  display: inline-flex;
+  align-items: center;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  padding: 2px;
+  gap: 2px;
+}
+
+.ai-locale-btn {
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.ai-locale-btn:hover:not(:disabled) {
+  color: var(--text-main);
+}
+
+.ai-locale-btn.active {
+  background: var(--accent-indigo);
+  color: #ffffff;
+}
+
+.ai-locale-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ai-advisor-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.ai-advisor-idle-desc {
+  margin: 0;
+  line-height: 1.55;
+}
+
+.ai-advisor-banner {
+  margin: 0;
+}
+
+.ai-best-window-pill {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0.55rem 0.9rem;
+  border-radius: 12px;
+  background: rgba(59, 130, 246, 0.12);
+  border: 1px solid rgba(59, 130, 246, 0.28);
+  color: var(--text-main);
+  font-size: 0.9rem;
+  width: fit-content;
+}
+
+body.light-theme .ai-best-window-pill {
+  background: rgba(29, 78, 216, 0.08);
+  border-color: rgba(29, 78, 216, 0.22);
+}
+
+.ai-best-window-label {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.ai-best-window-value {
+  color: var(--accent-indigo);
+  font-weight: 700;
+}
+
+.ai-advisor-bullets {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.7rem;
+}
+
+.ai-advisor-bullet-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-left-width: 4px;
+}
+
+.ai-advisor-bullet-item.cat-strength {
+  border-left-color: var(--accent-emerald);
+}
+
+.ai-advisor-bullet-item.cat-weakness {
+  border-left-color: var(--accent-red);
+}
+
+.ai-advisor-bullet-item.cat-timing {
+  border-left-color: var(--accent-amber);
+}
+
+.ai-advisor-bullet-item.cat-action {
+  border-left-color: var(--accent-indigo);
+}
+
+.ai-bullet-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  width: fit-content;
+  padding: 0.18rem 0.55rem;
+  border-radius: 999px;
+}
+
+.ai-bullet-badge.cat-strength {
+  color: var(--accent-emerald);
+  background: rgba(16, 185, 129, 0.14);
+}
+
+.ai-bullet-badge.cat-weakness {
+  color: var(--accent-red);
+  background: rgba(220, 38, 38, 0.14);
+}
+
+.ai-bullet-badge.cat-timing {
+  color: #93c5fd;
+  background: rgba(37, 99, 235, 0.16);
+}
+
+body.light-theme .ai-bullet-badge.cat-timing {
+  color: #1e40af;
+  background: #eff6ff;
+}
+
+.ai-bullet-badge.cat-action {
+  color: var(--accent-indigo);
+  background: rgba(59, 130, 246, 0.14);
+}
+
+.ai-bullet-text {
+  margin: 0;
+  color: var(--text-main);
+  font-size: 0.93rem;
+  line-height: 1.55;
+}
+
+.ai-advisor-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  padding-top: 0.3rem;
+}
+
+.ai-meta-time {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.ai-meta-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.ai-meta-badge {
+  font-size: 0.72rem;
+}
+
+.ai-advisor-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.55rem;
+  padding: 1.25rem 1rem;
+  border-radius: 12px;
+  background: var(--bg-secondary);
+  border: 1px dashed var(--border-subtle);
+}
+
+.ai-advisor-empty-icon {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.ai-advisor-empty-title {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--text-main);
+}
+
+.ai-advisor-footer {
+  margin-top: 0.9rem;
+  margin-bottom: 0;
+}
+
+/* Shimmer Loading Skeleton */
+.ai-advisor-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding: 0.25rem 0;
+}
+
+.ai-skeleton-pill,
+.ai-skeleton-line {
+  border-radius: 10px;
+  background: linear-gradient(
+    90deg,
+    var(--bg-secondary) 25%,
+    var(--border-subtle) 50%,
+    var(--bg-secondary) 75%
+  );
+  background-size: 200% 100%;
+  animation: aiAdvisorShimmer 1.4s infinite linear;
+}
+
+.ai-skeleton-pill {
+  width: 240px;
+  max-width: 75%;
+  height: 32px;
+}
+
+.ai-skeleton-line {
+  width: 100%;
+  height: 44px;
+}
+
+.ai-skeleton-line.medium {
+  width: 82%;
+}
+
+.ai-skeleton-line.short {
+  width: 68%;
+}
+
+@keyframes aiAdvisorShimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ai-skeleton-pill,
+  .ai-skeleton-line {
+    animation: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .ai-advisor-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .ai-advisor-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

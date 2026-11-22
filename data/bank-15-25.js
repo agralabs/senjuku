@@ -1,0 +1,338 @@
+// Curated Question Banks for Minna no Nihongo I — Bab 15 to Bab 25
+// Covers: (1) Kanji & Vocabulary Drill, (2) Kalimat Rumpang (Cloze), (3) Vocab Booster (Kana & Kanji)
+
+export const KANJI_VOCAB_15_25 = [
+  // --- BAB 15: ご家族は ---
+  { id: 'k_15_1', lesson: 15, type: 'kanji', kanji: '家族', kana: 'かぞく', romaji: 'kazoku', meaningId: 'keluarga', sentence: '私は家族を思い出しました。', sentenceKana: 'わたしはかぞくをおもいだしました。', sentenceId: 'Saya teringat keluarga saya.', distractors: ['りょうしん', 'きょうだい', 'ともだち'] },
+  { id: 'k_15_2', lesson: 15, type: 'kanji', kanji: '両親', kana: 'りょうしん', romaji: 'ryoushin', meaningId: 'kedua orang tua', sentence: '両親は大阪に住んでいます。', sentenceKana: 'りょうしんはおおさかにすんでいます。', sentenceId: 'Orang tua saya tinggal di Osaka.', distractors: ['かぞく', 'しまい', 'きょうだい'] },
+  { id: 'k_15_3', lesson: 15, type: 'kanji', kanji: '住みます', kana: 'すみます', romaji: 'sumimasu', meaningId: 'tinggal', sentence: '両親は東京に住んでいます。', sentenceKana: 'りょうしんはとうきょうにすんでいます。', sentenceId: 'Orang tua saya tinggal di Tokyo.', distractors: ['しります', 'うります', 'つくります'] },
+  { id: 'k_15_4', lesson: 15, type: 'kanji', kanji: '知ります', kana: 'しります', romaji: 'shirimasu', meaningId: 'tahu / kenal', sentence: '市役所の電話番号を知っていますか。', sentenceKana: 'しやくしょのでんわばんごうをしっていますか。', sentenceId: 'Apakah Anda tahu nomor telepon balai kota?', distractors: ['すみます', 'もちます', 'かります'] },
+  { id: 'k_15_5', lesson: 15, type: 'kanji', kanji: '作ります', kana: 'つくります', romaji: 'tsukurimasu', meaningId: 'membuat', sentence: '会社はコンピューターを作っています。', sentenceKana: 'かいしゃはコンピューターをつくっています。', sentenceId: 'Perusahaan membuat komputer.', distractors: ['うります', 'かいます', 'つかいます'] },
+  { id: 'k_15_6', lesson: 15, type: 'kanji', kanji: '売ります', kana: 'うります', romaji: 'urimasu', meaningId: 'menjual', sentence: 'スーパーで野菜を売っています。', sentenceKana: 'スーパーでやさいをうっています。', sentenceId: 'Menjual sayuran di supermarket.', distractors: ['かいます', 'つくります', 'とります'] },
+  { id: 'k_15_7', lesson: 15, type: 'kanji', kanji: '病院', kana: 'びょういん', romaji: 'byouin', meaningId: 'rumah sakit', sentence: '姉は病院で働いています。', sentenceKana: 'あねはびょういんではたらいています。', sentenceId: 'Kakak perempuan bekerja di rumah sakit.', distractors: ['びよういん', 'ぎんこう', 'だいがく'] },
+  { id: 'k_15_8', lesson: 15, type: 'katakana', kanji: 'カタログ', kana: 'カタログ', romaji: 'katarogu', meaningId: 'katalog', sentence: 'このカタログをもらってもいいですか。', sentenceKana: 'このカタログをもらってもいいですか。', sentenceId: 'Bolehkah saya meminta katalog ini?', distractors: ['カレンダー', 'カメラ', 'カード'] },
+
+  // --- BAB 16: 使い方を教えてください ---
+  { id: 'k_16_1', lesson: 16, type: 'kanji', kanji: '使い方', kana: 'つかいかた', romaji: 'tsukaikata', meaningId: 'cara menggunakan', sentence: '使い方を教えてください。', sentenceKana: 'つかいかたをおしえてください。', sentenceId: 'Tolong ajari saya cara menggunakannya.', distractors: ['よみかた', 'かきかた', 'いきかた'] },
+  { id: 'k_16_2', lesson: 16, type: 'kanji', kanji: '乗ります', kana: 'のります', romaji: 'norimasu', meaningId: 'naik (kendaraan)', sentence: 'JRに乗って、大阪駅で降ります。', sentenceKana: 'JRにのって、おおさかえきでおります。', sentenceId: 'Naik JR lalu turun di Stasiun Osaka.', distractors: ['おります', 'とまります', 'あるきます'] },
+  { id: 'k_16_3', lesson: 16, type: 'kanji', kanji: '降ります', kana: 'おります', romaji: 'orimasu', meaningId: 'turun (kendaraan)', sentence: '次の駅で電車を降ります。', sentenceKana: 'つぎのえきででんしゃをおります。', sentenceId: 'Turun kereta di stasiun berikutnya.', distractors: ['のります', 'はいります', 'でます'] },
+  { id: 'k_16_4', lesson: 16, type: 'kanji', kanji: '乗り換えます', kana: 'のりかえます', romaji: 'norikaemasu', meaningId: 'ganti kendaraan / transit', sentence: '京都駅で地下鉄に乗り換えます。', sentenceKana: 'きょうとえきでちかてつにのりかえます。', sentenceId: 'Transit ke kereta bawah tanah di Stasiun Kyoto.', distractors: ['のります', 'おります', 'かえります'] },
+  { id: 'k_16_5', lesson: 16, type: 'kanji', kanji: '押します', kana: 'おします', romaji: 'oshimasu', meaningId: 'menekan', sentence: 'このボタンを押してください。', sentenceKana: 'このボタンをおしてください。', sentenceId: 'Tolong tekan tombol ini.', distractors: ['ひきます', 'だします', 'いれます'] },
+  { id: 'k_16_6', lesson: 16, type: 'kanji', kanji: '若い', kana: 'わかい', romaji: 'wakai', meaningId: 'muda', sentence: 'あの先生は若くて親切です。', sentenceKana: 'あのせんせいはわかくてしんせつです。', sentenceId: 'Guru itu muda dan ramah.', distractors: ['ながい', 'みじかい', 'あかるい'] },
+  { id: 'k_16_7', lesson: 16, type: 'kanji', kanji: '頭', kana: 'あたま', romaji: 'atama', meaningId: 'kepala', sentence: 'マリアさんは頭がいいです。', sentenceKana: 'マリアさんはあたまがいいです。', sentenceId: 'Maria pintar (otaknya cerdas).', distractors: ['からだ', 'かお', 'おなか'] },
+  { id: 'k_16_8', lesson: 16, type: 'katakana', kanji: 'シャワー', kana: 'シャワー', romaji: 'shawaa', meaningId: 'shower', sentence: '毎朝シャワーを浴びます。', sentenceKana: 'まいあさシャワーをあびます。', sentenceId: 'Setiap pagi saya mandi shower.', distractors: ['シャツ', 'シューズ', 'シャンプー'] },
+
+  // --- BAB 17: どうしましたか ---
+  { id: 'k_17_1', lesson: 17, type: 'kanji', kanji: '病気', kana: 'びょうき', romaji: 'byouki', meaningId: 'penyakit / sakit', sentence: '病気ですから、会社を休みます。', sentenceKana: 'びょうきですから、かいしゃをやすみます。', sentenceId: 'Karena sakit, saya libur kerja.', distractors: ['げんき', 'てんき', 'でんき'] },
+  { id: 'k_17_2', lesson: 17, type: 'kanji', kanji: '薬', kana: 'くすり', romaji: 'kusuri', meaningId: 'obat', sentence: '毎日この薬を飲んでください。', sentenceKana: 'まいにちこのくすりをのんでください。', sentenceId: 'Tolong minum obat ini setiap hari.', distractors: ['みず', 'おちゃ', 'ねつ'] },
+  { id: 'k_17_3', lesson: 17, type: 'kanji', kanji: '熱', kana: 'ねつ', romaji: 'netsu', meaningId: 'demam', sentence: '昨日から熱があります。', sentenceKana: 'きのうからねつがあります。', sentenceId: 'Sejak kemarin saya demam.', distractors: ['かぜ', 'くすり', 'は'] },
+  { id: 'k_17_4', lesson: 17, type: 'kanji', kanji: '痛い', kana: 'いたい', romaji: 'itai', meaningId: 'sakit / nyeri', sentence: '喉が痛くて、熱もあります。', sentenceKana: 'のどがいたくて、ねつもあります。', sentenceId: 'Tenggorokan sakit dan demam juga.', distractors: ['あつい', 'さむい', 'ねむい'] },
+  { id: 'k_17_5', lesson: 17, type: 'kanji', kanji: '忘れます', kana: 'わすれます', romaji: 'wasuremasu', meaningId: 'lupa', sentence: 'パスポートを忘れないでください。', sentenceKana: 'パスポートをわすれないでください。', sentenceId: 'Jangan lupa paspor Anda.', distractors: ['おぼえます', 'なくします', 'はらいます'] },
+  { id: 'k_17_6', lesson: 17, type: 'kanji', kanji: '払います', kana: 'はらいます', romaji: 'haraimasu', meaningId: 'membayar', sentence: 'ここで料金を払います。', sentenceKana: 'ここでりょうきんをはらいます。', sentenceId: 'Membayar biaya di sini.', distractors: ['かえします', 'だします', 'とります'] },
+  { id: 'k_17_7', lesson: 17, type: 'kanji', kanji: '大切', kana: 'たいせつ', romaji: 'taisetsu', meaningId: 'penting / berharga', sentence: 'お大事に、体を大切にしてください。', sentenceKana: 'おだいじに、からだをたいせつにしてください。', sentenceId: 'Semoga lekas sembuh, jaga kesehatan tubuh.', distractors: ['だいじょうぶ', 'しんせつ', 'たいへん'] },
+  { id: 'k_17_8', lesson: 17, type: 'katakana', kanji: 'パスポート', kana: 'パスポート', romaji: 'pasupooto', meaningId: 'paspor', sentence: 'パスポートを見せなければなりません。', sentenceKana: 'パスポートをみせなければなりません。', sentenceId: 'Harus menunjukkan paspor.', distractors: ['パソコン', 'パンフレット', 'パーティー'] },
+
+  // --- BAB 18: 趣味は何ですか ---
+  { id: 'k_18_1', lesson: 18, type: 'kanji', kanji: '趣味', kana: 'しゅみ', romaji: 'shumi', meaningId: 'hobi', sentence: '趣味は何ですか。', sentenceKana: 'しゅみはなんですか。', sentenceId: 'Apa hobi Anda?', distractors: ['いみ', 'りょこう', 'しごと'] },
+  { id: 'k_18_2', lesson: 18, type: 'kanji', kanji: '歌います', kana: 'うたいます', romaji: 'utaimasu', meaningId: 'menyanyi', sentence: '日本の歌を歌うことができます。', sentenceKana: 'にほんのうたをうたうことができます。', sentenceId: 'Saya bisa menyanyikan lagu Jepang.', distractors: ['ひきます', 'あつめます', 'あらいます'] },
+  { id: 'k_18_3', lesson: 18, type: 'kanji', kanji: '集めます', kana: 'あつめます', romaji: 'atsumemasu', meaningId: 'mengumpulkan', sentence: '古い切手を集めています。', sentenceKana: 'ふるいきってをあつめています。', sentenceId: 'Saya mengumpulkan perangko lama.', distractors: ['すてます', 'かえます', 'うたいます'] },
+  { id: 'k_18_4', lesson: 18, type: 'kanji', kanji: '運転', kana: 'うんてん', romaji: 'unten', meaningId: 'menyetir / mengemudi', sentence: '車の運転ができますか。', sentenceKana: 'くるまのうんてんができますか。', sentenceId: 'Apakah Anda bisa menyetir mobil?', distractors: ['うんどう', 'よやく', 'れんしゅう'] },
+  { id: 'k_18_5', lesson: 18, type: 'kanji', kanji: '日記', kana: 'にっき', romaji: 'nikki', meaningId: 'buku harian', sentence: '寝る前に日記を書きます。', sentenceKana: 'ねるまえににっきをかきます。', sentenceId: 'Sebelum tidur saya menulis buku harian.', distractors: ['てんき', 'げんき', 'びょうき'] },
+  { id: 'k_18_6', lesson: 18, type: 'kanji', kanji: '予約', kana: 'よやく', romaji: 'yoyaku', meaningId: 'reservasi / pemesanan', sentence: 'ホテルを予約しました。', sentenceKana: 'ホテルをよやくしました。', sentenceId: 'Saya sudah memesan hotel.', distractors: ['やくそく', 'りょこう', 'あんない'] },
+  { id: 'k_18_7', lesson: 18, type: 'kanji', kanji: '動物', kana: 'どうぶつ', romaji: 'doubutsu', meaningId: 'hewan / binatang', sentence: '動物の写真を撮るのが好きです。', sentenceKana: 'どうぶつのしゃしんをとるのがすきです。', sentenceId: 'Saya suka memotret hewan.', distractors: ['たべもの', 'のみもの', 'にもつ'] },
+  { id: 'k_18_8', lesson: 18, type: 'katakana', kanji: 'ピアノ', kana: 'ピアノ', romaji: 'piano', meaningId: 'piano', sentence: 'ピアノを弾くことができます。', sentenceKana: 'ピアノをひくことができます。', sentenceId: 'Saya bisa bermain piano.', distractors: ['ギター', 'バイオリン', 'ビデオ'] },
+
+  // --- BAB 19: ダイエットは明日からします ---
+  { id: 'k_19_1', lesson: 19, type: 'kanji', kanji: '登ります', kana: 'のぼります', romaji: 'noborimasu', meaningId: 'mendaki', sentence: '富士山に登ったことがあります。', sentenceKana: 'ふじさんにのぼったことがあります。', sentenceId: 'Saya pernah mendaki Gunung Fuji.', distractors: ['とまります', 'わたります', 'おりる'] },
+  { id: 'k_19_2', lesson: 19, type: 'kanji', kanji: '泊まります', kana: 'とまります', romaji: 'tomarimasu', meaningId: 'menginap', sentence: '京都のホテルに泊まります。', sentenceKana: 'きょうとのホテルにとまります。', sentenceId: 'Menginap di hotel di Kyoto.', distractors: ['のぼります', 'かえります', 'あそびます'] },
+  { id: 'k_19_3', lesson: 19, type: 'kanji', kanji: '掃除', kana: 'そうじ', romaji: 'souji', meaningId: 'membersihkan', sentence: '日曜日に部屋を掃除します。', sentenceKana: 'にちようびにへやをそうじします。', sentenceId: 'Hari Minggu membersihkan kamar.', distractors: ['せんたく', 'りょうり', 'れんしゅう'] },
+  { id: 'k_19_4', lesson: 19, type: 'kanji', kanji: '洗濯', kana: 'せんたく', romaji: 'sentaku', meaningId: 'mencuci pakaian', sentence: '休みの日に洗濯したり掃除したりします。', sentenceKana: 'やすみのひにせんたくしたりそうじしたりします。', sentenceId: 'Di hari libur saya mencuci, bersih-bersih, dll.', distractors: ['そうじ', 'かいもの', 'さんぽ'] },
+  { id: 'k_19_5', lesson: 19, type: 'kanji', kanji: '練習', kana: 'れんしゅう', romaji: 'renshuu', meaningId: 'latihan', sentence: '毎日日本語を練習しています。', sentenceKana: 'まいにちにほんごをれんしゅうしています。', sentenceId: 'Setiap hari berlatih bahasa Jepang.', distractors: ['べんきょう', 'しゅくだい', 'しけん'] },
+  { id: 'k_19_6', lesson: 19, type: 'kanji', kanji: '強い', kana: 'つよい', romaji: 'tsuyoi', meaningId: 'kuat', sentence: '相撲の選手は強いです。', sentenceKana: 'すもうのせんしゅはつよいです。', sentenceId: 'Atlet sumo itu kuat.', distractors: ['よわい', 'はやい', 'おもい'] },
+  { id: 'k_19_7', lesson: 19, type: 'kanji', kanji: '無理', kana: 'むり', romaji: 'muri', meaningId: 'berlebihan / mustahil', sentence: '無理なダイエットは体によくありません。', sentenceKana: 'むりなダイエットはからだによくありません。', sentenceId: 'Diet berlebihan tidak baik untuk tubuh.', distractors: ['むだ', 'ひつよう', 'だいじょうぶ'] },
+  { id: 'k_19_8', lesson: 19, type: 'katakana', kanji: 'ダイエット', kana: 'ダイエット', romaji: 'daietto', meaningId: 'diet', sentence: 'ダイエットは明日からします。', sentenceKana: 'ダイエットはあしたからします。', sentenceId: 'Dietnya mulai besok saja.', distractors: ['テニス', 'デパート', 'ドア'] },
+
+  // --- BAB 20: 一緒に行かない？ ---
+  { id: 'k_20_1', lesson: 20, type: 'kanji', kanji: '調べます', kana: 'しらべます', romaji: 'shirabemasu', meaningId: 'memeriksa / mencari tahu', sentence: '辞書で意味を調べます。', sentenceKana: 'じしょでいみをしらべます。', sentenceId: 'Mencari tahu arti di kamus.', distractors: ['さがします', 'なおします', 'おぼえます'] },
+  { id: 'k_20_2', lesson: 20, type: 'kanji', kanji: '修理', kana: 'しゅうり', romaji: 'shuuri', meaningId: 'perbaikan / servis', sentence: '壊れた自転車を修理します。', sentenceKana: 'こわれたじてんしゃをしゅうりします。', sentenceId: 'Memperbaiki sepeda yang rusak.', distractors: ['そうじ', 'じゅんび', 'れんらく'] },
+  { id: 'k_20_3', lesson: 20, type: 'kanji', kanji: '僕', kana: 'ぼく', romaji: 'boku', meaningId: 'aku (pria, kasual)', sentence: '夏休み、僕も国へ帰るよ。', sentenceKana: 'なつやすみ、ぼくもくにへかえるよ。', sentenceId: 'Libur musim panas, aku juga pulang kampung.', distractors: ['きみ', 'かれ', 'わたし'] },
+  { id: 'k_20_4', lesson: 20, type: 'kanji', kanji: '君', kana: 'きみ', romaji: 'kimi', meaningId: 'kamu (kasual)', sentence: '君は夏休みどうするの？', sentenceKana: 'きみはなつやすみどうするの？', sentenceId: 'Kamu mau ngapain libur musim panas?', distractors: ['ぼく', 'かのじょ', 'みんな'] },
+  { id: 'k_20_5', lesson: 20, type: 'kanji', kanji: '言葉', kana: 'ことば', romaji: 'kotoba', meaningId: 'kata / bahasa', sentence: '新しい言葉を覚えます。', sentenceKana: 'あたらしいことばをおぼえます。', sentenceId: 'Menghafal kosakata baru.', distractors: ['いみ', 'ぶんか', 'てがみ'] },
+  { id: 'k_20_6', lesson: 20, type: 'kanji', kanji: '夏休み', kana: 'なつやすみ', romaji: 'natsuyasumi', meaningId: 'libur musim panas', sentence: '夏休みに沖縄へ行かない？', sentenceKana: 'なつやすみにおきなわへいかない？', sentenceId: 'Libur musim panas mau ke Okinawa nggak?', distractors: ['ふゆやすみ', 'はるやすみ', 'しゅうまつ'] },
+  { id: 'k_20_7', lesson: 20, type: 'kanji', kanji: '要ります', kana: 'いります', romaji: 'irimasu', meaningId: 'membutuhkan / perlu', sentence: 'ビザが要る？', sentenceKana: 'ビザがいる？', sentenceId: 'Apakah perlu visa?', distractors: ['あります', 'います', 'なります'] },
+  { id: 'k_20_8', lesson: 20, type: 'katakana', kanji: 'ビザ', kana: 'ビザ', romaji: 'biza', meaningId: 'visa', sentence: '日本へ行くときビザが要ります。', sentenceKana: 'にほんへいくときビザがいります。', sentenceId: 'Saat pergi ke Jepang butuh visa.', distractors: ['ピザ', 'ビル', 'ビデオ'] },
+
+  // --- BAB 21: 私もそう思います ---
+  { id: 'k_21_1', lesson: 21, type: 'kanji', kanji: '思います', kana: 'おもいます', romaji: 'omoimasu', meaningId: 'berpikir / berpendapat', sentence: '私もそう思います。', sentenceKana: 'わたしもそうおもいます。', sentenceId: 'Saya juga berpikir begitu.', distractors: ['いいます', 'しります', 'わすれます'] },
+  { id: 'k_21_2', lesson: 21, type: 'kanji', kanji: '言います', kana: 'いいます', romaji: 'iimasu', meaningId: 'berkata / mengatakan', sentence: '寝る前におやすみなさいと言います。', sentenceKana: 'ねるまえにおやすみなさいといいます。', sentenceId: 'Sebelum tidur mengucapkan oyasuminasai.', distractors: ['おもいます', 'ききます', 'はなします'] },
+  { id: 'k_21_3', lesson: 21, type: 'kanji', kanji: '勝ちます', kana: 'かちます', romaji: 'kachimasu', meaningId: 'menang', sentence: '次の試合に勝つと思います。', sentenceKana: 'つぎのしあいにかつとおもいます。', sentenceId: 'Saya rasa akan menang pertandingan berikutnya.', distractors: ['まけます', 'もちます', 'まちます'] },
+  { id: 'k_21_4', lesson: 21, type: 'kanji', kanji: '負けます', kana: 'まけます', romaji: 'makemasu', meaningId: 'kalah', sentence: '残念ながら試合に負けました。', sentenceKana: 'ざんねんながらしあいにまけました。', sentenceId: 'Sayangnya kalah di pertandingan.', distractors: ['かちます', 'あけます', 'つけます'] },
+  { id: 'k_21_5', lesson: 21, type: 'kanji', kanji: '意見', kana: 'いけん', romaji: 'iken', meaningId: 'pendapat / opini', sentence: '会議で意見を言いました。', sentenceKana: 'かいぎでいけんをいいました。', sentenceId: 'Saya menyampaikan pendapat di rapat.', distractors: ['いみ', 'しつもん', 'せつめい'] },
+  { id: 'k_21_6', lesson: 21, type: 'kanji', kanji: '交通', kana: 'こうつう', romaji: 'koutsuu', meaningId: 'lalu lintas / transportasi', sentence: '東京は交通がとても便利です。', sentenceKana: 'とうきょうはこうつうがとてもべんりです。', sentenceId: 'Transportasi di Tokyo sangat praktis.', distractors: ['けいざい', 'ぶっか', 'しぜん'] },
+  { id: 'k_21_7', lesson: 21, type: 'kanji', kanji: '最近', kana: 'さいきん', romaji: 'saikin', meaningId: 'akhir-akhir ini', sentence: '最近とても忙しいです。', sentenceKana: 'さいきんとてもいそがしいです。', sentenceId: 'Akhir-akhir ini sangat sibuk.', distractors: ['さいしょ', 'さいご', 'しょうらい'] },
+  { id: 'k_21_8', lesson: 21, type: 'katakana', kanji: 'ニュース', kana: 'ニュース', romaji: 'nyuusu', meaningId: 'berita', sentence: 'テレビのニュースを見ましたか。', sentenceKana: 'テレビのニュースをみましたか。', sentenceId: 'Apakah Anda menonton berita TV?', distractors: ['ジュース', 'テニス', 'ノート'] },
+
+  // --- BAB 22: どんな部屋をお探しですか ---
+  { id: 'k_22_1', lesson: 22, type: 'kanji', kanji: '部屋', kana: 'へや', romaji: 'heya', meaningId: 'kamar / ruangan', sentence: 'どんな部屋をお探しですか。', sentenceKana: 'どんなへやをおさがしですか。', sentenceId: 'Sedang mencari kamar yang seperti apa?', distractors: ['たてもの', 'げんかん', 'だいどころ'] },
+  { id: 'k_22_2', lesson: 22, type: 'kanji', kanji: '探します', kana: 'さがします', romaji: 'sagashimasu', meaningId: 'mencari', sentence: '駅の近くのアパートを探しています。', sentenceKana: 'えきのちかくのアパートをさがしています。', sentenceId: 'Saya sedang mencari apartemen dekat stasiun.', distractors: ['しらべます', 'みつけます', 'かります'] },
+  { id: 'k_22_3', lesson: 22, type: 'kanji', kanji: '着ます', kana: 'きます', romaji: 'kimasu', meaningId: 'memakai (baju/atasan)', sentence: '赤いセーターを着ている人はミラーさんです。', sentenceKana: 'あかいセーターをきているひとはミラーさんです。', sentenceId: 'Orang yang memakai sweater merah adalah Miller.', distractors: ['はきます', 'かぶります', 'かけます'] },
+  { id: 'k_22_4', lesson: 22, type: 'kanji', kanji: '履きます', kana: 'はきます', romaji: 'hakimasu', meaningId: 'memakai (sepatu/celana)', sentence: '新しい靴を履いています。', sentenceKana: 'あたらしいくつをはいています。', sentenceId: 'Memakai sepatu baru.', distractors: ['きます', 'かぶります', 'ぬぎます'] },
+  { id: 'k_22_5', lesson: 22, type: 'kanji', kanji: '眼鏡', kana: 'めがね', romaji: 'megane', meaningId: 'kacamata', sentence: '眼鏡をかけている人は先生です。', sentenceKana: 'めがねをかけているひとはせんせいです。', sentenceId: 'Orang yang memakai kacamata adalah guru.', distractors: ['ぼうし', 'とけい', 'かばん'] },
+  { id: 'k_22_6', lesson: 22, type: 'kanji', kanji: '帽子', kana: 'ぼうし', romaji: 'boushi', meaningId: 'topi', sentence: '白い帽子をかぶっています。', sentenceKana: 'しろいぼうしをかぶっています。', sentenceId: 'Memakai topi putih.', distractors: ['めがね', 'くつ', 'シャツ'] },
+  { id: 'k_22_7', lesson: 22, type: 'kanji', kanji: '家賃', kana: 'やちん', romaji: 'yachin', meaningId: 'biaya sewa rumah', sentence: '家賃は1か月8万円ぐらいです。', sentenceKana: 'やちんはいっかげつはちまんえんぐらいです。', sentenceId: 'Sewanya sekitar 80.000 yen per bulan.', distractors: ['ねだん', 'りょうきん', 'おかね'] },
+  { id: 'k_22_8', lesson: 22, type: 'katakana', kanji: 'アパート', kana: 'アパート', romaji: 'apaato', meaningId: 'apartemen', sentence: '静かなアパートに住みたいです。', sentenceKana: 'しずかなアパートにすみたいです。', sentenceId: 'Saya ingin tinggal di apartemen yang tenang.', distractors: ['デパート', 'ホテル', 'レストラン'] },
+
+  // --- BAB 23: どうやって行きますか ---
+  { id: 'k_23_1', lesson: 23, type: 'kanji', kanji: '道', kana: 'みち', romaji: 'michi', meaningId: 'jalan', sentence: 'この道をまっすぐ行くと、右にあります。', sentenceKana: 'このみちをまっすぐいくと、みぎにあります。', sentenceId: 'Kalau lurus di jalan ini, ada di sebelah kanan.', distractors: ['はし', 'かど', 'えき'] },
+  { id: 'k_23_2', lesson: 23, type: 'kanji', kanji: '橋', kana: 'はし', romaji: 'hashi', meaningId: 'jembatan', sentence: 'あの橋を渡ってください。', sentenceKana: 'あのはしをわたってください。', sentenceId: 'Tolong seberangi jembatan itu.', distractors: ['みち', 'かど', 'しんごう'] },
+  { id: 'k_23_3', lesson: 23, type: 'kanji', kanji: '渡ります', kana: 'わたります', romaji: 'watarimasu', meaningId: 'menyeberang', sentence: '横断歩道を渡ります。', sentenceKana: 'おうだんほどうをわたります。', sentenceId: 'Menyeberang di zebra cross.', distractors: ['まがります', 'とまります', 'のぼります'] },
+  { id: 'k_23_4', lesson: 23, type: 'kanji', kanji: '曲がります', kana: 'まがります', romaji: 'magarimasu', meaningId: 'belok', sentence: '次の角を左へ曲がると、図書館があります。', sentenceKana: 'つぎのかどをひだりへまがると、としょかんがあります。', sentenceId: 'Kalau belok kiri di tikungan berikutnya, ada perpustakaan.', distractors: ['わたります', 'うごきます', 'とまります'] },
+  { id: 'k_23_5', lesson: 23, type: 'kanji', kanji: '交差点', kana: 'こうさてん', romaji: 'kousaten', meaningId: 'persimpangan jalan', sentence: '交差点を右へ曲がってください。', sentenceKana: 'こうさてんをみぎへまがってください。', sentenceId: 'Tolong belok kanan di persimpangan.', distractors: ['ちゅうしゃじょう', 'しんごう', 'たてもの'] },
+  { id: 'k_23_6', lesson: 23, type: 'kanji', kanji: '動きます', kana: 'うごきます', romaji: 'ugokimasu', meaningId: 'bergerak / berfungsi', sentence: 'この機械は動きません。', sentenceKana: 'このきかいはうごきません。', sentenceId: 'Mesin ini tidak berfungsi.', distractors: ['とまります', 'まわします', 'さわります'] },
+  { id: 'k_23_7', lesson: 23, type: 'kanji', kanji: '音', kana: 'おと', romaji: 'oto', meaningId: 'suara / bunyi', sentence: 'つまみを回すと音が大きくなります。', sentenceKana: 'つまみをまわすとおとがおおきくなります。', sentenceId: 'Kalau tombol diputar, suaranya jadi besar.', distractors: ['こえ', 'うた', 'いろ'] },
+  { id: 'k_23_8', lesson: 23, type: 'katakana', kanji: 'レバー', kana: 'レバー', romaji: 'rebaa', meaningId: 'tuas / lever', sentence: 'レバーを引くとお釣りが出ます。', sentenceKana: 'レバーをひくとおつりがでます。', sentenceId: 'Kalau tuas ditarik, uang kembalian keluar.', distractors: ['ボタン', 'エレベーター', 'コピー'] },
+
+  // --- BAB 24: 手伝いに行きましょうか ---
+  { id: 'k_24_1', lesson: 24, type: 'kanji', kanji: '手伝います', kana: 'てつだいます', romaji: 'tetsudaimasu', meaningId: 'membantu', sentence: '引っ越しを手伝いに行きましょうか。', sentenceKana: 'ひっこしをてつだいにいきましょうか。', sentenceId: 'Perlukah saya datang membantu pindahan?', distractors: ['あんないします', 'しょうかいします', 'せつめいします'] },
+  { id: 'k_24_2', lesson: 24, type: 'kanji', kanji: '引っ越し', kana: 'ひっこし', romaji: 'hikkoshi', meaningId: 'pindah rumah', sentence: '日曜日に引っ越しをします。', sentenceKana: 'にちようびにひっこしをします。', sentenceId: 'Hari Minggu saya pindah rumah.', distractors: ['りょこう', 'しゅっちょう', 'そうじ'] },
+  { id: 'k_24_3', lesson: 24, type: 'kanji', kanji: '連れて行きます', kana: 'つれていきます', romaji: 'tsureteikimasu', meaningId: 'mengajak / membawa (orang)', sentence: '友達を奈良へ連れて行きました。', sentenceKana: 'ともだちをならへつれていきました。', sentenceId: 'Saya mengajak teman pergi ke Nara.', distractors: ['もっていきます', 'おくります', 'むかえます'] },
+  { id: 'k_24_4', lesson: 24, type: 'kanji', kanji: '送ります', kana: 'おくります', romaji: 'okurimasu', meaningId: 'mengantar / mengirim', sentence: '駅まで車で送ってくれました。', sentenceKana: 'えきまでくるまでおくってくれました。', sentenceId: 'Dia mengantar saya ke stasiun dengan mobil.', distractors: ['かりました', 'かえしました', 'もらいました'] },
+  { id: 'k_24_5', lesson: 24, type: 'kanji', kanji: '紹介します', kana: 'しょうかいします', romaji: 'shoukaishimasu', meaningId: 'memperkenalkan', sentence: '山田さんがいい人を紹介してくれました。', sentenceKana: 'やまださんがいいひとをしょうかいしてくれました。', sentenceId: 'Yamada memperkenalkan orang baik kepada saya.', distractors: ['あんないします', 'せつめいします', 'れんらくします'] },
+  { id: 'k_24_6', lesson: 24, type: 'kanji', kanji: '案内します', kana: 'あんないします', romaji: 'annaishimasu', meaningId: 'memandu / mengajak keliling', sentence: '京都を案内してくれました。', sentenceKana: 'きょうとをあんないしてくれました。', sentenceId: 'Dia memandu saya keliling Kyoto.', distractors: ['しょうかいします', 'せつめいします', 'よやくします'] },
+  { id: 'k_24_7', lesson: 24, type: 'kanji', kanji: '説明します', kana: 'せつめいします', romaji: 'setsumeishimasu', meaningId: 'menjelaskan', sentence: '先生が分かりやすく説明してくれました。', sentenceKana: 'せんせいがわかりやすくせつめいしてくれました。', sentenceId: 'Guru menjelaskan dengan mudah dipahami.', distractors: ['しつもんします', 'れんしゅうします', 'あんないします'] },
+  { id: 'k_24_8', lesson: 24, type: 'katakana', kanji: 'プレゼント', kana: 'プレゼント', romaji: 'purezento', meaningId: 'hadiah / kado', sentence: '母が誕生日にプレゼントをくれました。', sentenceKana: 'ははがたんじょうびにプレゼントをくれました。', sentenceId: 'Ibu memberi saya hadiah ulang tahun.', distractors: ['パーティー', 'パンフレット', 'パスポート'] },
+
+  // --- BAB 25: 色々お世話になりました ---
+  { id: 'k_25_1', lesson: 25, type: 'kanji', kanji: '考えます', kana: 'かんがえます', romaji: 'kangaemasu', meaningId: 'memikirkan', sentence: '将来のことをよく考えます。', sentenceKana: 'しょうらいのことをよくかんがえます。', sentenceId: 'Memikirkan masa depan dengan baik.', distractors: ['おもいます', 'しらべます', 'おぼえます'] },
+  { id: 'k_25_2', lesson: 25, type: 'kanji', kanji: '着きます', kana: 'つきます', romaji: 'tsukimasu', meaningId: 'tiba / sampai', sentence: '駅に着いたら電話をください。', sentenceKana: 'えきについたらでんわをください。', sentenceId: 'Kalau sudah sampai di stasiun, tolong telepon.', distractors: ['でます', 'きます', 'かえります'] },
+  { id: 'k_25_3', lesson: 25, type: 'kanji', kanji: '転勤', kana: 'てんきん', romaji: 'tenkin', meaningId: 'mutasi kerja', sentence: '来月東京へ転勤します。', sentenceKana: 'らいげつとうきょうへてんきんします。', sentenceId: 'Bulan depan saya mutasi kerja ke Tokyo.', distractors: ['しゅっちょう', 'りょこう', 'ひっこし'] },
+  { id: 'k_25_4', lesson: 25, type: 'kanji', kanji: '頑張ります', kana: 'がんばります', romaji: 'ganbarimasu', meaningId: 'berusaha keras / semangat', sentence: '新しい仕事も頑張ります。', sentenceKana: 'あたらしいしごともがんばります。', sentenceId: 'Saya juga akan berusaha keras di pekerjaan baru.', distractors: ['やすみます', 'はたらきます', 'あそびます'] },
+  { id: 'k_25_5', lesson: 25, type: 'kanji', kanji: '田舎', kana: 'いなか', romaji: 'inaka', meaningId: 'kampung halaman / pedesaan', sentence: '年を取ったら田舎に住みたいです。', sentenceKana: 'としをとったらいなかにすみたいです。', sentenceId: 'Kalau sudah tua ingin tinggal di pedesaan.', distractors: ['がいこく', 'まち', 'くに'] },
+  { id: 'k_25_6', lesson: 25, type: 'kanji', kanji: '機会', kana: 'きかい', romaji: 'kikai', meaningId: 'kesempatan', sentence: '機会があったらまた会いましょう。', sentenceKana: 'きかいがあったらまたあいましょう。', sentenceId: 'Kalau ada kesempatan mari bertemu lagi.', distractors: ['じかん', 'やくそく', 'りゆう'] },
+  { id: 'k_25_7', lesson: 25, type: 'kanji', kanji: '億', kana: 'おく', romaji: 'oku', meaningId: 'seratus juta (100.000.000)', sentence: '1億円あったら世界旅行をしたいです。', sentenceKana: 'いちおくえんあったらせかいりょこうをしたいです。', sentenceId: 'Kalau punya 100 juta yen, saya ingin keliling dunia.', distractors: ['まん', 'せん', 'ひゃく'] },
+  { id: 'k_25_8', lesson: 25, type: 'katakana', kanji: 'チャンス', kana: 'チャンス', romaji: 'chansu', meaningId: 'kesempatan / peluang', sentence: 'チャンスがあったら挑戦します。', sentenceKana: 'チャンスがあったらちょうせんします。', sentenceId: 'Kalau ada kesempatan saya akan mencoba.', distractors: ['チェック', 'チケット', 'チーズ'] }
+];
+
+export const CLOZE_15_25 = [
+  // Bab 15
+  { id: 'cloze_b15_1', lesson: 15, svgType: 'office', posLabelJa: '動詞', targetWord: '住んで', correctKana: 'すんで', sentenceWithBlank: '両親は大阪に〔 ＿＿＿ 〕います。', fullSentence: '両親は大阪に住んでいます。', audioSentence: 'りょうしんはおおさかにすんでいます。', options: ['すんで', 'しって', 'うって', 'つくって'] },
+  { id: 'cloze_b15_2', lesson: 15, svgType: 'phone', posLabelJa: '動詞', targetWord: '知って', correctKana: 'しって', sentenceWithBlank: '市役所の電話番号を〔 ＿＿＿ 〕いますか。', fullSentence: '市役所の電話番号を知っていますか。', audioSentence: 'しやくしょのでんわばんごうをしっていますか。', options: ['しって', 'すんで', 'もって', 'まって'] },
+  // Bab 16
+  { id: 'cloze_b16_1', lesson: 16, svgType: 'train', posLabelJa: '動詞', targetWord: '乗り換えます', correctKana: 'のりかえます', sentenceWithBlank: '京都駅で地下鉄に〔 ＿＿＿ 〕。', fullSentence: '京都駅で地下鉄に乗り換えます。', audioSentence: 'きょうとえきでちかてつにのりかえます。', options: ['のりかえます', 'おります', 'おします', 'あびます'] },
+  { id: 'cloze_b16_2', lesson: 16, svgType: 'office', posLabelJa: '名詞', targetWord: '使い方', correctKana: 'つかいかた', sentenceWithBlank: 'この機械の〔 ＿＿＿ 〕を教えてください。', fullSentence: 'この機械の使い方を教えてください。', audioSentence: 'このきかいのつかいかたをおしえてください。', options: ['つかいかた', 'よみかた', 'かきかた', 'いきかた'] },
+  // Bab 17
+  { id: 'cloze_b17_1', lesson: 17, svgType: 'health', posLabelJa: '名詞', targetWord: '薬', correctKana: 'くすり', sentenceWithBlank: '風邪ですから、この〔 ＿＿＿ 〕を飲んでください。', fullSentence: '風邪ですから、この薬を飲んでください。', audioSentence: 'かぜですから、このくすりをのんでください。', options: ['くすり', 'ねつ', 'びょうき', 'おさけ'] },
+  { id: 'cloze_b17_2', lesson: 17, svgType: 'travel', posLabelJa: '動詞', targetWord: '忘れないで', correctKana: 'わすれないで', sentenceWithBlank: 'パスポートを〔 ＿＿＿ 〕ください。', fullSentence: 'パスポートを忘れないでください。', audioSentence: 'パスポートをわすれないでください。', options: ['わすれないで', 'はらわないで', 'ぬがないで', 'すわらないで'] },
+  // Bab 18
+  { id: 'cloze_b18_1', lesson: 18, svgType: 'music', posLabelJa: '名詞', targetWord: '趣味', correctKana: 'しゅみ', sentenceWithBlank: 'ミラーさんの〔 ＿＿＿ 〕は何ですか。', fullSentence: 'ミラーさんの趣味は何ですか。', audioSentence: 'ミラーさんのしゅみはなんですか。', options: ['しゅみ', 'いみ', 'にっき', 'よやく'] },
+  { id: 'cloze_b18_2', lesson: 18, svgType: 'music', posLabelJa: '動詞', targetWord: '集める', correctKana: 'あつめる', sentenceWithBlank: '古い切手を〔 ＿＿＿ 〕ことです。', fullSentence: '古い切手を集めることです。', audioSentence: 'ふるいきってをあつめることです。', options: ['あつめる', 'すてる', 'うたう', 'ひく'] },
+  // Bab 19
+  { id: 'cloze_b19_1', lesson: 19, svgType: 'travel', posLabelJa: '動詞', targetWord: '登った', correctKana: 'のぼった', sentenceWithBlank: '富士山に〔 ＿＿＿ 〕ことがあります。', fullSentence: '富士山に登ったことがあります。', audioSentence: 'ふじさんにのぼったことがあります。', options: ['のぼった', 'とまった', 'わたった', 'まがった'] },
+  { id: 'cloze_b19_2', lesson: 19, svgType: 'home', posLabelJa: '名詞', targetWord: '掃除', correctKana: 'そうじ', sentenceWithBlank: '休みの日に〔 ＿＿＿ 〕したり洗濯したりします。', fullSentence: '休みの日に掃除したり洗濯したりします。', audioSentence: 'やすみのひにそうじしたりせんたくしたりします。', options: ['そうじ', 'れんしゅう', 'うんてん', 'よやく'] },
+  // Bab 20
+  { id: 'cloze_b20_1', lesson: 20, svgType: 'study', posLabelJa: '動詞', targetWord: '調べる', correctKana: 'しらべる', sentenceWithBlank: '辞書で新しい言葉を〔 ＿＿＿ 〕。', fullSentence: '辞書で新しい言葉を調べる。', audioSentence: 'じしょであたらしいことばをしらべる。', options: ['しらべる', 'さがす', 'なおす', 'わすれる'] },
+  { id: 'cloze_b20_2', lesson: 20, svgType: 'travel', posLabelJa: '動詞', targetWord: '要る', correctKana: 'いる', sentenceWithBlank: '国へ帰るときビザが〔 ＿＿＿ 〕？', fullSentence: '国へ帰るときビザが要る？', audioSentence: 'くにへかえるときビザがいる？', options: ['いる', 'ある', 'みる', 'きる'] },
+  // Bab 21
+  { id: 'cloze_b21_1', lesson: 21, svgType: 'office', posLabelJa: '動詞', targetWord: '思います', correctKana: 'おもいます', sentenceWithBlank: '私もそう〔 ＿＿＿ 〕。', fullSentence: '私もそう思います。', audioSentence: 'わたしもそうおもいます。', options: ['おもいます', 'いいます', 'しります', 'みます'] },
+  { id: 'cloze_b21_2', lesson: 21, svgType: 'office', posLabelJa: '名詞', targetWord: '意見', correctKana: 'いけん', sentenceWithBlank: '会議で自分の〔 ＿＿＿ 〕を言いました。', fullSentence: '会議で自分の意見を言いました。', audioSentence: 'かいぎでじぶんのいけんをいいました。', options: ['いけん', 'いみ', 'しゅみ', 'りゆう'] },
+  // Bab 22
+  { id: 'cloze_b22_1', lesson: 22, svgType: 'home', posLabelJa: '名詞', targetWord: '部屋', correctKana: 'へや', sentenceWithBlank: 'どんな〔 ＿＿＿ 〕をお探しですか。', fullSentence: 'どんな部屋をお探しですか。', audioSentence: 'どんなへやをおさがしですか。', options: ['へや', 'にわ', 'えき', 'はし'] },
+  { id: 'cloze_b22_2', lesson: 22, svgType: 'shopping', posLabelJa: '動詞', targetWord: '着て', correctKana: 'きて', sentenceWithBlank: '青いシャツを〔 ＿＿＿ 〕いる人はミラーさんです。', fullSentence: '青いシャツを着ている人はミラーさんです。', audioSentence: 'あおいシャツをきているひとはミラーさんです。', options: ['きて', 'はいて', 'かぶって', 'かけて'] },
+  // Bab 23
+  { id: 'cloze_b23_1', lesson: 23, svgType: 'travel', posLabelJa: '動詞', targetWord: '渡る', correctKana: 'わたる', sentenceWithBlank: 'あの橋を〔 ＿＿＿ 〕と、左に銀行があります。', fullSentence: 'あの橋を渡ると、左に銀行があります。', audioSentence: 'あのはしをわたると、ひだりにぎんこうがあります。', options: ['わたる', 'まがる', 'とまる', 'のぼる'] },
+  { id: 'cloze_b23_2', lesson: 23, svgType: 'travel', posLabelJa: '動詞', targetWord: '曲がる', correctKana: 'まがる', sentenceWithBlank: '次の角を右へ〔 ＿＿＿ 〕と、駅が見えます。', fullSentence: '次の角を右へ曲がると、駅が見えます。', audioSentence: 'つぎのかどをみぎへまがると、えきがみえます。', options: ['まがる', 'わたる', 'うごく', 'おす'] },
+  // Bab 24
+  { id: 'cloze_b24_1', lesson: 24, svgType: 'home', posLabelJa: '動詞', targetWord: '手伝い', correctKana: 'てつだい', sentenceWithBlank: '引っ越しを〔 ＿＿＿ 〕に行きましょうか。', fullSentence: '引っ越しを手伝いに行きましょうか。', audioSentence: 'ひっこしをてつだいにいきましょうか。', options: ['てつだい', 'あんない', 'しょうかい', 'せつめい'] },
+  { id: 'cloze_b24_2', lesson: 24, svgType: 'travel', posLabelJa: '動詞', targetWord: '案内して', correctKana: 'あんないして', sentenceWithBlank: '友達が京都を〔 ＿＿＿ 〕くれました。', fullSentence: '友達が京都を案内してくれました。', audioSentence: 'ともだちがきょうとをあんないしてくれました。', options: ['あんないして', 'しょうかいして', 'しつもんして', 'よやくして'] },
+  // Bab 25
+  { id: 'cloze_b25_1', lesson: 25, svgType: 'train', posLabelJa: '動詞', targetWord: '着いたら', correctKana: 'ついたら', sentenceWithBlank: '駅に〔 ＿＿＿ 〕電話をください。', fullSentence: '駅に着いたら電話をください。', audioSentence: 'えきについたらでんわをください。', options: ['ついたら', 'でたら', 'のったら', 'おりたら'] },
+  { id: 'cloze_b25_2', lesson: 25, svgType: 'office', posLabelJa: '動詞', targetWord: '考えて', correctKana: 'かんがえて', sentenceWithBlank: '将来のことをよく〔 ＿＿＿ 〕います。', fullSentence: '将来のことをよく考えています。', audioSentence: 'しょうらいのことをよくかんがえています。', options: ['かんがえて', 'わすれて', 'しらべて', 'おぼえて'] }
+];
+
+export const VOCAB_BOOSTER_15_25 = [
+  // ==================== BAB 15: Bagaimana dengan keluarga Anda? ====================
+  { id: 'vb_1_9', lesson: 15, kana: 'ぎんこういん', kanji: '銀行員', meaning: 'pegawai bank', sourceTag: 'Transcript', originalLesson: 1 },
+  { id: 'vb_2_12', lesson: 15, kana: 'えいご', kanji: '英語', meaning: 'bahasa Inggris', sourceTag: 'Transcript', originalLesson: 2 },
+  { id: 'vb_4_10', lesson: 15, kana: 'びじゅつかん', kanji: '美術館', meaning: 'gedung kesenian', sourceTag: 'Transcript', originalLesson: 4 },
+  { id: 'vb_7_5', lesson: 15, kana: 'おしえます', kanji: '教えます', meaning: 'mengajar', sourceTag: 'Transcript', originalLesson: 7 },
+  { id: 'vb_10_1', lesson: 15, kana: 'おとこのひと', kanji: '男の人', meaning: 'laki-laki, pria', sourceTag: 'Transcript', originalLesson: 10 },
+  { id: 'vb_10_2', lesson: 15, kana: 'おんなのひと', kanji: '女の人', meaning: 'wanita, perempuan', sourceTag: 'Transcript', originalLesson: 10 },
+  { id: 'vb_11_10', lesson: 15, kana: 'りょうしん', kanji: '両親', meaning: 'orang tua', sourceTag: 'Transcript', originalLesson: 11 },
+  { id: 'vb_15_1', lesson: 15, kana: 'かぞく', kanji: '家族', meaning: 'keluarga', sourceTag: 'Transcript' },
+  { id: 'vb_15_2', lesson: 15, kana: 'りょうしん', kanji: '両親', meaning: 'kedua orang tua', sourceTag: 'Transcript' },
+  { id: 'vb_15_3', lesson: 15, kana: 'すみます', kanji: '住みます', meaning: 'tinggal', sourceTag: 'Transcript' },
+  { id: 'vb_15_4', lesson: 15, kana: 'しります', kanji: '知ります', meaning: 'tahu / kenal', sourceTag: 'Transcript' },
+  { id: 'vb_15_9', lesson: 15, kana: 'しやくしょ', kanji: '市役所', meaning: 'balai kota', sourceTag: 'Textbook Extra' },
+  { id: 'vb_15_10', lesson: 15, kana: 'はいしゃ', kanji: '歯医者', meaning: 'dokter gigi', sourceTag: 'Textbook Extra' },
+  { id: 'vb_15_11', lesson: 15, kana: 'どくしん', kanji: '独身', meaning: 'lajang / belum menikah', sourceTag: 'Transcript' },
+  { id: 'vb_15_12', lesson: 15, kana: 'カタログ', kanji: '', meaning: 'katalog', sourceTag: 'Textbook Extra' },
+
+  // ==================== BAB 16: Tolong ajari saya cara menggunakannya ====================
+  { id: 'vb_1_3', lesson: 16, kana: 'あのひと', kanji: 'あの人', meaning: 'orang itu, dia', sourceTag: 'Transcript', originalLesson: 1 },
+  { id: 'vb_5_9', lesson: 16, kana: 'ちかてつ', kanji: '地下鉄', meaning: 'kereta bawah tanah', sourceTag: 'Transcript', originalLesson: 5 },
+  { id: 'vb_7_12', lesson: 16, kana: 'りょこう', kanji: '旅行', meaning: 'perjalanan, wisata', sourceTag: 'Transcript', originalLesson: 7 },
+  { id: 'vb_7_14', lesson: 16, kana: 'はし', kanji: '', meaning: 'sumpit', sourceTag: 'Transcript', originalLesson: 7 },
+  { id: 'vb_12_14', lesson: 16, kana: 'くうこう', kanji: '空港', meaning: 'bandara', sourceTag: 'Transcript', originalLesson: 12 },
+  { id: 'vb_13_4', lesson: 16, kana: 'つかれます', kanji: '疲れます', meaning: 'lelah, capek', sourceTag: 'Transcript', originalLesson: 13 },
+  { id: 'vb_13_9', lesson: 16, kana: 'ひろい', kanji: '広い', meaning: 'luas', sourceTag: 'Transcript', originalLesson: 13 },
+  { id: 'vb_13_11', lesson: 16, kana: 'しゅうまつ', kanji: '週末', meaning: 'akhir pekan', sourceTag: 'Transcript', originalLesson: 13 },
+  { id: 'vb_16_1', lesson: 16, kana: 'つかいかた', kanji: '使い方', meaning: 'cara menggunakan', sourceTag: 'Transcript' },
+  { id: 'vb_16_2', lesson: 16, kana: 'のります', kanji: '乗ります', meaning: 'naik kendaraan', sourceTag: 'Transcript' },
+  { id: 'vb_16_3', lesson: 16, kana: 'おります', kanji: '降ります', meaning: 'turun kendaraan', sourceTag: 'Transcript' },
+  { id: 'vb_16_4', lesson: 16, kana: 'のりかえます', kanji: '乗り換えます', meaning: 'transit / ganti kendaraan', sourceTag: 'Transcript' },
+  { id: 'vb_16_5', lesson: 16, kana: 'あびます', kanji: '浴びます', meaning: 'mandi (shower)', sourceTag: 'Textbook Extra' },
+  { id: 'vb_16_6', lesson: 16, kana: 'いれます', kanji: '入れます', meaning: 'memasukkan', sourceTag: 'Transcript' },
+  { id: 'vb_16_7', lesson: 16, kana: 'だします', kanji: '出します', meaning: 'mengeluarkan', sourceTag: 'Transcript' },
+  { id: 'vb_16_8', lesson: 16, kana: 'おします', kanji: '押します', meaning: 'menekan', sourceTag: 'Transcript' },
+  { id: 'vb_16_10', lesson: 16, kana: 'ながい', kanji: '長い', meaning: 'panjang', sourceTag: 'Transcript' },
+  { id: 'vb_16_11', lesson: 16, kana: 'あたま', kanji: '頭', meaning: 'kepala', sourceTag: 'Textbook Extra' },
+  { id: 'vb_16_12', lesson: 16, kana: 'シャワー', kanji: '', meaning: 'shower', sourceTag: 'Textbook Extra' },
+  { id: 'vb_23_10', lesson: 16, kana: 'ひきます', kanji: '引きます', meaning: 'menarik', sourceTag: 'Transcript', originalLesson: 23 },
+  { id: 'vb_25_6', lesson: 16, kana: 'きかい', kanji: '機会', meaning: 'kesempatan', sourceTag: 'Transcript', originalLesson: 25 },
+
+  // ==================== BAB 17: Ada keluhan apa (sakit apa)? ====================
+  { id: 'vb_1_13', lesson: 17, kana: 'びょういん', kanji: '病院', meaning: 'rumah sakit', sourceTag: 'Transcript', originalLesson: 1 },
+  { id: 'vb_5_4', lesson: 17, kana: 'がっこう', kanji: '学校', meaning: 'sekolah', sourceTag: 'Transcript', originalLesson: 5 },
+  { id: 'vb_9_6', lesson: 17, kana: 'のみもの', kanji: '飲み物', meaning: 'minuman', sourceTag: 'Transcript', originalLesson: 9 },
+  { id: 'vb_9_14', lesson: 17, kana: 'こども', kanji: '子ども', meaning: 'anak', sourceTag: 'Transcript', originalLesson: 9 },
+  { id: 'vb_11_12', lesson: 17, kana: 'がいこく', kanji: '外国', meaning: 'luar negeri', sourceTag: 'Transcript', originalLesson: 11 },
+  { id: 'vb_13_7', lesson: 17, kana: 'しょくじします', kanji: '食事します', meaning: 'makan', sourceTag: 'Transcript', originalLesson: 13 },
+  { id: 'vb_14_1', lesson: 17, kana: 'あけます', kanji: '開けます', meaning: 'membuka', sourceTag: 'Transcript', originalLesson: 14 },
+  { id: 'vb_17_1', lesson: 17, kana: 'びょうき', kanji: '病気', meaning: 'penyakit / sakit', sourceTag: 'Textbook Extra' },
+  { id: 'vb_17_2', lesson: 17, kana: 'くすり', kanji: '薬', meaning: 'obat', sourceTag: 'Transcript' },
+  { id: 'vb_17_3', lesson: 17, kana: 'ねつ', kanji: '熱', meaning: 'demam', sourceTag: 'Transcript' },
+  { id: 'vb_17_6', lesson: 17, kana: 'おぼえます', kanji: '覚えます', meaning: 'mengingat / menghafal', sourceTag: 'Textbook Extra' },
+  { id: 'vb_17_7', lesson: 17, kana: 'はらいます', kanji: '払います', meaning: 'membayar', sourceTag: 'Textbook Extra' },
+  { id: 'vb_17_9', lesson: 17, kana: 'ぬぎます', kanji: '脱ぎます', meaning: 'melepas (baju/sepatu)', sourceTag: 'Textbook Extra' },
+  { id: 'vb_17_10', lesson: 17, kana: 'たいせつ', kanji: '大切', meaning: 'penting / berharga', sourceTag: 'Textbook Extra' },
+  { id: 'vb_17_11', lesson: 17, kana: 'しんぱい', kanji: '心配', meaning: 'khawatir', sourceTag: 'Textbook Extra' },
+  { id: 'vb_17_12', lesson: 17, kana: 'パスポート', kanji: '', meaning: 'paspor', sourceTag: 'Textbook Extra' },
+  { id: 'vb_19_9', lesson: 17, kana: 'ちょうし', kanji: '調子', meaning: 'kondisi / keadaan', sourceTag: 'Transcript', originalLesson: 19 },
+
+  // ==================== BAB 18: Apa hobi Anda? ====================
+  { id: 'vb_12_1', lesson: 18, kana: 'かんたん', kanji: '簡単', meaning: 'mudah, sederhana', sourceTag: 'Transcript', originalLesson: 12 },
+  { id: 'vb_12_11', lesson: 18, kana: 'かるい', kanji: '軽い', meaning: 'ringan', sourceTag: 'Transcript', originalLesson: 12 },
+  { id: 'vb_14_5', lesson: 18, kana: 'てつだいます', kanji: '手伝います', meaning: 'membantu', sourceTag: 'Transcript', originalLesson: 14 },
+  { id: 'vb_15_5', lesson: 18, kana: 'つくります', kanji: '作ります', meaning: 'membuat', sourceTag: 'Transcript', originalLesson: 15 },
+  { id: 'vb_18_1', lesson: 18, kana: 'しゅみ', kanji: '趣味', meaning: 'hobi', sourceTag: 'Transcript' },
+  { id: 'vb_18_2', lesson: 18, kana: 'うたいます', kanji: '歌います', meaning: 'menyanyi', sourceTag: 'Textbook Extra' },
+  { id: 'vb_18_3', lesson: 18, kana: 'ひきます', kanji: '弾きます', meaning: 'memainkan (alat musik)', sourceTag: 'Textbook Extra' },
+  { id: 'vb_18_4', lesson: 18, kana: 'あつめます', kanji: '集めます', meaning: 'mengumpulkan', sourceTag: 'Textbook Extra' },
+  { id: 'vb_18_5', lesson: 18, kana: 'すてます', kanji: '捨てます', meaning: 'membuang', sourceTag: 'Textbook Extra' },
+  { id: 'vb_18_6', lesson: 18, kana: 'うんてんします', kanji: '運転します', meaning: 'menyetir', sourceTag: 'Transcript' },
+  { id: 'vb_18_7', lesson: 18, kana: 'よやくします', kanji: '予約します', meaning: 'memesan / reservasi', sourceTag: 'Textbook Extra' },
+  { id: 'vb_18_8', lesson: 18, kana: 'にっき', kanji: '日記', meaning: 'buku harian', sourceTag: 'Textbook Extra' },
+  { id: 'vb_18_9', lesson: 18, kana: 'どうぶつ', kanji: '動物', meaning: 'hewan / binatang', sourceTag: 'Transcript' },
+  { id: 'vb_18_10', lesson: 18, kana: 'うま', kanji: '馬', meaning: 'kuda', sourceTag: 'Transcript' },
+  { id: 'vb_18_11', lesson: 18, kana: 'げんきん', kanji: '現金', meaning: 'uang tunai', sourceTag: 'Transcript' },
+  { id: 'vb_18_12', lesson: 18, kana: 'ピアノ', kanji: '', meaning: 'piano', sourceTag: 'Textbook Extra' },
+
+  // ==================== BAB 19: Dietnya mulai besok saja ====================
+  { id: 'vb_6_11', lesson: 19, kana: 'やさい', kanji: '野菜', meaning: 'sayur-sayuran', sourceTag: 'Transcript', originalLesson: 6 },
+  { id: 'vb_10_13', lesson: 19, kana: 'となり', kanji: '隣', meaning: 'sebelah, tetangga', sourceTag: 'Transcript', originalLesson: 10 },
+  { id: 'vb_11_15', lesson: 19, kana: 'りんご', kanji: '', meaning: 'apel', sourceTag: 'Transcript', originalLesson: 11 },
+  { id: 'vb_12_8', lesson: 19, kana: 'あまい', kanji: '甘い', meaning: 'manis', sourceTag: 'Transcript', originalLesson: 12 },
+  { id: 'vb_19_1', lesson: 19, kana: 'のぼります', kanji: '登ります', meaning: 'mendaki', sourceTag: 'Textbook Extra' },
+  { id: 'vb_19_2', lesson: 19, kana: 'とまります', kanji: '泊まります', meaning: 'menginap', sourceTag: 'Textbook Extra' },
+  { id: 'vb_19_3', lesson: 19, kana: 'そうじします', kanji: '掃除します', meaning: 'membersihkan', sourceTag: 'Textbook Extra' },
+  { id: 'vb_19_4', lesson: 19, kana: 'せんたくします', kanji: '洗濯します', meaning: 'mencuci pakaian', sourceTag: 'Textbook Extra' },
+  { id: 'vb_19_5', lesson: 19, kana: 'れんしゅうします', kanji: '練習します', meaning: 'berlatih', sourceTag: 'Textbook Extra' },
+  { id: 'vb_19_6', lesson: 19, kana: 'ねむい', kanji: '眠い', meaning: 'mengantuk', sourceTag: 'Textbook Extra' },
+  { id: 'vb_19_8', lesson: 19, kana: 'よわい', kanji: '弱い', meaning: 'lemah', sourceTag: 'Textbook Extra' },
+  { id: 'vb_19_10', lesson: 19, kana: 'むり', kanji: '無理', meaning: 'berlebihan / mustahil', sourceTag: 'Transcript' },
+  { id: 'vb_19_12', lesson: 19, kana: 'ダイエット', kanji: '', meaning: 'diet', sourceTag: 'Transcript' },
+
+  // ==================== BAB 20: Mau pergi bareng nggak? ====================
+  { id: 'vb_6_12', lesson: 20, kana: 'くだもの', kanji: '果物', meaning: 'buah-buahan', sourceTag: 'Transcript', originalLesson: 6 },
+  { id: 'vb_7_11', lesson: 20, kana: 'きっぷ', kanji: '切符', meaning: 'karcis, tiket', sourceTag: 'Transcript', originalLesson: 7 },
+  { id: 'vb_9_12', lesson: 20, kana: 'ようじ', kanji: '用事', meaning: 'urusan', sourceTag: 'Transcript', originalLesson: 9 },
+  { id: 'vb_13_1', lesson: 20, kana: 'あそびます', kanji: '遊びます', meaning: 'bermain', sourceTag: 'Transcript', originalLesson: 13 },
+  { id: 'vb_20_2', lesson: 20, kana: 'しらべます', kanji: '調べます', meaning: 'memeriksa / mencari tahu', sourceTag: 'Transcript' },
+  { id: 'vb_20_3', lesson: 20, kana: 'しゅうりします', kanji: '修理します', meaning: 'memperbaiki', sourceTag: 'Textbook Extra' },
+  { id: 'vb_20_4', lesson: 20, kana: 'ぼく', kanji: '僕', meaning: 'aku (pria, kasual)', sourceTag: 'Transcript' },
+  { id: 'vb_20_5', lesson: 20, kana: 'きみ', kanji: '君', meaning: 'kamu (kasual)', sourceTag: 'Transcript' },
+  { id: 'vb_20_6', lesson: 20, kana: 'ことば', kanji: '言葉', meaning: 'kata / bahasa', sourceTag: 'Textbook Extra' },
+  { id: 'vb_20_7', lesson: 20, kana: 'きもの', kanji: '着物', meaning: 'kimono', sourceTag: 'Textbook Extra' },
+  { id: 'vb_20_8', lesson: 20, kana: 'なつやすみ', kanji: '夏休み', meaning: 'libur musim panas', sourceTag: 'Transcript' },
+  { id: 'vb_20_10', lesson: 20, kana: 'はじめ', kanji: '初め', meaning: 'awal / permulaan', sourceTag: 'Transcript' },
+  { id: 'vb_20_11', lesson: 20, kana: 'こっち', kanji: '', meaning: 'sini (kasual)', sourceTag: 'Textbook Extra' },
+  { id: 'vb_20_12', lesson: 20, kana: 'ビザ', kanji: '', meaning: 'visa', sourceTag: 'Textbook Extra' },
+
+  // ==================== BAB 21: Saya juga berpikir begitu ====================
+  { id: 'vb_10_6', lesson: 21, kana: 'はこ', kanji: '箱', meaning: 'kotak, peti', sourceTag: 'Transcript', originalLesson: 10 },
+  { id: 'vb_10_10', lesson: 21, kana: 'きっさてん', kanji: '喫茶店', meaning: 'kedai kopi', sourceTag: 'Transcript', originalLesson: 10 },
+  { id: 'vb_19_7', lesson: 21, kana: 'つよい', kanji: '強い', meaning: 'kuat', sourceTag: 'Transcript', originalLesson: 19 },
+  { id: 'vb_21_1', lesson: 21, kana: 'おもいます', kanji: '思います', meaning: 'berpikir / berpendapat', sourceTag: 'Transcript' },
+  { id: 'vb_21_2', lesson: 21, kana: 'いいます', kanji: '言います', meaning: 'berkata', sourceTag: 'Transcript' },
+  { id: 'vb_21_3', lesson: 21, kana: 'かちます', kanji: '勝ちます', meaning: 'menang', sourceTag: 'Textbook Extra' },
+  { id: 'vb_21_4', lesson: 21, kana: 'まけます', kanji: '負けます', meaning: 'kalah', sourceTag: 'Textbook Extra' },
+  { id: 'vb_21_5', lesson: 21, kana: 'やくにたちます', kanji: '役に立ちます', meaning: 'bermanfaat', sourceTag: 'Textbook Extra' },
+  { id: 'vb_21_7', lesson: 21, kana: 'ふべん', kanji: '不便', meaning: 'tidak praktis', sourceTag: 'Textbook Extra' },
+  { id: 'vb_21_8', lesson: 21, kana: 'いけん', kanji: '意見', meaning: 'pendapat / opini', sourceTag: 'Textbook Extra' },
+  { id: 'vb_21_9', lesson: 21, kana: 'こうつう', kanji: '交通', meaning: 'lalu lintas / transportasi', sourceTag: 'Textbook Extra' },
+  { id: 'vb_21_10', lesson: 21, kana: 'さいきん', kanji: '最近', meaning: 'akhir-akhir ini', sourceTag: 'Transcript' },
+  { id: 'vb_21_11', lesson: 21, kana: 'せかい', kanji: '世界', meaning: 'dunia', sourceTag: 'Textbook Extra' },
+  { id: 'vb_21_12', lesson: 21, kana: 'ニュース', kanji: '', meaning: 'berita', sourceTag: 'Textbook Extra' },
+  { id: 'vb_24_8', lesson: 21, kana: 'なおします', kanji: '直します', meaning: 'memperbaiki', sourceTag: 'Transcript', originalLesson: 24 },
+
+  // ==================== BAB 22: Sedang mencari kamar yang seperti apa? ====================
+  { id: 'vb_7_10', lesson: 22, kana: 'おかね', kanji: 'お金', meaning: 'uang', sourceTag: 'Transcript', originalLesson: 7 },
+  { id: 'vb_22_1', lesson: 22, kana: 'へや', kanji: '部屋', meaning: 'kamar / ruangan', sourceTag: 'Transcript' },
+  { id: 'vb_22_2', lesson: 22, kana: 'さがします', kanji: '探します', meaning: 'mencari', sourceTag: 'Transcript' },
+  { id: 'vb_22_3', lesson: 22, kana: 'きます', kanji: '着ます', meaning: 'memakai (baju)', sourceTag: 'Transcript' },
+  { id: 'vb_22_4', lesson: 22, kana: 'はきます', kanji: '履きます', meaning: 'memakai (sepatu/celana)', sourceTag: 'Textbook Extra' },
+  { id: 'vb_22_5', lesson: 22, kana: 'かぶります', kanji: '被ります', meaning: 'memakai (topi)', sourceTag: 'Textbook Extra' },
+  { id: 'vb_22_6', lesson: 22, kana: 'めがね', kanji: '眼鏡', meaning: 'kacamata', sourceTag: 'Transcript' },
+  { id: 'vb_22_7', lesson: 22, kana: 'ぼうし', kanji: '帽子', meaning: 'topi', sourceTag: 'Textbook Extra' },
+  { id: 'vb_22_8', lesson: 22, kana: 'やちん', kanji: '家賃', meaning: 'sewa rumah', sourceTag: 'Transcript' },
+  { id: 'vb_22_9', lesson: 22, kana: 'だいどころ', kanji: '台所', meaning: 'dapur', sourceTag: 'Textbook Extra' },
+  { id: 'vb_22_10', lesson: 22, kana: 'うまれます', kanji: '生まれます', meaning: 'lahir', sourceTag: 'Transcript' },
+  { id: 'vb_22_11', lesson: 22, kana: 'コート', kanji: '', meaning: 'mantel / coat', sourceTag: 'Textbook Extra' },
+  { id: 'vb_22_12', lesson: 22, kana: 'アパート', kanji: '', meaning: 'apartemen', sourceTag: 'Textbook Extra' },
+
+  // ==================== BAB 23: Pergi naik apa (bagaimana caranya)? ====================
+  { id: 'vb_1_17', lesson: 23, kana: 'ちゅうごく', kanji: '中国', meaning: 'China', sourceTag: 'Transcript', originalLesson: 1 },
+  { id: 'vb_10_9', lesson: 23, kana: 'こうえん', kanji: '公園', meaning: 'taman', sourceTag: 'Transcript', originalLesson: 10 },
+  { id: 'vb_15_8', lesson: 23, kana: 'しりょう', kanji: '資料', meaning: 'dokumen / bahan data', sourceTag: 'Transcript', originalLesson: 15 },
+  { id: 'vb_20_1', lesson: 23, kana: 'いります', kanji: '要ります', meaning: 'membutuhkan / perlu', sourceTag: 'Transcript', originalLesson: 20 },
+  { id: 'vb_23_1', lesson: 23, kana: 'みち', kanji: '道', meaning: 'jalan', sourceTag: 'Transcript' },
+  { id: 'vb_23_2', lesson: 23, kana: 'はし', kanji: '橋', meaning: 'jembatan', sourceTag: 'Transcript' },
+  { id: 'vb_23_3', lesson: 23, kana: 'かど', kanji: '角', meaning: 'sudut / tikungan', sourceTag: 'Transcript' },
+  { id: 'vb_23_4', lesson: 23, kana: 'こうさてん', kanji: '交差点', meaning: 'persimpangan', sourceTag: 'Textbook Extra' },
+  { id: 'vb_23_6', lesson: 23, kana: 'わたります', kanji: '渡ります', meaning: 'menyeberang', sourceTag: 'Textbook Extra' },
+  { id: 'vb_23_7', lesson: 23, kana: 'まがります', kanji: '曲がります', meaning: 'belok', sourceTag: 'Textbook Extra' },
+  { id: 'vb_23_8', lesson: 23, kana: 'うごきます', kanji: '動きます', meaning: 'bergerak / berfungsi', sourceTag: 'Textbook Extra' },
+  { id: 'vb_23_9', lesson: 23, kana: 'まわします', kanji: '回します', meaning: 'memutar', sourceTag: 'Textbook Extra' },
+  { id: 'vb_23_11', lesson: 23, kana: 'おと', kanji: '音', meaning: 'suara / bunyi', sourceTag: 'Transcript' },
+  { id: 'vb_23_12', lesson: 23, kana: 'レバー', kanji: '', meaning: 'tuas', sourceTag: 'Textbook Extra' },
+
+  // ==================== BAB 24: Perlukah saya datang membantu? ====================
+  { id: 'vb_24_1', lesson: 24, kana: 'てつだいます', kanji: '手伝います', meaning: 'membantu', sourceTag: 'Transcript' },
+  { id: 'vb_24_2', lesson: 24, kana: 'ひっこし', kanji: '引っ越し', meaning: 'pindah rumah', sourceTag: 'Transcript' },
+  { id: 'vb_24_3', lesson: 24, kana: 'つれていきます', kanji: '連れて行きます', meaning: 'mengajak pergi (orang)', sourceTag: 'Textbook Extra' },
+  { id: 'vb_24_5', lesson: 24, kana: 'しょうかいします', kanji: '紹介します', meaning: 'memperkenalkan', sourceTag: 'Textbook Extra' },
+  { id: 'vb_24_6', lesson: 24, kana: 'あんないします', kanji: '案内します', meaning: 'memandu keliling', sourceTag: 'Textbook Extra' },
+  { id: 'vb_24_7', lesson: 24, kana: 'せつめいします', kanji: '説明します', meaning: 'menjelaskan', sourceTag: 'Textbook Extra' },
+  { id: 'vb_24_9', lesson: 24, kana: 'じゅんび', kanji: '準備', meaning: 'persiapan', sourceTag: 'Textbook Extra' },
+  { id: 'vb_24_10', lesson: 24, kana: 'おじいさん', kanji: '', meaning: 'kakek', sourceTag: 'Textbook Extra' },
+  { id: 'vb_24_11', lesson: 24, kana: 'おばあさん', kanji: '', meaning: 'nenek', sourceTag: 'Textbook Extra' },
+  { id: 'vb_24_12', lesson: 24, kana: 'プレゼント', kanji: '', meaning: 'hadiah / kado', sourceTag: 'Textbook Extra' },
+
+  // ==================== BAB 25: Terima kasih banyak atas segala bantuannya ====================
+  { id: 'vb_1_4', lesson: 25, kana: 'みなさん', kanji: '皆さん', meaning: 'anda sekalian', sourceTag: 'Transcript', originalLesson: 1 },
+  { id: 'vb_5_11', lesson: 25, kana: 'じてんしゃ', kanji: '自転車', meaning: 'sepeda', sourceTag: 'Transcript', originalLesson: 5 },
+  { id: 'vb_8_4', lesson: 25, kana: 'べんり', kanji: '便利', meaning: 'praktis', sourceTag: 'Transcript', originalLesson: 8 },
+  { id: 'vb_12_4', lesson: 25, kana: 'はやい', kanji: '速い', meaning: 'cepat', sourceTag: 'Transcript', originalLesson: 12 },
+  { id: 'vb_17_5', lesson: 25, kana: 'わすれます', kanji: '忘れます', meaning: 'lupa', sourceTag: 'Transcript', originalLesson: 17 },
+  { id: 'vb_21_6', lesson: 25, kana: 'むだ', kanji: '無駄', meaning: 'sia-sia / boros', sourceTag: 'Transcript', originalLesson: 21 },
+  { id: 'vb_25_1', lesson: 25, kana: 'かんがえます', kanji: '考えます', meaning: 'memikirkan', sourceTag: 'Textbook Extra' },
+  { id: 'vb_25_2', lesson: 25, kana: 'つきます', kanji: '着きます', meaning: 'tiba / sampai', sourceTag: 'Textbook Extra' },
+  { id: 'vb_25_3', lesson: 25, kana: 'てんきんします', kanji: '転勤します', meaning: 'mutasi kerja', sourceTag: 'Transcript' },
+  { id: 'vb_25_4', lesson: 25, kana: 'がんばります', kanji: '頑張ります', meaning: 'berusaha keras', sourceTag: 'Textbook Extra' },
+  { id: 'vb_25_5', lesson: 25, kana: 'いなか', kanji: '田舎', meaning: 'kampung halaman / pedesaan', sourceTag: 'Textbook Extra' },
+  { id: 'vb_25_8', lesson: 25, kana: 'しょうらい', kanji: '将来', meaning: 'masa depan', sourceTag: 'Textbook Extra' },
+  { id: 'vb_25_9', lesson: 25, kana: 'いろいろ', kanji: '色々', meaning: 'bermacam-macam', sourceTag: 'Transcript' },
+  { id: 'vb_25_10', lesson: 25, kana: 'おせわになります', kanji: 'お世話になります', meaning: 'terima kasih atas bantuannya', sourceTag: 'Transcript' },
+  { id: 'vb_25_11', lesson: 25, kana: 'としをとります', kanji: '年を取ります', meaning: 'bertambah tua', sourceTag: 'Textbook Extra' },
+  { id: 'vb_25_12', lesson: 25, kana: 'チャンス', kanji: '', meaning: 'peluang / kesempatan', sourceTag: 'Textbook Extra' },
+];

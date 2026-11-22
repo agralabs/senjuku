@@ -1,0 +1,40 @@
+# =========================================================
+# KiraKira Nihongo — Git Ignore Rules (Secrets & Runtime Data)
+# =========================================================
+
+# Environment & Secret Files (never commit real API keys or SMTP credentials)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*service-account*.json
+*credentials*.json
+
+# SQLite Databases (contains user accounts, password hashes, sessions & private logs)
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+data/*.db
+data/*.db-wal
+data/*.db-shm
+
+# Synthesized TTS Audio Cache
+data/tts-cache/
+
+# Dependencies, Logs & Temp Files
+node_modules/
+npm-debug.log*
+*.log
+tmp/
+temp/
+
+# OS & Editor Artifacts
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+.agents/

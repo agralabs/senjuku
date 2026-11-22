@@ -1,0 +1,22 @@
+{
+  "name": "kirakira-nihongo-reading-gym",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Aplikasi interaktif drill membaca Kana dan Kanji berbasis transkrip percakapan Minna no Nihongo Bab 1-14. 15 menit per hari, fokus membaca, repetisi SRS, dan scorecard lengkap.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "japanese",
+    "reading",
+    "drill",
+    "kanji",
+    "hiragana",
+    "katakana",
+    "minna-no-nihongo",
+    "srs"
+  ],
+  "author": "Antigravity",
+  "license": "MIT"
+}

@@ -1,0 +1,754 @@
+/* =========================================================
+   KiraKira Nihongo — Kana Writing Companion Module
+   Inspired by authentic Japanese paper workbook practice sheets
+   Supports Dark & Light themes + Web & Mobile responsive layouts
+   ========================================================= */
+
+.kc-shell {
+  --kc-paper: #121722;
+  --kc-panel: #090d14;
+  --kc-ink: #f8fafc;
+  --kc-mute: #94a3b8;
+  --kc-ai: linear-gradient(135deg, #32070d 0%, #1f070e 28%, #111726 65%, #080b11 100%);
+  --kc-ai-ink: #f8fafc;
+  --kc-shu: #dc2626;
+  --kc-guide: rgba(220, 38, 38, 0.4);
+  --kc-ghost: #20293a;
+  --kc-line: rgba(148, 163, 184, 0.2);
+  --kc-ok: #10b981;
+
+  max-width: 1180px;
+  margin: 0 auto;
+  color: var(--kc-ink);
+}
+
+body.light-theme .kc-shell {
+  --kc-paper: #ffffff;
+  --kc-panel: #f4f7fb;
+  --kc-ink: #11141c;
+  --kc-mute: #475569;
+  --kc-ai: linear-gradient(135deg, #7f1d1d 0%, #991b1b 30%, #1e3a8a 100%);
+  --kc-ai-ink: #ffffff;
+  --kc-shu: #991b1b;
+  --kc-guide: #e8a7a7;
+  --kc-ghost: #dce3ee;
+  --kc-line: #d6e0ee;
+  --kc-ok: #15803d;
+}
+
+.kc-jp {
+  font-family: "Klee One", "M PLUS Rounded 1c", serif;
+  font-weight: 600;
+}
+
+/* Top Banner + Sub-Tabs */
+.kc-hero {
+  background: var(--kc-ai);
+  color: var(--kc-ai-ink);
+  border-radius: 16px;
+  padding: 1.25rem 1.35rem 0;
+  margin-bottom: 1.25rem;
+  border-top: 3px solid #991b1b;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.65), 0 1px 18px rgba(153, 27, 27, 0.25);
+}
+
+.kc-hero-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.kc-script-switcher {
+  display: inline-flex;
+  gap: 0.3rem;
+  padding: 0.25rem;
+  border-radius: 12px;
+  background: rgba(11, 16, 27, 0.32);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  flex-shrink: 0;
+}
+
+.kc-script-btn {
+  border: none;
+  background: transparent;
+  color: rgba(248, 250, 252, 0.84);
+  padding: 0.45rem 0.9rem;
+  min-height: 40px;
+  border-radius: 9px;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  touch-action: manipulation;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.kc-script-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+.kc-script-btn.active {
+  background: var(--kc-shu);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.kc-hero h2 {
+  margin: 0;
+  font-size: clamp(1.35rem, 3vw, 1.9rem);
+  line-height: 1.15;
+  color: var(--kc-ai-ink);
+}
+
+.kc-hero p {
+  margin: 0.45rem 0 1rem;
+  max-width: 66ch;
+  font-size: 0.9rem;
+  opacity: 0.88;
+  line-height: 1.5;
+}
+
+.kc-subnav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.kc-subnav-btn {
+  border: none;
+  background: transparent;
+  color: rgba(244, 241, 234, 0.82);
+  padding: 0.65rem 1rem;
+  min-height: 44px;
+  border-radius: 10px 10px 0 0;
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.kc-subnav-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+.kc-subnav-btn[aria-current="page"] {
+  background: var(--bg-primary, var(--kc-paper));
+  color: var(--kc-ink);
+}
+
+.kc-view {
+  display: none;
+}
+
+.kc-view.on {
+  display: block;
+}
+
+/* Two-column layout: Practice Square left, Chart/Lesson right */
+.kc-two {
+  display: grid;
+  grid-template-columns: minmax(0, 350px) minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.kc-stick {
+  position: sticky;
+  top: 84px;
+}
+
+/* Practice Square */
+.kc-sq {
+  position: relative;
+  aspect-ratio: 1;
+  width: 100%;
+  background: var(--kc-paper);
+  border: 2px solid var(--kc-shu);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.14);
+}
+
+.kc-sq svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.kc-meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin: 0.75rem 0 0.65rem;
+}
+
+.kc-meta .kc-ro {
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.1;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.kc-meta .kc-ro .kc-jp {
+  font-size: 2.35rem;
+}
+
+.kc-meta .kc-sc {
+  color: var(--kc-mute);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.kc-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.kc-btn {
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.88rem;
+  min-height: 44px;
+  padding: 0.5rem 0.95rem;
+  border-radius: 10px;
+  border: 1.5px solid var(--kc-line);
+  background: var(--kc-paper);
+  color: var(--kc-ink);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  touch-action: manipulation;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+
+.kc-btn:hover {
+  background: var(--kc-panel);
+  border-color: var(--kc-shu);
+}
+
+.kc-btn:active {
+  transform: scale(0.97);
+}
+
+.kc-btn.pri {
+  background: var(--kc-shu);
+  border-color: var(--kc-shu);
+  color: #ffffff;
+}
+
+.kc-btn.pri:hover {
+  filter: brightness(1.06);
+}
+
+.kc-btn svg {
+  width: 17px;
+  height: 17px;
+  flex: none;
+}
+
+.kc-note {
+  color: var(--kc-mute);
+  font-size: 0.84rem;
+  margin: 0.6rem 0 0;
+  line-height: 1.45;
+}
+
+/* Gojuon Chart Grid */
+.kc-tools {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 0.85rem;
+}
+
+.kc-tools h3 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.kc-tg {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 40px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.88rem;
+}
+
+.kc-tg input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--kc-shu);
+}
+
+.kc-grid {
+  display: grid;
+  grid-template-columns: auto repeat(5, minmax(0, 1fr));
+  gap: 0.38rem;
+  align-items: stretch;
+}
+
+.kc-grid .kc-h {
+  font-size: 0.78rem;
+  color: var(--kc-mute);
+  text-align: center;
+  font-weight: 700;
+  padding-bottom: 0.15rem;
+}
+
+.kc-grid .kc-rl {
+  font-size: 0.78rem;
+  color: var(--kc-mute);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 0.3rem;
+  white-space: nowrap;
+}
+
+.kc-k {
+  border: 1px solid var(--kc-line);
+  background: var(--kc-paper);
+  color: var(--kc-ink);
+  border-radius: 10px;
+  min-height: 60px;
+  padding: 0.25rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: border-color 0.14s ease, background 0.14s ease, transform 0.08s ease;
+}
+
+.kc-k:hover {
+  border-color: var(--kc-shu);
+  background: var(--kc-panel);
+}
+
+.kc-k:active {
+  transform: scale(0.95);
+}
+
+.kc-k b {
+  font-family: "Klee One", "M PLUS Rounded 1c", serif;
+  font-weight: 600;
+  font-size: clamp(1.35rem, 2.8vw, 1.85rem);
+  line-height: 1.1;
+}
+
+.kc-k small {
+  font-size: 0.74rem;
+  color: var(--kc-mute);
+  font-weight: 500;
+}
+
+.kc-grid.hide-ro .kc-k small {
+  visibility: hidden;
+}
+
+.kc-k.sel {
+  border: 2px solid var(--kc-shu);
+  background: var(--kc-panel);
+  box-shadow: 0 0 0 2px rgba(255, 107, 79, 0.2);
+}
+
+.kc-k.row-done {
+  box-shadow: inset 0 -3px 0 var(--kc-ok);
+}
+
+.kc-gap {
+  visibility: hidden;
+}
+
+/* Row Selector + Stepper */
+.kc-row-picker {
+  display: flex;
+  gap: 0.4rem;
+  overflow-x: auto;
+  padding-bottom: 0.35rem;
+  margin-bottom: 0.85rem;
+  -webkit-overflow-scrolling: touch;
+}
+
+.kc-row-pill {
+  flex: 0 0 auto;
+  min-height: 38px;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  border: 1.5px solid var(--kc-line);
+  background: var(--kc-paper);
+  color: var(--kc-ink);
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.kc-row-pill.active {
+  background: var(--kc-shu);
+  border-color: var(--kc-shu);
+  color: #ffffff;
+}
+
+.kc-row-pill.done::after {
+  content: " ✓";
+  color: var(--kc-ok);
+}
+
+.kc-row-pill.active.done::after {
+  color: #ffffff;
+}
+
+.kc-steps {
+  display: flex;
+  gap: 0.4rem;
+  margin: 0 0 1rem;
+  flex-wrap: wrap;
+}
+
+.kc-step-btn {
+  border: 1px solid var(--kc-line);
+  background: var(--kc-paper);
+  color: var(--kc-ink);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0.42rem 0.75rem;
+  min-height: 38px;
+  border-radius: 9px;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.kc-step-btn[aria-current="step"] {
+  background: var(--kc-ai);
+  color: var(--kc-ai-ink);
+  border-color: var(--kc-ai);
+}
+
+.kc-step-btn.done::after {
+  content: " ✓";
+  color: var(--kc-ok);
+}
+
+.kc-step-btn[aria-current="step"].done::after {
+  color: var(--kc-ai-ink);
+}
+
+.kc-card {
+  background: var(--kc-panel);
+  border: 1px solid var(--kc-line);
+  border-radius: 14px;
+  padding: 1.15rem;
+}
+
+.kc-tip {
+  font-size: 0.96rem;
+  margin: 0.4rem 0 0.9rem;
+  max-width: 62ch;
+  line-height: 1.55;
+}
+
+.kc-dots {
+  display: flex;
+  gap: 0.45rem;
+  margin: 0.75rem 0 0;
+  flex-wrap: wrap;
+}
+
+.kc-dots button {
+  min-width: 48px;
+  min-height: 46px;
+  border-radius: 10px;
+  border: 1.5px solid var(--kc-line);
+  background: var(--kc-paper);
+  color: var(--kc-ink);
+  font-size: 1.35rem;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.kc-dots button.on {
+  border-color: var(--kc-shu);
+  background: var(--kc-panel);
+  box-shadow: 0 0 0 2px rgba(255, 107, 79, 0.22);
+}
+
+/* Paper Workbook 5-Square Model Grid */
+.kc-five {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin: 0.9rem 0;
+}
+
+.kc-five .kc-sq {
+  border-width: 1.5px;
+}
+
+.kc-chk {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem 1.25rem;
+  margin: 0.75rem 0;
+}
+
+/* Quiz Options */
+.kc-qhead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.kc-score {
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--kc-mute);
+}
+
+.kc-big {
+  font-size: clamp(4.2rem, 13vw, 6.8rem);
+  line-height: 1.05;
+  text-align: center;
+  margin: 0.5rem 0;
+}
+
+.kc-opts {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin: 0.9rem 0;
+}
+
+.kc-opts button {
+  min-height: 58px;
+  border-radius: 10px;
+  border: 1.5px solid var(--kc-line);
+  background: var(--kc-paper);
+  color: var(--kc-ink);
+  font: inherit;
+  font-weight: 700;
+  font-size: clamp(1.25rem, 3.8vw, 1.85rem);
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.kc-opts.ro button {
+  font-size: 1.08rem;
+}
+
+.kc-opts button.right {
+  border-color: var(--kc-ok);
+  color: var(--kc-ok);
+  background: rgba(95, 211, 147, 0.12);
+}
+
+.kc-opts button.wrong {
+  border-color: var(--kc-shu);
+  color: var(--kc-shu);
+  text-decoration: line-through;
+  background: rgba(255, 107, 79, 0.12);
+}
+
+.kc-fb {
+  min-height: 26px;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.kc-fb.ok {
+  color: var(--kc-ok);
+}
+
+.kc-fb.no {
+  color: var(--kc-shu);
+}
+
+/* Words Grid */
+.kc-words {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 175px), 1fr));
+  gap: 0.65rem;
+  margin-top: 0.85rem;
+}
+
+.kc-word {
+  background: var(--kc-paper);
+  border: 1px solid var(--kc-line);
+  border-radius: 12px;
+  padding: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  text-align: left;
+  color: var(--kc-ink);
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.kc-word:hover {
+  border-color: var(--kc-shu);
+}
+
+.kc-word .kc-w {
+  font-family: "Klee One", "M PLUS Rounded 1c", serif;
+  font-weight: 600;
+  font-size: 1.9rem;
+  line-height: 1.1;
+}
+
+.kc-word .kc-m {
+  color: var(--kc-mute);
+  font-size: 0.88rem;
+  transition: filter 0.15s ease;
+}
+
+.kc-word .kc-m.hid {
+  filter: blur(6px);
+}
+
+/* Leitner Review Boxes */
+.kc-rv {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 320px);
+  gap: 1.35rem;
+  align-items: start;
+}
+
+.kc-flash {
+  background: var(--kc-panel);
+  border: 1px solid var(--kc-line);
+  border-radius: 14px;
+  padding: 1.4rem;
+  text-align: center;
+}
+
+.kc-flash .kc-ans {
+  min-height: 40px;
+  font-size: 1.65rem;
+  font-weight: 700;
+  color: var(--kc-shu);
+}
+
+.kc-boxes {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.kc-bx {
+  display: grid;
+  grid-template-columns: 8.5em minmax(0, 1fr) auto;
+  gap: 0.6rem;
+  align-items: center;
+  font-size: 0.84rem;
+}
+
+.kc-bar {
+  height: 12px;
+  background: var(--kc-ghost);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.kc-bar i {
+  display: block;
+  height: 100%;
+  background: var(--kc-shu);
+  border-radius: 999px;
+  transition: width 0.25s ease;
+}
+
+.kc-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.28rem;
+  margin-top: 0.35rem;
+}
+
+.kc-chips span {
+  font-family: "Klee One", "M PLUS Rounded 1c", serif;
+  font-weight: 600;
+  font-size: 1.15rem;
+  padding: 0.08rem 0.42rem;
+  border-radius: 6px;
+  background: var(--kc-paper);
+  border: 1px solid var(--kc-line);
+}
+
+.kc-attrib {
+  margin-top: 1.25rem;
+  font-size: 0.76rem;
+  color: var(--kc-mute);
+  text-align: center;
+}
+
+.kc-attrib a {
+  color: inherit;
+}
+
+/* Mobile Responsive */
+@media (max-width: 820px) {
+  .kc-two,
+  .kc-rv {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .kc-stick {
+    position: static;
+  }
+  .kc-two > .kc-left {
+    max-width: 310px;
+    margin: 0 auto;
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .kc-hero {
+    padding: 1rem 0.9rem 0;
+    border-radius: 12px;
+  }
+  .kc-subnav-btn {
+    padding: 0.55rem 0.75rem;
+    font-size: 0.84rem;
+  }
+  .kc-five {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .kc-opts {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .kc-grid {
+    gap: 0.25rem;
+  }
+  .kc-k {
+    min-height: 52px;
+  }
+  .kc-card {
+    padding: 0.9rem;
+  }
+}

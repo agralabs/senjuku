@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verifikasi Akun — KiraKira Nihongo</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="css/auth-leaderboard.css" />
+</head>
+<body class="dark-theme verify-page-body">
+  <main class="verify-shell">
+    <div class="verify-card">
+      <div class="verify-brand">
+        <span class="verify-logo">🌸</span>
+        <h1>きらきら日本語</h1>
+        <p>KiraKira Nihongo — Aktivasi &amp; Setel Kata Sandi</p>
+      </div>
+
+      <div id="verifyLoading" class="verify-state">
+        <p>Memeriksa tautan verifikasi Anda...</p>
+      </div>
+
+      <div id="verifyError" class="verify-state verify-error-box" hidden>
+        <h2 id="verifyErrorTitle">Tautan Tidak Valid</h2>
+        <p id="verifyErrorMsg"></p>
+        <a href="/" class="btn btn-secondary">← Kembali ke Beranda</a>
+      </div>
+
+      <form id="setPasswordForm" class="verify-form" hidden>
+        <div class="verify-welcome">
+          Halo, <strong id="verifyNickname"></strong>! 🎉<br />
+          <span>Buat kata sandi untuk mengaktifkan akun dan menyimpan progres latihan Anda.</span>
+        </div>
+
+        <label class="auth-field">
+          <span>Kata Sandi Baru (minimal 6 karakter)</span>
+          <input type="password" id="newPasswordInput" minlength="6" maxlength="128" required autocomplete="new-password" placeholder="Masukkan kata sandi..." />
+        </label>
+
+        <label class="auth-field">
+          <span>Konfirmasi Kata Sandi</span>
+          <input type="password" id="confirmPasswordInput" minlength="6" maxlength="128" required autocomplete="new-password" placeholder="Ulangi kata sandi..." />
+        </label>
+
+        <div id="setPasswordFeedback" class="auth-feedback" hidden></div>
+
+        <button type="submit" class="btn btn-primary btn-full" id="submitPasswordBtn">
+          ✨ Aktifkan Akun &amp; Masuk
+        </button>
+      </form>
+
+      <div id="verifySuccess" class="verify-state verify-success-box" hidden>
+        <h2>Akun Aktif! 🎉</h2>
+        <p>Anda telah berhasil masuk. Mengalihkan ke KiraKira Nihongo Reading Gym...</p>
+        <a href="/" class="btn btn-primary">Mulai Latihan →</a>
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    if (localStorage.getItem('kirakira_theme') === 'light') {
+      document.body.classList.remove('dark-theme');
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token') || '';
+    const isResetMode = params.get('mode') === 'reset';
+
+    if (isResetMode) {
+      document.title = 'Reset Kata Sandi — KiraKira Nihongo';
+      const brandSub = document.querySelector('.verify-brand p');
+      if (brandSub) brandSub.textContent = 'KiraKira Nihongo — Atur Ulang Kata Sandi';
+      const welcomeSub = document.querySelector('.verify-welcome span');
+      if (welcomeSub) welcomeSub.textContent = 'Masukkan kata sandi baru untuk akun Anda.';
+      const btn = document.getElementById('submitPasswordBtn');
+      if (btn) btn.textContent = '🔑 Simpan Kata Sandi Baru & Masuk';
+    }
+
+    const elLoading = document.getElementById('verifyLoading');
+    const elError = document.getElementById('verifyError');
+    const elErrorMsg = document.getElementById('verifyErrorMsg');
+    const elForm = document.getElementById('setPasswordForm');
+    const elNick = document.getElementById('verifyNickname');
+    const elFeedback = document.getElementById('setPasswordFeedback');
+    const elSuccess = document.getElementById('verifySuccess');
+    const elSubmitBtn = document.getElementById('submitPasswordBtn');
+
+    function showError(msg) {
+      elLoading.hidden = true;
+      elForm.hidden = true;
+      elErrorMsg.textContent = msg;
+      elError.hidden = false;
+    }
+
+    async function validateToken() {
+      if (!token) {
+        showError('Token verifikasi tidak ditemukan di URL.');
+        return;
+      }
+      try {
+        const res = await fetch(`/api/auth/verify?token=${encodeURIComponent(token)}`);
+        const data = await res.json();
+        if (!res.ok || !data.valid) {
+          showError(data.error || 'Tautan verifikasi tidak valid atau sudah kedaluwarsa.');
+          return;
+        }
+        elLoading.hidden = true;
+        elNick.textContent = data.nickname;
+        elForm.hidden = false;
+        document.getElementById('newPasswordInput').focus();
+      } catch (err) {
+        showError('Gagal menghubungi server. Pastikan server lokal sedang berjalan.');
+      }
+    }
+
+    elForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      elFeedback.hidden = true;
+
+      const password = document.getElementById('newPasswordInput').value;
+      const confirm = document.getElementById('confirmPasswordInput').value;
+
+      if (password.length < 6) {
+        elFeedback.textContent = 'Kata sandi minimal 6 karakter.';
+        elFeedback.className = 'auth-feedback error';
+        elFeedback.hidden = false;
+        return;
+      }
+      if (password !== confirm) {
+        elFeedback.textContent = 'Konfirmasi kata sandi tidak cocok.';
+        elFeedback.className = 'auth-feedback error';
+        elFeedback.hidden = false;
+        return;
+      }
+
+      elSubmitBtn.disabled = true;
+      elSubmitBtn.textContent = 'Mengaktifkan akun...';
+
+      try {
+        const res = await fetch('/api/auth/set-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token, password })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          elFeedback.textContent = data.error || 'Gagal menyetel kata sandi.';
+          elFeedback.className = 'auth-feedback error';
+          elFeedback.hidden = false;
+          elSubmitBtn.disabled = false;
+          elSubmitBtn.textContent = '✨ Aktifkan Akun & Masuk';
+          return;
+        }
+
+        elForm.hidden = true;
+        elSuccess.hidden = false;
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 1200);
+      } catch (err) {
+        elFeedback.textContent = 'Gagal terhubung ke server.';
+        elFeedback.className = 'auth-feedback error';
+        elFeedback.hidden = false;
+        elSubmitBtn.disabled = false;
+        elSubmitBtn.textContent = '✨ Aktifkan Akun & Masuk';
+      }
+    });
+
+    validateToken();
+  </script>
+</body>
+</html>
