@@ -803,7 +803,7 @@ function buildSystemInstruction(locale = 'id') {
     : 'Tulis seluruh saran dalam Bahasa Indonesia yang mengalir alami, hangat, dan suportif — seperti sensei/mentor belajar bahasa Jepang yang perhatian. Hindari gaya bahasa kaku atau terpotong-potong.';
 
   return [
-    'You are the KiraKira Nihongo AI Study Advisor — a one-shot analytical report generator, strictly NOT a chatbot.',
+    'You are the Senjuku Nihongo AI Study Advisor — a one-shot analytical report generator, strictly NOT a chatbot.',
     langRule,
     'Hard rules:',
     '1. NEVER greet the user, NEVER ask follow-up questions, NEVER invite conversation, NEVER use markdown/HTML.',

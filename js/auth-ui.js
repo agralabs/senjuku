@@ -240,7 +240,7 @@ class AuthUIController {
       <div class="auth-modal-backdrop" id="authModalBackdrop" hidden role="dialog" aria-modal="true" aria-labelledby="authModalTitle">
         <div class="auth-modal-card">
           <button type="button" class="auth-modal-close" id="btnCloseAuthModal" aria-label="Tutup">&times;</button>
-          <h2 id="authModalTitle" style="margin:0;font-size:1.25rem;">🌸 Akun KiraKira Nihongo</h2>
+          <h2 id="authModalTitle" style="margin:0;font-size:1.25rem;">🌸 Akun Senjuku Nihongo</h2>
           <p style="margin:0.3rem 0 0;font-size:0.84rem;color:var(--text-muted);">Simpan progres SRS Anda &amp; ikut Papan Peringkat.</p>
 
           <div class="auth-modal-tabs">

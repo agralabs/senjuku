@@ -1,4 +1,4 @@
-// KiraKira Nihongo - Zero-Dependency TLS SMTP Mailer (node:tls)
+// Senjuku Nihongo - Zero-Dependency TLS SMTP Mailer (node:tls)
 // Connects via SSL/TLS (port 465) with AUTH LOGIN using SMTP_* environment variables.
 
 import tls from 'node:tls';
@@ -11,7 +11,7 @@ export const SMTP_CONFIG = {
     user: (process.env.SMTP_USER || '').trim(),
     pass: (process.env.SMTP_PASS || '').trim()
   },
-  fromName: 'KiraKira Nihongo',
+  fromName: 'Senjuku Nihongo',
   fromEmail: (process.env.SMTP_FROM || process.env.SMTP_USER || '').trim()
 };
 
@@ -28,7 +28,7 @@ function escapeHtml(str) {
 }
 
 function buildMimeMessage({ fromName, fromEmail, to, subject, text, html }) {
-  const boundary = '----=_KiraKira_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2);
+  const boundary = '----=_Senjuku_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2);
   const encodedSubject = `=?UTF-8?B?${encodeBase64(subject)}?=`;
   const dateHeader = new Date().toUTCString();
 
@@ -99,7 +99,7 @@ export function sendSmtpEmail({ to, subject, text, html }, config = SMTP_CONFIG)
     });
 
     const commands = [
-      () => sendLine(`EHLO kirakira.local`),
+      () => sendLine(`EHLO senjuku.local`),
       () => sendLine(`AUTH LOGIN`),
       () => sendLine(encodeBase64(config.auth.user)),
       () => sendLine(encodeBase64(config.auth.pass)),
@@ -175,12 +175,12 @@ export function sendSmtpEmail({ to, subject, text, html }, config = SMTP_CONFIG)
 export async function sendVerificationEmail({ to, nickname, verifyUrl }) {
   const safeNick = escapeHtml(nickname);
   const safeUrl = escapeHtml(verifyUrl);
-  const subject = '🌸 Verifikasi Akun KiraKira Nihongo - Atur Kata Sandi Anda';
+  const subject = '🌸 Verifikasi Akun Senjuku Nihongo - Atur Kata Sandi Anda';
 
   const text = [
     `Halo ${nickname}!`,
     ``,
-    `Selamat datang di KiraKira Nihongo Reading Gym (きらきら日本語).`,
+    `Selamat datang di Senjuku Nihongo (せんじゅく日本語).`,
     `Klik tautan di bawah ini untuk memverifikasi email Anda dan menyetel kata sandi akun:`,
     ``,
     verifyUrl,
@@ -188,7 +188,7 @@ export async function sendVerificationEmail({ to, nickname, verifyUrl }) {
     `Tautan ini berlaku selama 24 jam dan hanya dapat digunakan satu kali.`,
     `Jika Anda tidak merasa mendaftar, silakan abaikan email ini.`,
     ``,
-    `Ganbatte kudasai! — Tim KiraKira Nihongo`
+    `Ganbatte kudasai! — Tim Senjuku Nihongo`
   ].join('\n');
 
   const html = `<!DOCTYPE html>
@@ -202,15 +202,15 @@ export async function sendVerificationEmail({ to, nickname, verifyUrl }) {
           <tr>
             <td style="padding:28px 32px;background:linear-gradient(135deg,#4f46e5,#ec4899);text-align:center;">
               <div style="font-size:32px;margin-bottom:6px;">🌸</div>
-              <h1 style="margin:0;font-size:22px;color:#ffffff;letter-spacing:0.3px;">きらきら日本語</h1>
-              <p style="margin:6px 0 0;font-size:13px;color:rgba(255,255,255,0.9);">KiraKira Nihongo — Japanese Reading Gym</p>
+              <h1 style="margin:0;font-size:22px;color:#ffffff;letter-spacing:0.3px;">せんじゅく日本語</h1>
+              <p style="margin:6px 0 0;font-size:13px;color:rgba(255,255,255,0.9);">Senjuku Nihongo</p>
             </td>
           </tr>
           <tr>
             <td style="padding:32px;">
               <h2 style="margin:0 0 12px;font-size:18px;color:#f8fafc;">Halo, ${safeNick}! 👋</h2>
               <p style="margin:0 0 18px;font-size:14px;line-height:1.65;color:#cbd5e1;">
-                Terima kasih telah mendaftar di <strong>KiraKira Nihongo</strong>.
+                Terima kasih telah mendaftar di <strong>Senjuku Nihongo</strong>.
                 Satu langkah lagi untuk mengaktifkan akun dan mulai menyinkronkan progres latihan Kana &amp; Kanji Anda!
               </p>
               <div style="text-align:center;margin:28px 0;">
@@ -230,7 +230,7 @@ export async function sendVerificationEmail({ to, nickname, verifyUrl }) {
           </tr>
           <tr>
             <td style="padding:16px 32px;background:#0f172a;text-align:center;font-size:11px;color:#64748b;">
-              頑張ってください！(Ganbatte kudasai!) • KiraKira Nihongo Reading Gym
+              頑張ってください！(Ganbatte kudasai!) • Senjuku Nihongo
             </td>
           </tr>
         </table>
@@ -246,12 +246,12 @@ export async function sendVerificationEmail({ to, nickname, verifyUrl }) {
 export async function sendPasswordResetEmail({ to, nickname, resetUrl }) {
   const safeNick = escapeHtml(nickname);
   const safeUrl = escapeHtml(resetUrl);
-  const subject = '🔑 Reset Kata Sandi Akun KiraKira Nihongo';
+  const subject = '🔑 Reset Kata Sandi Akun Senjuku Nihongo';
 
   const text = [
     `Halo ${nickname}!`,
     ``,
-    `Kami menerima permintaan untuk mengatur ulang (reset) kata sandi akun KiraKira Nihongo Anda.`,
+    `Kami menerima permintaan untuk mengatur ulang (reset) kata sandi akun Senjuku Nihongo Anda.`,
     `Klik tautan di bawah ini untuk membuat kata sandi baru:`,
     ``,
     resetUrl,
@@ -259,7 +259,7 @@ export async function sendPasswordResetEmail({ to, nickname, resetUrl }) {
     `Tautan ini berlaku selama 24 jam dan hanya dapat digunakan satu kali.`,
     `Jika Anda tidak meminta reset kata sandi, silakan abaikan email ini.`,
     ``,
-    `— Tim KiraKira Nihongo`
+    `— Tim Senjuku Nihongo`
   ].join('\n');
 
   const html = `<!DOCTYPE html>
@@ -274,7 +274,7 @@ export async function sendPasswordResetEmail({ to, nickname, resetUrl }) {
             <td style="padding:26px 32px;background:linear-gradient(135deg,#6366f1,#f59e0b);text-align:center;">
               <div style="font-size:34px;margin-bottom:6px;">🔑</div>
               <h1 style="margin:0;font-size:21px;color:#ffffff;">Reset Kata Sandi</h1>
-              <p style="margin:6px 0 0;font-size:13px;color:rgba(255,255,255,0.92);">KiraKira Nihongo Reading Gym</p>
+              <p style="margin:6px 0 0;font-size:13px;color:rgba(255,255,255,0.92);">Senjuku Nihongo</p>
             </td>
           </tr>
           <tr>
@@ -312,17 +312,17 @@ export async function sendPasswordResetEmail({ to, nickname, resetUrl }) {
 export async function sendLessonClearEmail({ to, nickname, lessonNum, appUrl = 'http://localhost:3000' }) {
   const safeNick = escapeHtml(nickname);
   const safeUrl = escapeHtml(appUrl);
-  const subject = `⭐ Selamat ${nickname}! Bab ${lessonNum} Lulus Scorecard Penuh — KiraKira Nihongo`;
+  const subject = `⭐ Selamat ${nickname}! Bab ${lessonNum} Lulus Scorecard Penuh — Senjuku Nihongo`;
 
   const text = [
     `Selamat, ${nickname}! ⭐`,
     ``,
-    `Anda baru saja menyelesaikan Scorecard Bab ${lessonNum} dengan nilai penuh (100%) di KiraKira Nihongo Reading Gym!`,
+    `Anda baru saja menyelesaikan Scorecard Bab ${lessonNum} dengan nilai penuh (100%) di Senjuku Nihongo!`,
     `Teruskan kebiasaan belajar 15 menit per hari untuk membuka blok pelajaran berikutnya.`,
     ``,
     `Lanjutkan latihan di sini: ${appUrl}`,
     ``,
-    `素晴らしい！(Subarashii!) — Tim KiraKira Nihongo`
+    `素晴らしい！(Subarashii!) — Tim Senjuku Nihongo`
   ].join('\n');
 
   const html = `<!DOCTYPE html>
@@ -337,7 +337,7 @@ export async function sendLessonClearEmail({ to, nickname, lessonNum, appUrl = '
             <td style="padding:26px 32px;background:linear-gradient(135deg,#f59e0b,#ec4899);text-align:center;">
               <div style="font-size:36px;margin-bottom:6px;">⭐🎉</div>
               <h1 style="margin:0;font-size:21px;color:#ffffff;">Bab ${lessonNum} Lulus Penuh!</h1>
-              <p style="margin:6px 0 0;font-size:13px;color:rgba(255,255,255,0.92);">KiraKira Nihongo Reading Gym</p>
+              <p style="margin:6px 0 0;font-size:13px;color:rgba(255,255,255,0.92);">Senjuku Nihongo</p>
             </td>
           </tr>
           <tr>
@@ -368,22 +368,22 @@ export async function sendGradeUnlockEmail({ to, nickname, blockNum, clearedRang
   const safeNick = escapeHtml(nickname);
   const safeUrl = escapeHtml(appUrl);
   const safeTitle = escapeHtml(gradeTitle);
-  const subject = `🏆 Grade Unlock! ${gradeTitle} Tercapai — KiraKira Nihongo`;
+  const subject = `🏆 Grade Unlock! ${gradeTitle} Tercapai — Senjuku Nihongo`;
 
   const nextLine = unlockedRange
     ? `Blok pelajaran baru <strong>${escapeHtml(unlockedRange)}</strong> kini resmi TERBUKA untuk Anda!`
-    : `Anda telah menaklukkan <strong>SELURUH 14 Bab Minna no Nihongo</strong>!`;
+    : `Anda telah menaklukkan <strong>SELURUH Bab Minna no Nihongo I</strong>!`;
 
   const text = [
     `Selamat atas kenaikan Grade, ${nickname}! 🏆`,
     ``,
     `Anda telah menyelesaikan seluruh ${clearedRange} (${gradeTitle}).`,
-    unlockedRange ? `Blok baru ${unlockedRange} kini TERBUKA!` : `Semua 14 Bab telah selesai!`,
+    unlockedRange ? `Blok baru ${unlockedRange} kini TERBUKA!` : `Semua Bab telah selesai!`,
     `Lencana pencapaian baru Anda kini tampil di Papan Peringkat (Leaderboard)!`,
     ``,
-    `Buka KiraKira Nihongo: ${appUrl}`,
+    `Buka Senjuku Nihongo: ${appUrl}`,
     ``,
-    `おめでとうございます！(Omedetou gozaimasu!) — Tim KiraKira Nihongo`
+    `おめでとうございます！(Omedetou gozaimasu!) — Tim Senjuku Nihongo`
   ].join('\n');
 
   const html = `<!DOCTYPE html>

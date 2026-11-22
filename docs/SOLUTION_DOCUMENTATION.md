@@ -1,5 +1,6 @@
-# KiraKira Nihongo (きらきら日本語) — Complete Solution Documentation
+# Senjuku Nihongo (せんじゅく日本語) — Complete Solution Documentation
 
+**Branding:** Senjuku (Full Name: Senjuku Nihongo / せんじゅく日本語)  
 **Version:** 2.5 (Minna no Nihongo I — Bab 1–25, Kana Writing Companion, Google Cloud Neural2 TTS, Gemini AI Study Advisor, Sumi & Urushi Web + Mobile UI, Multi-User RBAC, SQLite + Litestream)  
 **Runtime:** Node.js v24+ (Zero External npm Dependencies — Native `node:http`, `node:sqlite`, `node:crypto`, `node:tls`, `fetch`)
 
@@ -7,7 +8,7 @@
 
 ## 1. Application Functionality
 
-**KiraKira Nihongo Reading Gym** is an interactive Japanese reading & Kana-writing web application aligned 1:1 with *Minna no Nihongo I* (**Bab 1–25**, Audio Tracks **001–087**), engineered as a single responsive web app for desktop and mobile browsers.
+**Senjuku Nihongo Reading Gym** (brand: **Senjuku**) is an interactive Japanese reading & Kana-writing web application aligned 1:1 with *Minna no Nihongo I* (**Bab 1–25**, Audio Tracks **001–087**), engineered as a single responsive web app for desktop and mobile browsers.
 
 ### 1.1 Access Control & Multi-User Accounts
 - **Registered Users Only (Auth Gate)**: Anonymous browsing is blocked both in the UI (`body.auth-gate-locked`) and on the API (`/api/leaderboard`, `/api/progress/*`, `/api/profile`, `/api/achievements/*`, `/api/tts*`, `/api/activity/*`, `/api/advisor/*`, `/api/admin/*` return `401 Unauthorized` without a valid session cookie).

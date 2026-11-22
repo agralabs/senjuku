@@ -1,10 +1,10 @@
-# Litestream Configuration for KiraKira Nihongo on Google Cloud Run
+# Litestream Configuration for Senjuku Nihongo on Google Cloud Run
 # Replicates SQLite WAL frames continuously to Google Cloud Storage (GCS)
 
 dbs:
-  - path: /app/data/kirakira.db
+  - path: /app/data/senjuku.db
     replicas:
-      # LITESTREAM_GCS_BUCKET environment variable (e.g. gs://kirakira-sqlite-backup/db)
-      - url: "${LITESTREAM_REPLICA_URL:-gcs://kirakira-sqlite-data/db}"
+      # LITESTREAM_GCS_BUCKET environment variable (e.g. gs://senjuku-sqlite-backup/db)
+      - url: "${LITESTREAM_REPLICA_URL:-gcs://senjuku-sqlite-data/db}"
         sync-interval: 1s
         retention: 72h

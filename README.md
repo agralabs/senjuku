@@ -1,4 +1,4 @@
-# Senjuku — KiraKira Nihongo (きらきら日本語)
+# Senjuku (せんじゅく) — Senjuku Nihongo (せんじゅく日本語)
 ### Japanese Reading Gym & Kana-Writing Web Application
 
 An interactive Japanese reading, vocabulary, and Kana-writing web application aligned 1:1 with *Minna no Nihongo I* (**Bab 1–25**, Audio Tracks **001–087**), built with a zero-external-npm Node.js v24 backend, vanilla ECMAScript modules, SQLite WAL mode, and the **Sumi & Urushi** editorial design system.

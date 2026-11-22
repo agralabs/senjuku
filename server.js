@@ -1,4 +1,4 @@
-// KiraKira Nihongo - Zero-Dependency Local & Multi-User Server (Static + SQLite API)
+// Senjuku Nihongo - Zero-Dependency Local & Multi-User Server (Static + SQLite API)
 import http from 'http';
 import fs from 'fs';
 import path from 'path';
@@ -31,7 +31,7 @@ try {
     }
   }
 } catch (err) {
-  console.warn('[KiraKira Nihongo] .env load warning:', err.message);
+  console.warn('[Senjuku Nihongo] .env load warning:', err.message);
 }
 
 // Initialize SQLite database schema on startup
@@ -107,6 +107,6 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, HOST, () => {
-  console.log(`[KiraKira Nihongo] Server running at http://${HOST}:${PORT}/`);
+  console.log(`[Senjuku Nihongo] Server running at http://${HOST}:${PORT}/`);
   console.log(`Open http://localhost:${PORT}/ in your browser to start your 15-minute daily reading drill!`);
 });

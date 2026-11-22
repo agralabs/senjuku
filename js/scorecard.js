@@ -429,7 +429,7 @@ export class ScorecardView {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `kirakira_japanese_scorecard_${progress.getTodayKey()}.json`;
+        a.download = `senjuku_japanese_scorecard_${progress.getTodayKey()}.json`;
         a.click();
         URL.revokeObjectURL(url);
       };

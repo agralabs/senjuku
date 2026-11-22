@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Verifikasi Akun — KiraKira Nihongo</title>
+  <title>Verifikasi Akun — Senjuku Nihongo</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="css/auth-leaderboard.css" />
 </head>
@@ -12,8 +12,8 @@
     <div class="verify-card">
       <div class="verify-brand">
         <span class="verify-logo">🌸</span>
-        <h1>きらきら日本語</h1>
-        <p>KiraKira Nihongo — Aktivasi &amp; Setel Kata Sandi</p>
+        <h1>せんじゅく日本語</h1>
+        <p>Senjuku Nihongo — Aktivasi &amp; Setel Kata Sandi</p>
       </div>
 
       <div id="verifyLoading" class="verify-state">
@@ -51,7 +51,7 @@
 
       <div id="verifySuccess" class="verify-state verify-success-box" hidden>
         <h2>Akun Aktif! 🎉</h2>
-        <p>Anda telah berhasil masuk. Mengalihkan ke KiraKira Nihongo Reading Gym...</p>
+        <p>Anda telah berhasil masuk. Mengalihkan ke Senjuku Nihongo...</p>
         <a href="/" class="btn btn-primary">Mulai Latihan →</a>
       </div>
     </div>
@@ -67,9 +67,9 @@
     const isResetMode = params.get('mode') === 'reset';
 
     if (isResetMode) {
-      document.title = 'Reset Kata Sandi — KiraKira Nihongo';
+      document.title = 'Reset Kata Sandi — Senjuku Nihongo';
       const brandSub = document.querySelector('.verify-brand p');
-      if (brandSub) brandSub.textContent = 'KiraKira Nihongo — Atur Ulang Kata Sandi';
+      if (brandSub) brandSub.textContent = 'Senjuku Nihongo — Atur Ulang Kata Sandi';
       const welcomeSub = document.querySelector('.verify-welcome span');
       if (welcomeSub) welcomeSub.textContent = 'Masukkan kata sandi baru untuk akun Anda.';
       const btn = document.getElementById('submitPasswordBtn');

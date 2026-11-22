@@ -1,8 +1,8 @@
 {
-  "name": "kirakira-nihongo-reading-gym",
-  "version": "1.0.0",
+  "name": "senjuku-nihongo",
+  "version": "2.5.0",
   "type": "module",
-  "description": "Aplikasi interaktif drill membaca Kana dan Kanji berbasis transkrip percakapan Minna no Nihongo Bab 1-14. 15 menit per hari, fokus membaca, repetisi SRS, dan scorecard lengkap.",
+  "description": "Senjuku Nihongo — Aplikasi interaktif drill membaca & menulis Kana dan Kanji berbasis Minna no Nihongo I Bab 1-25.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"

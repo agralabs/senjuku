@@ -9,7 +9,10 @@ let _dbInstance = null;
 export function getDb(customPath = null) {
   if (_dbInstance && !customPath) return _dbInstance;
 
-  const dbPath = customPath || process.env.DB_PATH || path.resolve(process.cwd(), 'data', 'kirakira.db');
+  const defaultDbFile = fs.existsSync(path.resolve(process.cwd(), 'data', 'senjuku.db'))
+    ? 'senjuku.db'
+    : (fs.existsSync(path.resolve(process.cwd(), 'data', 'kirakira.db')) ? 'kirakira.db' : 'senjuku.db');
+  const dbPath = customPath || process.env.DB_PATH || path.resolve(process.cwd(), 'data', defaultDbFile);
   const dir = path.dirname(dbPath);
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });

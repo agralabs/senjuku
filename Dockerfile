@@ -1,4 +1,4 @@
-# KiraKira Nihongo - Dockerfile for Google Cloud Run with Litestream + SQLite
+# Senjuku Nihongo - Dockerfile for Google Cloud Run with Litestream + SQLite
 FROM node:24-alpine
 
 # Install curl, ca-certificates, and litestream
