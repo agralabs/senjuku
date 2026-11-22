@@ -5,6 +5,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { handleApiRequest } from './server/auth.js';
 import { getDb } from './server/db.js';
+import { bootstrapDefaultAdmin, printAdminBootstrapBanner } from './server/admin-bootstrap.js';
 
 const BASE_DIR = path.dirname(fileURLToPath(import.meta.url));
 
@@ -35,8 +36,9 @@ try {
 const PORT = process.env.PORT || 3000;
 const HOST = process.env.HOST || '0.0.0.0';
 
-// Initialize SQLite database schema on startup
-getDb();
+// Initialize SQLite database schema & seed default admin on fresh installs
+const db = getDb();
+printAdminBootstrapBanner(bootstrapDefaultAdmin(db));
 
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',

@@ -368,20 +368,26 @@ erDiagram
 
 ## 3. Deployment Guide
 
-### Environment Variables (Shared by Cloud Run & VM)
+### Environment Variables (Shared by Cloud Run, Docker & VM)
 
 | Variable | Required | Default | Description |
 |---|---|---|---|
 | `PORT` | No | `3000` (Cloud Run sets `8080`) | HTTP listening port |
 | `HOST` | No | `0.0.0.0` | Bind interface |
 | `NODE_ENV` | Prod | `production` | Enables `Secure` flag on session cookies |
-| `BASE_URL` | **Yes (Prod)** | `http://localhost:3000` | Public HTTPS origin used in email verification & reset links (e.g., `https://nihongo.yourdomain.com`) |
-| `DB_PATH` | No | `./data/kirakira.db` | SQLite database file path (e.g., `/data/kirakira.db` in container) |
-| `SMTP_HOST` | Yes | `smtp.yourdomain.com` | SMTP server hostname |
-| `SMTP_PORT` | No | `465` | TLS SMTP port |
-| `SMTP_USER` | Yes | `noreply@yourdomain.com` | SMTP login username |
-| `SMTP_PASS` | Yes (Secret) | — | SMTP password (store in Secret Manager / `.env` `chmod 600`) |
+| `BASE_URL` | **Yes (Prod)** | `http://localhost:3000` | Public HTTPS origin used in email verification & reset links (e.g., `https://senjuku.yourdomain.com`) |
+| `DB_PATH` | No | `./data/senjuku.db` | SQLite database file path (e.g., `/data/senjuku.db` in container) |
+| `ADMIN_DEFAULT_EMAIL` | No | `admin@senjuku.local` | Auto-seeded default Admin (Sensei) email on fresh DB |
+| `ADMIN_DEFAULT_NICKNAME` | No | `SenseiAdmin` | Auto-seeded default Admin nickname |
+| `ADMIN_DEFAULT_PASSWORD` | Recommended (Prod) | `AdminSenjuku123!` | Initial Admin password (if omitted, fallback is used & flagged for mandatory change on first login) |
+| `ADMIN_FORCE_CHANGE_PASSWORD` | No | `1` (fallback) / `0` (custom) | Forces password change prompt in Profile modal on first login |
+| `DISABLE_ADMIN_AUTO_SEED` | No | `0` | Set to `1` to disable automatic admin creation |
+| `SMTP_HOST` | Yes (for email) | — | SMTP server hostname (set `SKIP_SMTP=1` to disable SMTP in local dev) |
+| `SMTP_PORT` | No | `465` | `465` (Implicit SSL/TLS) or `587` / `2525` (STARTTLS) |
+| `SMTP_USER` | Yes (for email) | — | SMTP login username |
+| `SMTP_PASS` | Yes (Secret) | — | SMTP password / App Password (store in Secret Manager or `.env` `chmod 600`) |
 | `SMTP_FROM` | No | `SMTP_USER` | Sender email address |
+| `SMTP_TLS_REJECT_UNAUTHORIZED` | No | `true` | Set `false` only if your mail host uses a self-signed TLS certificate |
 | `GOOGLE_TTS_API_KEY` | Recommended | — | Google Cloud Text-to-Speech API key (1M free chars/month; falls back to browser TTS if omitted) |
 | `GOOGLE_TTS_MALE_VOICE` | No | `ja-JP-Neural2-C` | Native Tokyo male voice |
 | `GOOGLE_TTS_FEMALE_VOICE` | No | `ja-JP-Neural2-B` | Native Tokyo female voice |
@@ -389,17 +395,26 @@ erDiagram
 | `GEMINI_ADVISOR_MODEL` | No | `gemini-3.5-flash-lite` | Gemini model ID (e.g., `gemini-3.1-flash-lite` or `gemini-3.5-flash-lite`) |
 | `GEMINI_ADVISOR_THINKING_LEVEL` | No | `low` | Gemini thinking budget (`minimal`, `low`, `medium`, `high`) |
 
+### Default Admin Bootstrap (`server/admin-bootstrap.js`)
+
+On first startup with a fresh SQLite database (zero existing `admin` users), `server/admin-bootstrap.js` automatically seeds an active, verified Admin (`Sensei`) account with zero SMTP dependency:
+- **Fallback credentials** (when `ADMIN_DEFAULT_*` vars are not set): `admin@senjuku.local` / `AdminSenjuku123!` (`must_change_password = 1`).
+- Upon first login with the fallback password, the Profile modal opens automatically with a security banner prompting the administrator to update the password via `POST /api/auth/change-password`.
+- When `ADMIN_DEFAULT_PASSWORD` is supplied via environment variables/Secret Manager, the password is **never printed** to stdout/container logs.
+- Emergency CLI password reset: `node tools/reset-password.mjs <email-or-nickname> <new-password>`.
+- SMTP diagnostic CLI: `node tools/test-smtp.mjs <recipient-email>`.
+
 ---
 
 ### Option A: Deploy to Google Cloud Run (Recommended — Litestream + GCS)
 
-Because Cloud Run containers are ephemeral, **Litestream** continuously replicates the local SQLite WAL file to a Google Cloud Storage (GCS) bucket and restores it automatically on cold start. Setting `--max-instances 1` avoids SQLite multi-writer locks while `--concurrency 80` easily serves hundreds of concurrent learners.
+Because Cloud Run containers are ephemeral, **Litestream** continuously replicates the local SQLite WAL file to a Google Cloud Storage (GCS) bucket and restores it automatically on cold start. Setting `--max-instances 1` avoids SQLite multi-writer locks while `--concurrency 80` serves hundreds of concurrent learners.
 
 #### 1. Create a GCS Bucket for SQLite Replication
 ```bash
 export PROJECT_ID="your-gcp-project-id"
 export REGION="asia-southeast2"
-export BUCKET_NAME="kirakira-nihongo-db-${PROJECT_ID}"
+export BUCKET_NAME="senjuku-nihongo-db-${PROJECT_ID}"
 
 gcloud storage buckets create "gs://${BUCKET_NAME}" \
   --project="${PROJECT_ID}" \
@@ -407,75 +422,84 @@ gcloud storage buckets create "gs://${BUCKET_NAME}" \
   --uniform-bucket-level-access
 ```
 
-#### 2. Add `litestream.yml`
-```yaml
-dbs:
-  - path: /data/kirakira.db
-    replicas:
-      - type: gcs
-        bucket: ${LITESTREAM_BUCKET}
-        path: kirakira.db
-        sync-interval: 1s
-```
+#### 2. Verify `litestream.yml` & `Dockerfile`
+Both `litestream.yml` and `Dockerfile` are included at the repository root. On startup, the container restores the latest SQLite replica from GCS (if present) and runs `node server.js` under Litestream continuous replication.
 
-#### 3. Add `Dockerfile`
-```dockerfile
-FROM node:24-slim
-
-# Install Litestream binary
-ADD https://github.com/benbjohnson/litestream/releases/download/v0.3.13/litestream-v0.3.13-linux-amd64.tar.gz /tmp/litestream.tar.gz
-RUN tar -C /usr/local/bin -xzf /tmp/litestream.tar.gz && rm /tmp/litestream.tar.gz
-
-WORKDIR /app
-COPY . .
-RUN mkdir -p /data /app/data/tts-cache
-
-ENV NODE_ENV=production
-ENV HOST=0.0.0.0
-ENV DB_PATH=/data/kirakira.db
-
-# Restore latest DB snapshot from GCS if missing, then run server under Litestream replication
-CMD ["sh", "-c", "litestream restore -if-replica-exists -config /app/litestream.yml /data/kirakira.db && exec litestream replicate -config /app/litestream.yml -exec 'node server.js'"]
-```
-
-#### 4. Store Secrets in Secret Manager & Deploy
+#### 3. Store Secrets in Secret Manager & Deploy
 ```bash
-printf '%s' 'YOUR_SMTP_PASSWORD' | gcloud secrets create kirakira-smtp-pass --data-file=-
-printf '%s' 'YOUR_GOOGLE_TTS_API_KEY' | gcloud secrets create kirakira-tts-key --data-file=-
-printf '%s' 'YOUR_GEMINI_API_KEY' | gcloud secrets create kirakira-gemini-key --data-file=-
+printf '%s' 'YOUR_STRONG_ADMIN_PASSWORD' | gcloud secrets create senjuku-admin-pass --data-file=-
+printf '%s' 'YOUR_SMTP_PASSWORD'         | gcloud secrets create senjuku-smtp-pass --data-file=-
+printf '%s' 'YOUR_GOOGLE_TTS_API_KEY'    | gcloud secrets create senjuku-tts-key --data-file=-
+printf '%s' 'YOUR_GEMINI_API_KEY'        | gcloud secrets create senjuku-gemini-key --data-file=-
 
-gcloud run deploy kirakira-nihongo \
+gcloud run deploy senjuku-nihongo \
   --source . \
   --region "${REGION}" \
   --allow-unauthenticated \
   --max-instances 1 \
   --concurrency 80 \
   --memory 512Mi \
-  --set-env-vars "NODE_ENV=production,BASE_URL=https://YOUR_CLOUD_RUN_URL,LITESTREAM_BUCKET=${BUCKET_NAME},SMTP_HOST=smtp.yourdomain.com,SMTP_PORT=465,SMTP_USER=noreply@yourdomain.com,GOOGLE_TTS_MALE_VOICE=ja-JP-Neural2-C,GOOGLE_TTS_FEMALE_VOICE=ja-JP-Neural2-B,GEMINI_ADVISOR_MODEL=gemini-3.1-flash-lite" \
-  --set-secrets "SMTP_PASS=kirakira-smtp-pass:latest,GOOGLE_TTS_API_KEY=kirakira-tts-key:latest,GEMINI_API_KEY=kirakira-gemini-key:latest"
+  --set-env-vars "NODE_ENV=production,BASE_URL=https://YOUR_CLOUD_RUN_URL,LITESTREAM_BUCKET=${BUCKET_NAME},ADMIN_DEFAULT_EMAIL=admin@yourdomain.com,ADMIN_DEFAULT_NICKNAME=SenseiAdmin,SMTP_HOST=smtp.yourdomain.com,SMTP_PORT=465,SMTP_USER=noreply@yourdomain.com,GOOGLE_TTS_MALE_VOICE=ja-JP-Neural2-C,GOOGLE_TTS_FEMALE_VOICE=ja-JP-Neural2-B,GEMINI_ADVISOR_MODEL=gemini-3.5-flash-lite" \
+  --set-secrets "ADMIN_DEFAULT_PASSWORD=senjuku-admin-pass:latest,SMTP_PASS=senjuku-smtp-pass:latest,GOOGLE_TTS_API_KEY=senjuku-tts-key:latest,GEMINI_API_KEY=senjuku-gemini-key:latest"
 ```
-Grant the Cloud Run service account **`roles/storage.objectAdmin`** on `gs://${BUCKET_NAME}` and **`roles/secretmanager.secretAccessor`** on all three secrets.
+Grant the Cloud Run service account **`roles/storage.objectAdmin`** on `gs://${BUCKET_NAME}` and **`roles/secretmanager.secretAccessor`** on all secrets.
 
 ---
 
-### Option B: Deploy to Your Own Linux VM (Ubuntu/Debian + systemd + Caddy HTTPS)
+### Option B: Deploy with Docker (Standalone Container / Docker Compose)
 
-#### 1. Install Node.js v24 & Copy Project
+Ideal for local servers, VPS hosts, or homelabs using a persistent host volume for SQLite.
+
+#### 1. Build Image & Prepare `.env`
 ```bash
-curl -fsSL https://deb.nodesource.com/setup_24.x | sudo -E bash -
-sudo apt-get install -y nodejs caddy
-sudo mkdir -p /opt/kirakira-nihongo /var/lib/kirakira-nihongo
-# Copy project files into /opt/kirakira-nihongo
+git clone https://github.com/agralabs/senjuku.git
+cd senjuku
+cp .env.example .env
+# Edit .env with your BASE_URL, ADMIN_DEFAULT_*, SMTP_*, and optional API keys
+docker build -t senjuku-nihongo .
 ```
 
-#### 2. Create Secure Environment File (`/etc/kirakira-nihongo.env`)
+#### 2. Run Container with Persistent SQLite Volume
 ```bash
-sudo tee /etc/kirakira-nihongo.env > /dev/null <<'EOF'
+docker run -d \
+  --name senjuku-nihongo \
+  --restart unless-stopped \
+  -p 3000:3000 \
+  --env-file .env \
+  -e PORT=3000 \
+  -e DB_PATH=/data/senjuku.db \
+  -v senjuku_data:/data \
+  senjuku-nihongo \
+  node server.js
+```
+Check startup logs to view the auto-seeded Admin banner (on fresh volume):
+```bash
+docker logs senjuku-nihongo
+```
+
+---
+
+### Option C: Deploy to Linux VM (Ubuntu/Debian + systemd + Caddy HTTPS)
+
+#### 1. Install Node.js v24 & Clone Repository
+```bash
+curl -fsSL https://deb.nodesource.com/setup_24.x | sudo -E bash -
+sudo apt-get install -y nodejs caddy git
+sudo mkdir -p /opt/senjuku-nihongo /var/lib/senjuku-nihongo
+sudo git clone https://github.com/agralabs/senjuku.git /opt/senjuku-nihongo
+```
+
+#### 2. Create Secure Environment File (`/etc/senjuku-nihongo.env`)
+```bash
+sudo tee /etc/senjuku-nihongo.env > /dev/null <<'EOF'
 NODE_ENV=production
 HOST=127.0.0.1
 PORT=3000
-BASE_URL=https://nihongo.yourdomain.com
-DB_PATH=/var/lib/kirakira-nihongo/kirakira.db
+BASE_URL=https://senjuku.yourdomain.com
+DB_PATH=/var/lib/senjuku-nihongo/senjuku.db
+ADMIN_DEFAULT_EMAIL=admin@yourdomain.com
+ADMIN_DEFAULT_NICKNAME=SenseiAdmin
+ADMIN_DEFAULT_PASSWORD=CHANGE_ME_STRONG_PASSWORD
 SMTP_HOST=smtp.yourdomain.com
 SMTP_PORT=465
 SMTP_USER=noreply@yourdomain.com
@@ -484,38 +508,38 @@ GOOGLE_TTS_API_KEY=YOUR_GOOGLE_TTS_API_KEY
 GOOGLE_TTS_MALE_VOICE=ja-JP-Neural2-C
 GOOGLE_TTS_FEMALE_VOICE=ja-JP-Neural2-B
 GEMINI_API_KEY=YOUR_GEMINI_API_KEY
-GEMINI_ADVISOR_MODEL=gemini-3.1-flash-lite
+GEMINI_ADVISOR_MODEL=gemini-3.5-flash-lite
 EOF
-sudo chmod 600 /etc/kirakira-nihongo.env
+sudo chmod 600 /etc/senjuku-nihongo.env
 ```
 
-#### 3. Create `systemd` Service (`/etc/systemd/system/kirakira-nihongo.service`)
+#### 3. Create `systemd` Service (`/etc/systemd/system/senjuku-nihongo.service`)
 ```ini
 [Unit]
-Description=KiraKira Nihongo Reading Gym
+Description=Senjuku Nihongo Reading Gym
 After=network.target
 
 [Service]
 Type=simple
-WorkingDirectory=/opt/kirakira-nihongo
-EnvironmentFile=/etc/kirakira-nihongo.env
-ExecStart=/usr/bin/node /opt/kirakira-nihongo/server.js
+WorkingDirectory=/opt/senjuku-nihongo
+EnvironmentFile=/etc/senjuku-nihongo.env
+ExecStart=/usr/bin/node /opt/senjuku-nihongo/server.js
 Restart=always
 RestartSec=3
 
 [Install]
 WantedBy=multi-user.target
 ```
-Enable & start:
+Enable, start, and verify:
 ```bash
 sudo systemctl daemon-reload
-sudo systemctl enable --now kirakira-nihongo
-sudo systemctl status kirakira-nihongo
+sudo systemctl enable --now senjuku-nihongo
+sudo systemctl status senjuku-nihongo
 ```
 
 #### 4. Reverse Proxy with Automatic HTTPS (Caddy — `/etc/caddy/Caddyfile`)
 ```caddyfile
-nihongo.yourdomain.com {
+senjuku.yourdomain.com {
     reverse_proxy 127.0.0.1:3000
 }
 ```
@@ -523,14 +547,14 @@ nihongo.yourdomain.com {
 sudo systemctl reload caddy
 ```
 
-#### 5. Daily Automated SQLite Backup (Cron)
+#### 5. Daily Automated SQLite Backup (Cron) & Maintenance CLIs
 ```bash
 # Safe online SQLite backup via Node.js VACUUM INTO at 02:00 daily
-0 2 * * * /usr/bin/node -e "const {DatabaseSync}=require('node:sqlite'); new DatabaseSync('/var/lib/kirakira-nihongo/kirakira.db').exec(\"VACUUM INTO '/var/backups/kirakira_$(date +\%F).db'\")"
-```
+0 2 * * * /usr/bin/node -e "const {DatabaseSync}=require('node:sqlite'); new DatabaseSync('/var/lib/senjuku-nihongo/senjuku.db').exec(\"VACUUM INTO '/var/backups/senjuku_$(date +\%F).db'\")"
 
-#### 6. Promote First Admin User on VM
-```bash
-cd /opt/kirakira-nihongo
-DB_PATH=/var/lib/kirakira-nihongo/kirakira.db node tools/manage-user.cjs set-admin your@email.com
+# Test SMTP delivery from VM
+cd /opt/senjuku-nihongo && node tools/test-smtp.mjs your@email.com
+
+# Emergency admin password reset
+cd /opt/senjuku-nihongo && DB_PATH=/var/lib/senjuku-nihongo/senjuku.db node tools/reset-password.mjs admin@yourdomain.com NewPassword123!
 ```

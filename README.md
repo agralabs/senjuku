@@ -69,33 +69,48 @@ flowchart LR
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Quick Installation
 
 ### Prerequisites
-- **Node.js v24.0.0+** (utilizes native `node:sqlite` and built-in modern platform modules).
-- No external npm packages required (`npm install` is not needed).
+- **Node.js v24.0.0+** (uses native `node:sqlite`, zero external npm packages needed).
+- Or **Docker** (no local Node.js installation required).
 
-### 1. Clone & Configure
+### Option 1: Local Machine
 ```bash
 git clone https://github.com/agralabs/senjuku.git
 cd senjuku
-
-# Create local environment configuration
 cp .env.example .env
-```
-
-### 2. Run the Server
-```bash
 node server.js
 ```
-The application will be live at:
-👉 **http://localhost:3000**
+Open **http://localhost:3000**.
 
-### 3. Production / Container Deployment
+### Option 2: Docker (Quick Container)
 ```bash
-docker build -t senjuku .
-docker run -p 3000:3000 --env-file .env senjuku
+git clone https://github.com/agralabs/senjuku.git
+cd senjuku
+cp .env.example .env
+docker build -t senjuku-nihongo .
+docker run -d --name senjuku-nihongo --restart unless-stopped \
+  -p 3000:3000 --env-file .env -e PORT=3000 -e DB_PATH=/data/senjuku.db \
+  -v senjuku_data:/data senjuku-nihongo node server.js
 ```
+
+### Option 3: Linux VM (Ubuntu / Debian)
+```bash
+curl -fsSL https://deb.nodesource.com/setup_24.x | sudo -E bash -
+sudo apt-get install -y nodejs git
+git clone https://github.com/agralabs/senjuku.git /opt/senjuku-nihongo
+cd /opt/senjuku-nihongo
+cp .env.example .env   # Configure BASE_URL, ADMIN_DEFAULT_*, SMTP_*
+node server.js         # Or run via systemd + Caddy (see Solution Documentation)
+```
+
+### Default Admin Login (Fresh Install)
+On a fresh SQLite database, `server/admin-bootstrap.js` automatically creates an active Admin (**Sensei**) account without requiring SMTP:
+- **Email / Nickname**: `admin@senjuku.local` / `SenseiAdmin`
+- **Default Password**: `AdminSenjuku123!` *(override via `ADMIN_DEFAULT_PASSWORD` in `.env`, or change immediately in **Profil → Ubah Kata Sandi** on first login)*.
+
+> 📖 For full **GCP Cloud Run (Litestream + GCS)**, **Docker**, and **VM (systemd + Caddy HTTPS + automated backups)** guides, see [`docs/SOLUTION_DOCUMENTATION.md`](docs/SOLUTION_DOCUMENTATION.md#3-deployment-guide).
 
 ---
 

@@ -174,6 +174,7 @@ export function getDb(customPath = null) {
   ensureColumn('users', 'avatar_emoji', "TEXT DEFAULT '🌸'");
   ensureColumn('users', 'bio', "TEXT DEFAULT ''");
   ensureColumn('users', 'is_active', "INTEGER NOT NULL DEFAULT 1");
+  ensureColumn('users', 'must_change_password', "INTEGER NOT NULL DEFAULT 0");
   ensureColumn('user_progress', 'weekly_minutes', "REAL NOT NULL DEFAULT 0");
 
   try {

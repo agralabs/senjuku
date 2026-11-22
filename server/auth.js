@@ -217,7 +217,7 @@ function getAuthenticatedUser(req, db) {
   if (!sessionToken) return null;
 
   const row = db.prepare(`
-    SELECT u.id, u.email, u.nickname, u.role, u.membership_tier, u.avatar_emoji, u.bio, u.is_verified, u.created_at, s.expires_at
+    SELECT u.id, u.email, u.nickname, u.role, u.membership_tier, u.avatar_emoji, u.bio, u.is_verified, u.must_change_password, u.created_at, s.expires_at
     FROM sessions s
     JOIN users u ON u.id = s.user_id
     WHERE s.session_token = ?
@@ -240,6 +240,7 @@ function getAuthenticatedUser(req, db) {
       avatarEmoji: row.avatar_emoji || '🌸',
       bio: row.bio || '',
       isVerified: Boolean(row.is_verified),
+      mustChangePassword: Boolean(row.must_change_password),
       createdAt: row.created_at
     }
   };
@@ -447,7 +448,7 @@ export async function handleApiRequest(req, res, parsedUrl, customDb = null, dep
       try {
         db.prepare(`
           UPDATE users
-          SET password_hash = ?, is_verified = 1, updated_at = datetime('now')
+          SET password_hash = ?, is_verified = 1, must_change_password = 0, updated_at = datetime('now')
           WHERE id = ?
         `).run(passwordHash, row.user_id);
 
@@ -560,7 +561,7 @@ export async function handleApiRequest(req, res, parsedUrl, customDb = null, dep
       }
 
       const user = db.prepare(`
-        SELECT id, email, nickname, password_hash, role, membership_tier, avatar_emoji, bio, is_verified, created_at
+        SELECT id, email, nickname, password_hash, role, membership_tier, avatar_emoji, bio, is_verified, must_change_password, created_at
         FROM users
         WHERE email = ? OR nickname = ?
       `).get(identifier.toLowerCase(), identifier);
@@ -618,6 +619,7 @@ export async function handleApiRequest(req, res, parsedUrl, customDb = null, dep
             membershipTier: user.membership_tier,
             avatarEmoji: user.avatar_emoji || '🌸',
             bio: user.bio || '',
+            mustChangePassword: Boolean(user.must_change_password),
             createdAt: user.created_at
           },
           progress
@@ -650,6 +652,49 @@ export async function handleApiRequest(req, res, parsedUrl, customDb = null, dep
         return true;
       }
       sendJson(res, 200, { authenticated: true, user: auth.user });
+      return true;
+    }
+
+    // 6b. POST /api/auth/change-password (Authenticated user updates own password)
+    if (method === 'POST' && pathname === '/api/auth/change-password') {
+      const auth = getAuthenticatedUser(req, db);
+      if (!auth) {
+        sendJson(res, 401, { error: 'Silakan login terlebih dahulu.' });
+        return true;
+      }
+
+      const body = await readJsonBody(req);
+      const currentPassword = String(body.currentPassword || '');
+      const newPassword = String(body.newPassword || '');
+
+      if (!currentPassword || !newPassword) {
+        sendJson(res, 400, { error: 'Masukkan kata sandi saat ini dan kata sandi baru.' });
+        return true;
+      }
+      if (newPassword.length < 6 || newPassword.length > 128) {
+        sendJson(res, 400, { error: 'Kata sandi baru minimal 6 karakter.' });
+        return true;
+      }
+      if (currentPassword === newPassword) {
+        sendJson(res, 400, { error: 'Kata sandi baru harus berbeda dari kata sandi saat ini.' });
+        return true;
+      }
+
+      const row = db.prepare('SELECT password_hash FROM users WHERE id = ?').get(auth.user.id);
+      if (!row || !verifyPassword(currentPassword, row.password_hash)) {
+        sendJson(res, 401, { error: 'Kata sandi saat ini tidak cocok.' });
+        return true;
+      }
+
+      const newHash = hashPassword(newPassword);
+      db.prepare(`
+        UPDATE users
+        SET password_hash = ?, must_change_password = 0, updated_at = datetime('now')
+        WHERE id = ?
+      `).run(newHash, auth.user.id);
+
+      clearLoginFailures(db, `user:${auth.user.id}`);
+      sendJson(res, 200, { ok: true, message: 'Kata sandi berhasil diperbarui.' });
       return true;
     }
 

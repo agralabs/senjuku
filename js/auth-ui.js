@@ -330,6 +330,10 @@ class AuthUIController {
             </div>
           </div>
 
+          <div id="mustChangePasswordBanner" class="auth-custom-notice" hidden>
+            ⚠️ <strong>Peringatan Keamanan:</strong> Anda sedang menggunakan kata sandi default. Demi keamanan server Anda, segera perbarui kata sandi di bagian <strong>Ubah Kata Sandi</strong> di bawah ini.
+          </div>
+
           <form id="profileForm" class="auth-form">
             <label class="auth-field">
               <span>Nickname</span>
@@ -368,6 +372,22 @@ class AuthUIController {
               <button type="submit" class="btn btn-primary" style="flex:1;justify-content:center;" id="btnSaveProfile">Simpan Profil</button>
               <button type="button" class="btn btn-secondary" id="btnLogoutAccount">Keluar</button>
             </div>
+          </form>
+
+          <hr style="border:none;border-top:1px solid var(--border-subtle);margin:1.15rem 0;" />
+
+          <form id="changePasswordForm" class="auth-form">
+            <h3 style="margin:0;font-size:0.95rem;">🔑 Ubah Kata Sandi</h3>
+            <label class="auth-field">
+              <span>Kata Sandi Saat Ini</span>
+              <input type="password" id="currentPasswordInput" required autocomplete="current-password" placeholder="Masukkan kata sandi saat ini..." />
+            </label>
+            <label class="auth-field">
+              <span>Kata Sandi Baru (minimal 6 karakter)</span>
+              <input type="password" id="newPasswordInput" minlength="6" maxlength="128" required autocomplete="new-password" placeholder="Buat kata sandi baru yang kuat..." />
+            </label>
+            <div id="changePasswordFeedback" class="auth-feedback" hidden></div>
+            <button type="submit" class="btn btn-secondary btn-full" id="btnChangePassword">Perbarui Kata Sandi</button>
           </form>
         </div>
       </div>
@@ -474,6 +494,9 @@ class AuthUIController {
         this.notifyAuthChange();
         await this.pullCloudProgress();
         this.loadLeaderboard();
+        if (this.user?.mustChangePassword) {
+          this.openProfileModal();
+        }
       } catch (err) {
         feedback.textContent = 'Gagal menghubungi server. Pastikan server lokal aktif di http://localhost:3000.';
         feedback.className = 'auth-feedback error';
@@ -608,6 +631,56 @@ class AuthUIController {
       if (this.onProgressUpdated) this.onProgressUpdated();
       this.loadLeaderboard();
     });
+
+    // Change Password Submit (also clears mustChangePassword flag)
+    document.getElementById('changePasswordForm')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const feedback = document.getElementById('changePasswordFeedback');
+      const btn = document.getElementById('btnChangePassword');
+      const curInput = document.getElementById('currentPasswordInput');
+      const newInput = document.getElementById('newPasswordInput');
+      if (feedback) feedback.hidden = true;
+      if (btn) btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/auth/change-password', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            currentPassword: curInput?.value || '',
+            newPassword: newInput?.value || ''
+          })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          if (feedback) {
+            feedback.textContent = data.error || 'Gagal memperbarui kata sandi.';
+            feedback.className = 'auth-feedback error';
+            feedback.hidden = false;
+          }
+          return;
+        }
+        if (this.user) this.user.mustChangePassword = false;
+        const warnBanner = document.getElementById('mustChangePasswordBanner');
+        if (warnBanner) warnBanner.hidden = true;
+        if (curInput) curInput.value = '';
+        if (newInput) newInput.value = '';
+        if (feedback) {
+          feedback.textContent = '✅ Kata sandi berhasil diperbarui!';
+          feedback.className = 'auth-feedback success';
+          feedback.hidden = false;
+        }
+      } catch {
+        if (feedback) {
+          feedback.textContent = 'Gagal menghubungi server.';
+          feedback.className = 'auth-feedback error';
+          feedback.hidden = false;
+        }
+      } finally {
+        if (btn) btn.disabled = false;
+      }
+    });
   }
 
   openAuthModal(tab = 'login', notice = null) {
@@ -652,6 +725,11 @@ class AuthUIController {
 
   populateProfileModal() {
     if (!this.user) return;
+    const warnBanner = document.getElementById('mustChangePasswordBanner');
+    if (warnBanner) warnBanner.hidden = !this.user.mustChangePassword;
+    const pwdFb = document.getElementById('changePasswordFeedback');
+    if (pwdFb) pwdFb.hidden = true;
+
     document.getElementById('profAvatarPreview').textContent = this.user.avatarEmoji || '🌸';
     document.getElementById('profDisplayNick').textContent = this.user.nickname;
     document.getElementById('profDisplayEmail').textContent = this.user.email;
