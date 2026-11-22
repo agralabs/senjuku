@@ -105,6 +105,27 @@
             </p>
           </div>
 
+          <!-- Guest / Registration Wall Notice Banner (Anonymous Users) -->
+          <div class="guest-notice-banner" id="guestNoticeBanner" hidden>
+            <div class="guest-notice-icon">🌸</div>
+            <div class="guest-notice-body">
+              <div class="guest-notice-tag">Mode Pengunjung Terbatas</div>
+              <h3 class="guest-notice-title">Buka Akses Penuh ke Semua 25 Bab &amp; Fitur Eksklusif!</h3>
+              <p class="guest-notice-desc">
+                Saat ini Anda berada dalam mode demo tamu dengan akses terbatas ke <strong>Bab 1–5</strong> dan format latihan dasar (<strong>MCQ</strong>, <strong>Vocab Booster</strong>, &amp; <strong>Flashcard</strong>).
+                Buat akun gratis untuk membuka <strong>25 Bab</strong>, mode <strong>Ketik Langsung</strong>, <strong>Kalimat Rumpang</strong>, <strong>Audio Transcript</strong>, pelacakan <strong>SRS awan</strong>, dan <strong>Papan Peringkat</strong>!
+              </p>
+              <div class="guest-notice-actions">
+                <button type="button" class="btn btn-primary btn-guest-register-action" id="btnGuestRegister">
+                  ✨ Buat Akun Gratis (10 Detik)
+                </button>
+                <button type="button" class="btn btn-secondary btn-guest-login-action" id="btnGuestLogin">
+                  Sudah Punya Akun? Masuk
+                </button>
+              </div>
+            </div>
+          </div>
+
           <!-- 1. Session Type Switcher (Quiz Mode vs Learning Mode) -->
           <div class="session-type-toggle-container">
             <span class="config-label">1. Pilih Jenis Latihan:</span>
@@ -131,15 +152,17 @@
                 <span class="pill-title" id="mcqFormatTitle">Pilihan Ganda (MCQ)</span>
                 <span class="pill-desc" id="mcqFormatDesc">4 opsi bacaan cepat untuk melatih refleks mengenali</span>
               </button>
-              <button type="button" class="format-pill-btn" id="btnFormatTyping" data-format="typing">
+              <button type="button" class="format-pill-btn" id="btnFormatTyping" data-format="typing" data-guest-locked="true">
                 <span class="pill-icon">⌨️</span>
                 <span class="pill-title" id="typingFormatTitle">Ketik Langsung (Typing)</span>
                 <span class="pill-desc" id="typingFormatDesc">Ketik kata/bacaan Kana & Kanji secara langsung</span>
+                <span class="teaser-lock-badge" hidden>🔒 Perlu Akun</span>
               </button>
-              <button type="button" class="format-pill-btn" id="btnFormatBooster" data-format="booster" hidden>
+              <button type="button" class="format-pill-btn" id="btnFormatBooster" data-format="booster" data-guest-locked="true" hidden>
                 <span class="pill-icon">🔗</span>
                 <span class="pill-title">Vocab Booster (3 Pasang)</span>
                 <span class="pill-desc">Pasangkan 3 arti Indonesia dengan Kana atau Kanji (1× kirim)</span>
+                <span class="teaser-lock-badge" hidden>🔒 Perlu Akun</span>
               </button>
             </div>
           </div>
@@ -188,10 +211,11 @@
                   <span class="qcat-title">Tebak Bacaan (MCQ)</span>
                   <span class="qcat-desc">4 opsi pilihan ganda cepat</span>
                 </button>
-                <button type="button" class="quiz-cat-card" data-mode="kanji_match" data-format="typing" aria-checked="false">
+                <button type="button" class="quiz-cat-card" data-mode="kanji_match" data-format="typing" data-guest-locked="true" aria-checked="false">
                   <span class="qcat-icon">⌨️</span>
                   <span class="qcat-title">Tebak Bacaan (Ketik)</span>
                   <span class="qcat-desc">Ketik langsung Kana/Kanji</span>
+                  <span class="teaser-lock-badge" hidden>🔒 Perlu Akun</span>
                 </button>
                 <button type="button" class="quiz-cat-card" data-mode="vocab_booster_kana" data-format="booster" aria-checked="false">
                   <span class="qcat-icon">🔗</span>
@@ -203,25 +227,29 @@
                   <span class="qcat-title">Vocab Booster: Kanji</span>
                   <span class="qcat-desc">3 pasang • 1× kirim</span>
                 </button>
-                <button type="button" class="quiz-cat-card" data-mode="sentence_romaji" data-format="typing" aria-checked="false">
+                <button type="button" class="quiz-cat-card" data-mode="sentence_romaji" data-format="typing" data-guest-locked="true" aria-checked="false">
                   <span class="qcat-icon">✍️</span>
                   <span class="qcat-title">Ketik Kalimat Penuh</span>
                   <span class="qcat-desc">Audio • 45 dtk (2× putar)</span>
+                  <span class="teaser-lock-badge" hidden>🔒 Perlu Akun</span>
                 </button>
-                <button type="button" class="quiz-cat-card" data-mode="sentence_cloze" data-format="typing" aria-checked="false">
+                <button type="button" class="quiz-cat-card" data-mode="sentence_cloze" data-format="typing" data-guest-locked="true" aria-checked="false">
                   <span class="qcat-icon">🔥</span>
                   <span class="qcat-title">Kalimat Rumpang</span>
                   <span class="qcat-desc">Bobot 2× • Wajib 100%</span>
+                  <span class="teaser-lock-badge" hidden>🔒 Perlu Akun</span>
                 </button>
-                <button type="button" class="quiz-cat-card" data-mode="weakness_focus" data-format="mcq" aria-checked="false">
+                <button type="button" class="quiz-cat-card" data-mode="weakness_focus" data-format="mcq" data-guest-locked="true" aria-checked="false">
                   <span class="qcat-icon">🎯</span>
                   <span class="qcat-title">Perbaiki Skor Saya</span>
                   <span class="qcat-desc">Salah 7 hari terakhir</span>
+                  <span class="teaser-lock-badge" hidden>🔒 Perlu Akun</span>
                 </button>
-                <button type="button" class="quiz-cat-card" data-mode="katakana_blitz" data-format="mcq" aria-checked="false">
+                <button type="button" class="quiz-cat-card" data-mode="katakana_blitz" data-format="mcq" data-guest-locked="true" aria-checked="false">
                   <span class="qcat-icon">🔤</span>
                   <span class="qcat-title">Spesial Katakana</span>
                   <span class="qcat-desc">Kata serapan asing</span>
+                  <span class="teaser-lock-badge" hidden>🔒 Perlu Akun</span>
                 </button>
               </div>
               <!-- Hidden synced select for backward compatibility -->
@@ -418,6 +446,26 @@
 
             <!-- Selected Lessons Tag Cloud -->
             <div class="selected-lessons-tag-cloud" id="selectedLessonsTagCloud" aria-label="Bab terpilih"></div>
+          </div>
+
+          <!-- Guest Lessons Bucket Notice (Bab 1 - 5 only for anonymous) -->
+          <div class="guest-lessons-wrapper" id="guestLessonsWrapper" hidden>
+            <div class="guest-bucket-card" id="guestBucketCard">
+              <div class="guest-bucket-header">
+                <span class="guest-bucket-icon">📖</span>
+                <div class="guest-bucket-info">
+                  <span class="guest-bucket-title">Materi Terpilih: Bab 1 – 5 (Paket Pemula)</span>
+                  <span class="guest-bucket-sub">Mode Pengunjung otomatis disetel ke Bab 1–5</span>
+                </div>
+                <span class="badge badge-info">Bab 1–5 Aktif</span>
+              </div>
+              <p class="guest-bucket-text">
+                Pemilihan bab kustom (Bab 6–25) dikunci khusus untuk siswa terdaftar. Daftarkan akun gratis sekarang untuk membuka seluruh 25 Bab!
+              </p>
+              <button type="button" class="btn-guest-unlock-lessons" id="btnGuestUnlockLessons">
+                🔒 Buka Bab 6–25 Sekarang (Daftar Gratis) &rarr;
+              </button>
+            </div>
           </div>
 
           <div class="hero-actions-container">

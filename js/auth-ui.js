@@ -34,12 +34,14 @@ class AuthUIController {
     this.leaderboardPeriod = 'all';
     this.syncTimer = null;
     this.onProgressUpdated = null;
+    this.onAuthChange = null;
   }
 
   async init(options = {}) {
     if (this.initialized) return;
     this.initialized = true;
     this.onProgressUpdated = typeof options.onProgressUpdated === 'function' ? options.onProgressUpdated : null;
+    this.onAuthChange = typeof options.onAuthChange === 'function' ? options.onAuthChange : null;
 
     this.ensureModalsExist();
     this.bindLeaderboardControls();
@@ -53,6 +55,16 @@ class AuthUIController {
     await this.refreshSession();
   }
 
+  notifyAuthChange() {
+    if (typeof this.onAuthChange === 'function') {
+      try {
+        this.onAuthChange(this.user);
+      } catch (err) {
+        console.error('Error in onAuthChange callback:', err);
+      }
+    }
+  }
+
   async refreshSession() {
     try {
       const res = await fetch('/api/auth/me', { credentials: 'same-origin' });
@@ -60,6 +72,7 @@ class AuthUIController {
         this.user = null;
         this.renderHeaderSlot();
         this.updateAdminTabVisibility();
+        this.notifyAuthChange();
         return;
       }
       const data = await res.json();
@@ -79,6 +92,7 @@ class AuthUIController {
         }
         if (this.onProgressUpdated) this.onProgressUpdated();
       }
+      this.notifyAuthChange();
     } catch {
       // Offline / static-only fallback: app continues working with localStorage
       this.user = null;
@@ -87,6 +101,7 @@ class AuthUIController {
       }
       this.renderHeaderSlot();
       this.updateAdminTabVisibility();
+      this.notifyAuthChange();
     }
   }
 
@@ -242,6 +257,8 @@ class AuthUIController {
           <button type="button" class="auth-modal-close" id="btnCloseAuthModal" aria-label="Tutup">&times;</button>
           <h2 id="authModalTitle" style="margin:0;font-size:1.25rem;">🌸 Akun Senjuku Nihongo</h2>
           <p style="margin:0.3rem 0 0;font-size:0.84rem;color:var(--text-muted);">Simpan progres SRS Anda &amp; ikut Papan Peringkat.</p>
+
+          <div id="authCustomNotice" class="auth-custom-notice" hidden></div>
 
           <div class="auth-modal-tabs">
             <button type="button" class="auth-tab-btn active" id="authTabLogin">Masuk</button>
@@ -454,6 +471,7 @@ class AuthUIController {
         authBackdrop.hidden = true;
         this.renderHeaderSlot();
         this.updateAdminTabVisibility();
+        this.notifyAuthChange();
         await this.pullCloudProgress();
         this.loadLeaderboard();
       } catch (err) {
@@ -586,15 +604,25 @@ class AuthUIController {
       profileBackdrop.hidden = true;
       this.renderHeaderSlot();
       this.updateAdminTabVisibility();
+      this.notifyAuthChange();
       if (this.onProgressUpdated) this.onProgressUpdated();
       this.loadLeaderboard();
     });
   }
 
-  openAuthModal(tab = 'login') {
+  openAuthModal(tab = 'login', notice = null) {
     const backdrop = document.getElementById('authModalBackdrop');
     if (!backdrop) return;
     this.switchAuthTab(tab);
+    const noticeEl = document.getElementById('authCustomNotice');
+    if (noticeEl) {
+      if (notice) {
+        noticeEl.innerHTML = notice;
+        noticeEl.hidden = false;
+      } else {
+        noticeEl.hidden = true;
+      }
+    }
     backdrop.hidden = false;
   }
 

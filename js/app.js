@@ -184,12 +184,26 @@ export class JapaneseApp {
     }
 
     // Input Format Switching (MCQ vs Typing vs Vocab Booster)
-    if (this.dom.btnFormatMcq && this.dom.btnFormatTyping) {
+    if (this.dom.btnFormatMcq) {
       this.dom.btnFormatMcq.addEventListener('click', () => this.setInputFormat('mcq'));
-      this.dom.btnFormatTyping.addEventListener('click', () => this.setInputFormat('typing'));
+    }
+    if (this.dom.btnFormatTyping) {
+      this.dom.btnFormatTyping.addEventListener('click', () => {
+        if (!authUI.user) {
+          authUI.openAuthModal('register', '🔒 <strong>Fitur Siswa Terdaftar</strong>: Mode <em>Ketik Langsung (Typing)</em> memerlukan akun gratis. Daftar sekarang dalam 10 detik!');
+          return;
+        }
+        this.setInputFormat('typing');
+      });
     }
     if (this.dom.btnFormatBooster) {
-      this.dom.btnFormatBooster.addEventListener('click', () => this.setInputFormat('booster'));
+      this.dom.btnFormatBooster.addEventListener('click', () => {
+        if (!authUI.user && this.currentSessionType === 'learning') {
+          authUI.openAuthModal('register', '🔒 <strong>Fitur Siswa Terdaftar</strong>: Mode <em>Vocab Booster (Learning)</em> memerlukan akun gratis. Daftar sekarang!');
+          return;
+        }
+        this.setInputFormat('booster');
+      });
     }
 
     // Learning Mode -> Latihan Ketik Santai Sub-Options (Word Typing vs Full Sentence Typing)
@@ -209,9 +223,25 @@ export class JapaneseApp {
       this.dom.quizCategoryCardsGrid.addEventListener('click', (e) => {
         const card = e.target.closest('.quiz-cat-card');
         if (!card) return;
+        if (!authUI.user && card.dataset.guestLocked === 'true') {
+          const title = card.querySelector('.qcat-title')?.textContent || 'Latihan Ini';
+          authUI.openAuthModal('register', `🔒 <strong>Fitur Siswa Terdaftar</strong>: Kategori <em>${title}</em> memerlukan akun gratis. Daftar sekarang dalam 10 detik!`);
+          return;
+        }
         this.selectQuizCategory(card.dataset.mode, card.dataset.format || 'mcq');
       });
     }
+
+    // Guest Banner & Bucket CTA actions
+    document.getElementById('btnGuestRegister')?.addEventListener('click', () => {
+      authUI.openAuthModal('register', '🌸 <strong>Daftar Akun Gratis</strong>: Buka seluruh 25 Bab, mode Ketik, Audio Transcript, dan simpan progres belajar Anda!');
+    });
+    document.getElementById('btnGuestLogin')?.addEventListener('click', () => {
+      authUI.openAuthModal('login');
+    });
+    document.getElementById('btnGuestUnlockLessons')?.addEventListener('click', () => {
+      authUI.openAuthModal('register', '🔒 <strong>Buka Bab 6–25</strong>: Buat akun gratis sekarang untuk membuka seluruh 25 bab Minna no Nihongo!');
+    });
 
     // Lesson multi-select preset filter buttons
     this.dom.presetBtns.forEach(btn => {
@@ -283,6 +313,10 @@ export class JapaneseApp {
     // Special Katakana Blitz Drill Button
     if (this.dom.startKatakanaDrillBtn) {
       this.dom.startKatakanaDrillBtn.addEventListener('click', () => {
+        if (!authUI.user) {
+          authUI.openAuthModal('register', '🔒 <strong>Fitur Siswa Terdaftar</strong>: Mode <em>Spesial Katakana</em> memerlukan akun gratis.');
+          return;
+        }
         const selected = this.getSelectedLessons();
         if (selected.length === 0) {
           this.promptLessonSelection();
@@ -322,6 +356,10 @@ export class JapaneseApp {
     // Full-Sentence Romaji Typing (Audio List • 30s/45s countdown) Button
     if (this.dom.startSentenceRomajiBtn) {
       this.dom.startSentenceRomajiBtn.addEventListener('click', () => {
+        if (!authUI.user) {
+          authUI.openAuthModal('register', '🔒 <strong>Fitur Siswa Terdaftar</strong>: Mode <em>Ketik Kalimat (45s)</em> memerlukan akun gratis.');
+          return;
+        }
         const selected = this.getSelectedLessons();
         if (selected.length === 0) {
           this.promptLessonSelection();
@@ -335,6 +373,10 @@ export class JapaneseApp {
     // Hardest Mode: Cloze Sentence (Isi Kalimat Rumpang) Button
     if (this.dom.startClozeDrillBtn) {
       this.dom.startClozeDrillBtn.addEventListener('click', () => {
+        if (!authUI.user) {
+          authUI.openAuthModal('register', '🔒 <strong>Fitur Siswa Terdaftar</strong>: Mode <em>Kalimat Rumpang</em> memerlukan akun gratis.');
+          return;
+        }
         const selected = this.getSelectedLessons();
         if (selected.length === 0) {
           this.promptLessonSelection();
@@ -348,6 +390,10 @@ export class JapaneseApp {
     // Weakness Repetition Drill Button (runs on selected lessons, or all weak words if none selected)
     if (this.dom.startWeaknessDrillBtn) {
       this.dom.startWeaknessDrillBtn.addEventListener('click', () => {
+        if (!authUI.user) {
+          authUI.openAuthModal('register', '🔒 <strong>Fitur Siswa Terdaftar</strong>: Mode <em>Perbaiki Skor Saya</em> memerlukan akun gratis.');
+          return;
+        }
         const selected = this.getSelectedLessons();
         if (this.dom.drillModeSelect) this.dom.drillModeSelect.value = 'weakness_focus';
         this.launchDrill(this.currentSessionType || 'quiz', 'weakness_focus', selected.length > 0 ? selected : ['all'], 'mcq');
@@ -865,6 +911,10 @@ export class JapaneseApp {
   }
 
   getSelectedLessons() {
+    if (!authUI.user) {
+      // Anonymous / Guest users are strictly locked to Bucket 1: Bab 1-5
+      return [1, 2, 3, 4, 5];
+    }
     const checked = document.querySelectorAll('.lesson-tile input[type="checkbox"]:checked');
     return Array.from(checked).map(cb => parseInt(cb.value, 10)).filter(n => !isNaN(n));
   }
@@ -1053,11 +1103,122 @@ export class JapaneseApp {
         } else if (this.currentTab === 'kana') {
           kanaCompanion.refreshForUser();
         }
+      },
+      onAuthChange: (user) => {
+        this.applyAccessControl(user);
       }
     });
+
+    // Apply initial access control (defaults to guest until session is established)
+    this.applyAccessControl(authUI.user);
+  }
+
+  getTabDisplayName(tabName) {
+    const map = {
+      explorer: 'Audio Transcript',
+      scorecard: 'My Progress',
+      weakness: 'Perbaiki Skor Saya',
+      leaderboard: 'Papan Peringkat',
+      admin: 'Dashboard Sensei'
+    };
+    return map[tabName] || tabName;
+  }
+
+  applyAccessControl(user) {
+    const isGuest = !user;
+
+    // 1. Navigation tabs visibility: anonymous only sees 'drill' & 'kana'
+    this.dom.navTabs.forEach(btn => {
+      const tab = btn.dataset.tab;
+      if (tab === 'admin') {
+        // Admin tab visibility handled by authUI.updateAdminTabVisibility()
+        return;
+      }
+      if (tab === 'drill' || tab === 'kana') {
+        btn.style.display = '';
+      } else {
+        btn.style.display = isGuest ? 'none' : '';
+      }
+    });
+
+    // If guest was on a hidden tab, redirect to daily drill
+    if (isGuest && this.currentTab !== 'drill' && this.currentTab !== 'kana') {
+      this.switchTab('drill');
+    }
+
+    // 2. Toggle Guest Notice Banner and Lessons Selection vs Bucket Card
+    const guestNotice = document.getElementById('guestNoticeBanner');
+    const guestLessons = document.getElementById('guestLessonsWrapper');
+    const lessonsWrapper = document.getElementById('lessonsSelectionWrapper');
+    if (guestNotice) guestNotice.hidden = !isGuest;
+    if (guestLessons) guestLessons.hidden = !isGuest;
+    if (lessonsWrapper) lessonsWrapper.hidden = isGuest;
+
+    // 3. Teaser locks for drill formats and categories
+    this.updateTeaserLockStates(isGuest);
+
+    // 4. Update lessons count / Start CTA state
+    this.updateSelectedLessonsCount();
+  }
+
+  updateTeaserLockStates(isGuest) {
+    // 1. Quiz Category Cards
+    if (this.dom.quizCategoryCardsGrid) {
+      const cards = this.dom.quizCategoryCardsGrid.querySelectorAll('.quiz-cat-card');
+      cards.forEach(card => {
+        const isLocked = isGuest && card.dataset.guestLocked === 'true';
+        card.classList.toggle('teaser-locked', isLocked);
+        const badge = card.querySelector('.teaser-lock-badge');
+        if (badge) badge.hidden = !isLocked;
+      });
+    }
+
+    // 2. Format Pills
+    const formatPills = document.querySelectorAll('.format-pill-btn');
+    formatPills.forEach(pill => {
+      const isLocked = isGuest && pill.dataset.guestLocked === 'true';
+      pill.classList.toggle('teaser-locked', isLocked);
+      const badge = pill.querySelector('.teaser-lock-badge');
+      if (badge) badge.hidden = !isLocked;
+    });
+
+    // 3. Quick Mode Chips
+    const lockedChips = [
+      'startSentenceRomajiBtn',
+      'startClozeDrillBtn',
+      'startWeaknessDrillBtn',
+      'startKatakanaDrillBtn'
+    ];
+    lockedChips.forEach(id => {
+      const btn = document.getElementById(id);
+      if (btn) {
+        btn.classList.toggle('teaser-locked', isGuest);
+        btn.dataset.guestLocked = isGuest ? 'true' : 'false';
+      }
+    });
+
+    // If guest is currently on a locked format or mode, reset to allowed defaults
+    if (isGuest) {
+      if (this.currentSessionType === 'learning') {
+        if (this.currentInputFormat !== 'mcq') {
+          this.setInputFormat('mcq'); // Flashcard
+        }
+      } else {
+        // Quiz mode: only MCQ and Vocab Booster allowed
+        if (this.currentInputFormat === 'typing') {
+          this.setInputFormat('mcq');
+          this.selectQuizCategory('kanji_match', 'mcq');
+        }
+      }
+    }
   }
 
   switchTab(tabName) {
+    if (!authUI.user && tabName !== 'drill' && tabName !== 'kana') {
+      authUI.openAuthModal('register', `🔒 <strong>Fitur Siswa Terdaftar</strong>: Masuk atau buat akun gratis untuk membuka menu <em>${this.getTabDisplayName(tabName)}</em>.`);
+      return;
+    }
+
     this.currentTab = tabName;
     this.dom.navTabs.forEach(btn => {
       btn.classList.toggle('active', btn.dataset.tab === tabName);
