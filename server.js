@@ -9,10 +9,15 @@ import { bootstrapDefaultAdmin, printAdminBootstrapBanner } from './server/admin
 
 const BASE_DIR = path.dirname(fileURLToPath(import.meta.url));
 
-// Zero-dependency .env loader (for optional GOOGLE_TTS_API_KEY, AZURE_SPEECH_KEY, VOICEVOX_URL, SMTP_*, etc.)
+// Zero-dependency .env loader (supports current dir, ../.env, and ../../.env for /deploys/<hash>/ hosting layouts)
 try {
-  const envPath = path.join(BASE_DIR, '.env');
-  if (fs.existsSync(envPath)) {
+  const envCandidates = [
+    path.join(BASE_DIR, '.env'),
+    path.resolve(BASE_DIR, '..', '.env'),
+    path.resolve(BASE_DIR, '..', '..', '.env')
+  ];
+  const envPath = envCandidates.find((p) => fs.existsSync(p));
+  if (envPath) {
     const lines = fs.readFileSync(envPath, 'utf8').split(/\r?\n/);
     for (const rawLine of lines) {
       const line = rawLine.trim();
@@ -28,6 +33,7 @@ try {
         process.env[key] = val;
       }
     }
+    console.log(`[Senjuku Nihongo] Loaded environment from: ${envPath}`);
   }
 } catch (err) {
   console.warn('[Senjuku Nihongo] .env load warning:', err.message);

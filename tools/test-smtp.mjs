@@ -8,9 +8,14 @@ import { fileURLToPath } from 'node:url';
 import { getSmtpConfig, sendSmtpEmail } from '../server/mailer.js';
 
 const BASE_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const envPath = path.join(BASE_DIR, '.env');
+const envCandidates = [
+  path.join(BASE_DIR, '.env'),
+  path.resolve(BASE_DIR, '..', '.env'),
+  path.resolve(BASE_DIR, '..', '..', '.env')
+];
+const envPath = envCandidates.find((p) => fs.existsSync(p));
 
-if (fs.existsSync(envPath)) {
+if (envPath) {
   const lines = fs.readFileSync(envPath, 'utf8').split(/\r?\n/);
   for (const rawLine of lines) {
     const line = rawLine.trim();
