@@ -6,8 +6,6 @@ import { fileURLToPath } from 'url';
 import { handleApiRequest } from './server/auth.js';
 import { getDb } from './server/db.js';
 
-const PORT = process.env.PORT || 3000;
-const HOST = process.env.HOST || '0.0.0.0';
 const BASE_DIR = path.dirname(fileURLToPath(import.meta.url));
 
 // Zero-dependency .env loader (for optional GOOGLE_TTS_API_KEY, AZURE_SPEECH_KEY, VOICEVOX_URL, SMTP_*, etc.)
@@ -33,6 +31,9 @@ try {
 } catch (err) {
   console.warn('[Senjuku Nihongo] .env load warning:', err.message);
 }
+
+const PORT = process.env.PORT || 3000;
+const HOST = process.env.HOST || '0.0.0.0';
 
 // Initialize SQLite database schema on startup
 getDb();

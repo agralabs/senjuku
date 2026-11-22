@@ -1,18 +1,40 @@
-// Senjuku Nihongo - Zero-Dependency TLS SMTP Mailer (node:tls)
-// Connects via SSL/TLS (port 465) with AUTH LOGIN using SMTP_* environment variables.
+// Senjuku Nihongo - Zero-Dependency TLS/STARTTLS SMTP Mailer (node:tls + node:net)
+// Supports both Implicit SSL/TLS (port 465) and STARTTLS (port 587 / 2525 / 25)
+// Reads SMTP_* environment variables dynamically at send time so .env loaders work reliably with ESM.
 
+import net from 'node:net';
 import tls from 'node:tls';
 
+export function getSmtpConfig() {
+  const host = (process.env.SMTP_HOST || '').trim();
+  const port = parseInt(process.env.SMTP_PORT || '465', 10) || 465;
+  const secureEnv = (process.env.SMTP_SECURE || '').trim().toLowerCase();
+  const secure = secureEnv === 'true' ? true : (secureEnv === 'false' ? false : port === 465);
+  const rejectUnauthorized = (process.env.SMTP_TLS_REJECT_UNAUTHORIZED || 'true').trim().toLowerCase() !== 'false';
+  const user = (process.env.SMTP_USER || '').trim();
+  const pass = (process.env.SMTP_PASS || '').trim();
+  const fromName = (process.env.SMTP_FROM_NAME || 'Senjuku Nihongo').trim();
+  const fromEmail = (process.env.SMTP_FROM || user).trim();
+
+  return {
+    host,
+    port,
+    secure,
+    rejectUnauthorized,
+    auth: { user, pass },
+    fromName,
+    fromEmail
+  };
+}
+
+// Backwards-compatible dynamic getter object
 export const SMTP_CONFIG = {
-  host: (process.env.SMTP_HOST || '').trim(),
-  port: Number(process.env.SMTP_PORT || 465),
-  secure: true,
-  auth: {
-    user: (process.env.SMTP_USER || '').trim(),
-    pass: (process.env.SMTP_PASS || '').trim()
-  },
-  fromName: 'Senjuku Nihongo',
-  fromEmail: (process.env.SMTP_FROM || process.env.SMTP_USER || '').trim()
+  get host() { return getSmtpConfig().host; },
+  get port() { return getSmtpConfig().port; },
+  get secure() { return getSmtpConfig().secure; },
+  get auth() { return getSmtpConfig().auth; },
+  get fromName() { return getSmtpConfig().fromName; },
+  get fromEmail() { return getSmtpConfig().fromEmail; }
 };
 
 function encodeBase64(str) {
@@ -60,18 +82,35 @@ function buildMimeMessage({ fromName, fromEmail, to, subject, text, html }) {
   return lines.join('\r\n').replace(/^\./gm, '..');
 }
 
-export function sendSmtpEmail({ to, subject, text, html }, config = SMTP_CONFIG) {
-  return new Promise((resolve, reject) => {
-    const socket = tls.connect(
-      {
-        host: config.host,
-        port: config.port,
-        servername: config.host,
-        rejectUnauthorized: true
-      }
-    );
+export function sendSmtpEmail({ to, subject, text, html }, customConfig = null) {
+  const config = customConfig || getSmtpConfig();
 
-    socket.setTimeout(15000);
+  if (!config.host) {
+    return Promise.reject(new Error('SMTP_HOST belum dikonfigurasi di .env atau environment server.'));
+  }
+  if (!config.auth?.user || !config.auth?.pass) {
+    return Promise.reject(new Error('SMTP_USER atau SMTP_PASS belum dikonfigurasi di .env atau environment server.'));
+  }
+  if (!config.fromEmail) {
+    return Promise.reject(new Error('SMTP_FROM / SMTP_USER kosong sehingga alamat pengirim tidak valid.'));
+  }
+
+  return new Promise((resolve, reject) => {
+    const ehloDomain = (config.fromEmail.includes('@') ? config.fromEmail.split('@')[1] : '') || config.host || 'localhost';
+    const useImplicitTls = config.secure !== false;
+    const rejectUnauthorized = config.rejectUnauthorized !== false;
+
+    let socket = useImplicitTls
+      ? tls.connect({
+          host: config.host,
+          port: config.port,
+          servername: config.host,
+          rejectUnauthorized
+        })
+      : net.connect({
+          host: config.host,
+          port: config.port
+        });
 
     let buffer = '';
     let step = 0;
@@ -98,77 +137,135 @@ export function sendSmtpEmail({ to, subject, text, html }, config = SMTP_CONFIG)
       html
     });
 
-    const commands = [
-      () => sendLine(`EHLO senjuku.local`),
-      () => sendLine(`AUTH LOGIN`),
-      () => sendLine(encodeBase64(config.auth.user)),
-      () => sendLine(encodeBase64(config.auth.pass)),
-      () => sendLine(`MAIL FROM:<${config.fromEmail}>`),
-      () => sendLine(`RCPT TO:<${to}>`),
-      () => sendLine(`DATA`),
-      () => socket.write(mimeBody + '\r\n.\r\n'),
-      () => sendLine(`QUIT`)
-    ];
+    const upgradeToStartTls = () => {
+      const rawSocket = socket;
+      rawSocket.removeAllListeners('data');
+      rawSocket.removeAllListeners('error');
+      rawSocket.removeAllListeners('timeout');
+      rawSocket.removeAllListeners('close');
 
-    const expectedCodes = [
-      220, // Server greeting
-      250, // EHLO
-      334, // AUTH LOGIN prompt username
-      334, // AUTH LOGIN prompt password
-      235, // Auth success
-      250, // MAIL FROM
-      250, // RCPT TO
-      354, // DATA ready
-      250, // Message accepted
-      221  // QUIT bye
-    ];
+      const tlsSocket = tls.connect({
+        socket: rawSocket,
+        servername: config.host,
+        rejectUnauthorized
+      });
 
-    socket.on('data', (chunk) => {
-      buffer += chunk.toString('utf8');
-      const lines = buffer.split('\r\n');
-      buffer = lines.pop() || '';
+      socket = tlsSocket;
+      buffer = '';
+      attachSocketHandlers(tlsSocket);
 
-      for (const line of lines) {
-        if (!line) continue;
-        // Multi-line SMTP response has hyphen after 3-digit code (e.g., 250-PIPELINING)
-        if (/^\d{3}-/.test(line)) continue;
+      tlsSocket.once('secureConnect', () => {
+        sendLine(`EHLO ${ehloDomain}`);
+      });
+    };
 
-        const match = line.match(/^(\d{3})[\s]?/);
-        if (!match) continue;
-        const code = Number(match[1]);
-        const expected = expectedCodes[step];
+    // Build command sequence depending on Implicit TLS (465) vs STARTTLS (587)
+    const commands = useImplicitTls
+      ? [
+          () => sendLine(`EHLO ${ehloDomain}`),
+          () => sendLine(`AUTH LOGIN`),
+          () => sendLine(encodeBase64(config.auth.user)),
+          () => sendLine(encodeBase64(config.auth.pass)),
+          () => sendLine(`MAIL FROM:<${config.fromEmail}>`),
+          () => sendLine(`RCPT TO:<${to}>`),
+          () => sendLine(`DATA`),
+          () => socket.write(mimeBody + '\r\n.\r\n'),
+          () => sendLine(`QUIT`)
+        ]
+      : [
+          () => sendLine(`EHLO ${ehloDomain}`),
+          () => sendLine(`STARTTLS`),
+          () => upgradeToStartTls(),
+          () => sendLine(`AUTH LOGIN`),
+          () => sendLine(encodeBase64(config.auth.user)),
+          () => sendLine(encodeBase64(config.auth.pass)),
+          () => sendLine(`MAIL FROM:<${config.fromEmail}>`),
+          () => sendLine(`RCPT TO:<${to}>`),
+          () => sendLine(`DATA`),
+          () => socket.write(mimeBody + '\r\n.\r\n'),
+          () => sendLine(`QUIT`)
+        ];
 
-        if (code !== expected) {
-          return finish(new Error(`SMTP error at step ${step} (expected ${expected}, got ${code}): ${line}`));
+    const expectedCodes = useImplicitTls
+      ? [
+          220, // Server greeting
+          250, // EHLO
+          334, // AUTH LOGIN prompt username
+          334, // AUTH LOGIN prompt password
+          235, // Auth success
+          250, // MAIL FROM
+          250, // RCPT TO
+          354, // DATA ready
+          250, // Message accepted
+          221  // QUIT bye
+        ]
+      : [
+          220, // Server greeting
+          250, // Initial EHLO
+          220, // Ready to start TLS
+          250, // Post-STARTTLS EHLO
+          334, // AUTH LOGIN prompt username
+          334, // AUTH LOGIN prompt password
+          235, // Auth success
+          250, // MAIL FROM
+          250, // RCPT TO
+          354, // DATA ready
+          250, // Message accepted
+          221  // QUIT bye
+        ];
+
+    const attachSocketHandlers = (sock) => {
+      sock.setTimeout(15000);
+
+      sock.on('data', (chunk) => {
+        buffer += chunk.toString('utf8');
+        const lines = buffer.split('\r\n');
+        buffer = lines.pop() || '';
+
+        for (const line of lines) {
+          if (!line) continue;
+          // Multi-line SMTP response has hyphen after 3-digit code (e.g., 250-PIPELINING)
+          if (/^\d{3}-/.test(line)) continue;
+
+          const match = line.match(/^(\d{3})[\s]?/);
+          if (!match) continue;
+          const code = Number(match[1]);
+          const expected = expectedCodes[step];
+
+          if (code !== expected) {
+            return finish(new Error(`SMTP error at step ${step} (expected ${expected}, got ${code}): ${line}`));
+          }
+
+          if (step < commands.length) {
+            const cmd = commands[step];
+            step++;
+            cmd();
+          } else {
+            return finish(null, { accepted: [to], response: line });
+          }
         }
+      });
 
-        if (step < commands.length) {
-          const cmd = commands[step];
-          step++;
-          cmd();
-        } else {
-          return finish(null, { accepted: [to], response: line });
+      sock.on('timeout', () => {
+        finish(new Error(`SMTP connection timed out (${config.host}:${config.port})`));
+      });
+
+      sock.on('error', (err) => {
+        finish(err);
+      });
+
+      sock.on('close', () => {
+        if (!settled) {
+          if (step >= commands.length) {
+            finish(null, { accepted: [to], response: 'Closed cleanly after QUIT' });
+          } else {
+            finish(new Error(`SMTP socket closed unexpectedly at step ${step} (${config.host}:${config.port})`));
+          }
         }
-      }
-    });
+      });
+    };
 
-    socket.on('timeout', () => {
-      finish(new Error('SMTP connection timed out'));
-    });
-
-    socket.on('error', (err) => {
-      finish(err);
-    });
-
-    socket.on('close', () => {
-      if (!settled) {
-        if (step >= commands.length) {
-          finish(null, { accepted: [to], response: 'Closed cleanly after QUIT' });
-        } else {
-          finish(new Error(`SMTP socket closed unexpectedly at step ${step}`));
-        }
-      }
-    });
+    attachSocketHandlers(socket);
   });
 }
 
