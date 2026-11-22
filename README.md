@@ -1,9 +1,13 @@
 # Senjuku (せんじゅく) — Senjuku Nihongo (せんじゅく日本語)
 ### Japanese Reading Gym & Kana-Writing Web Application
 
-An interactive Japanese reading, vocabulary, and Kana-writing web application aligned 1:1 with *Minna no Nihongo I* (**Bab 1–25**, Audio Tracks **001–087**), built with a zero-external-npm Node.js v24 backend, vanilla ECMAScript modules, SQLite WAL mode, and the **Sumi & Urushi** editorial design system.
+An interactive Japanese reading, vocabulary, and Kana-writing web application inspired by *Minna no Nihongo I*. This app is intended as a classroom teaching companion, providing a 20-minute daily drill to accelerate classical learning.
 
-> 📖 **Comprehensive Solution Documentation**: For detailed functional specifications, SRS formulas, randomization algorithms, scoring rules, and database schemas, refer to [`docs/SOLUTION_DOCUMENTATION.md`](docs/SOLUTION_DOCUMENTATION.md).
+It is built with a zero-external-npm Node.js v24 backend, vanilla ECMAScript modules, SQLite WAL mode, and the **Sumi & Urushi** editorial design system.
+
+> 📖 **Documentation**:
+> - **Student User Guide**: [🇬🇧 English](docs/USER_GUIDE.md) | [🇮🇩 Bahasa Indonesia](docs/USER_GUIDE_ID.md)
+> - **Solution Architecture & Deployment**: Detailed specifications, SRS formulas, database schemas, and Cloud Run / Docker / VM guides — [`docs/SOLUTION_DOCUMENTATION.md`](docs/SOLUTION_DOCUMENTATION.md)
 
 ---
 
@@ -35,7 +39,7 @@ flowchart LR
 | **Authentication & RBAC** | Salted `scrypt` hashing, session cookies (`kk_session`), brute-force lockout, single-use token verification, Student/Admin roles. | Native `node:crypto` |
 | **Neural TTS** | Tokyo Japanese speech synthesis with permanent SHA-256 disk cache and browser voice fallback. | Google Cloud TTS Neural2 (`ja-JP-Neural2-C/B`) |
 | **AI Study Advisor** | One-shot analytical coaching bullets based on aggregated user timing and mistake history (zero free-text chat). | Google Gemini API (`gemini-3.1-flash-lite`), 5-layer guardrails |
-| **Transactional Email** | Account activation, password reset, lesson clear, and grade unlock milestone notifications. | Native `node:tls` SMTP client (Port 465 SSL/TLS) |
+| **Transactional Email** | Account activation, password reset, lesson clear, and grade unlock milestone notifications. | Native `node:tls` / `node:net` SMTP client (Port 465 SSL/TLS & Port 587 STARTTLS) |
 | **UI Design System** | Modern dual-theme editorial canvas with mobile ergonomics (`<= 640px`) and tabular numerics. | **Sumi & Urushi** CSS (`css/sumi-urushi.css`) |
 
 ---
@@ -50,7 +54,7 @@ flowchart LR
    - **Kalimat Rumpang (Cloze)**: Context-rich fill-in-the-blank grammar and particle drills with SVG visuals.
    - **Perbaiki Skor Saya**: Targeted repetition of weak cards failed within the past 7 days.
 
-2. **Session Scoring & Early Exit Penalization**:
+2. **Session Scoring & Early Exit Penalty**:
    - Explicit numerical scoring (`X / 100`) and correct count (`X / Y Soal Benar`).
    - Premature exits penalize all remaining unanswered questions as wrong, demoting cards in the SRS Leitner box.
 
@@ -72,7 +76,7 @@ flowchart LR
 ## 🚀 Quick Installation
 
 ### Prerequisites
-- **Node.js v24.0.0+** (uses native `node:sqlite`, zero external npm packages needed).
+- **Node.js v24.0.0+** (uses native `node:sqlite`; no external npm packages required).
 - Or **Docker** (no local Node.js installation required).
 
 ### Option 1: Local Machine
@@ -135,10 +139,11 @@ senjuku/
 │
 ├── server/
 │   ├── auth.js                  # Authentication router, RBAC & API endpoints
+│   ├── admin-bootstrap.js       # Default Admin auto-seed module (fresh install)
 │   ├── db.js                    # Native SQLite database layer & migrations
 │   ├── advisor.js               # Gemini AI Study Advisor & guardrails
 │   ├── tts.js                   # Neural TTS synthesizer & disk cache
-│   └── mailer.js                # TLS SMTP client for transactional emails
+│   └── mailer.js                # TLS/STARTTLS SMTP client for transactional emails
 │
 ├── data/
 │   ├── book-mapping.js          # Minna no Nihongo I Bab 1–25 audio mapping
@@ -164,10 +169,14 @@ senjuku/
 │   └── auth-ui.js               # Auth modals, leaderboard & admin panel
 │
 ├── docs/
-│   └── SOLUTION_DOCUMENTATION.md # Comprehensive functional & technical specification
+│   ├── SOLUTION_DOCUMENTATION.md # Comprehensive functional & technical specification
+│   ├── USER_GUIDE.md             # Student User Guide (English)
+│   └── USER_GUIDE_ID.md          # Student User Guide (Bahasa Indonesia)
 │
 └── tools/
     ├── manage-user.cjs          # Admin CLI tool (list, activate, set-admin)
+    ├── reset-password.mjs       # Emergency admin password reset CLI
+    ├── test-smtp.mjs            # SMTP connectivity diagnostic CLI
     ├── verify-answer-randomization.mjs # 2,000-iteration statistical test suite
     ├── verify-early-exit-and-scores.mjs # Scoring & early exit verification
     └── verify-*.mjs             # Zero-dependency automated test suites
@@ -180,7 +189,7 @@ senjuku/
 All test suites run natively using Node.js without third-party test runners:
 
 ```bash
-# Verify session scoring & early exit penalization
+# Verify session scoring & early exit penalty
 node tools/verify-early-exit-and-scores.mjs
 
 # Verify 2,000-iteration statistical answer & question randomization
