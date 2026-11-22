@@ -1,90 +1,185 @@
-# きらきら日本語 (KiraKira Nihongo) — Japanese Reading Gym
+# Senjuku — KiraKira Nihongo (きらきら日本語)
+### Japanese Reading Gym & Kana-Writing Web Application
 
-Aplikasi web interaktif modern yang dirancang khusus untuk menguasai kemampuan **membaca Kana (Hiragana & Katakana) serta Kanji** langsung dari transkrip percakapan autentik **Minna no Nihongo (Bab 1 sampai Bab 14)**.
+An interactive Japanese reading, vocabulary, and Kana-writing web application aligned 1:1 with *Minna no Nihongo I* (**Bab 1–25**, Audio Tracks **001–087**), built with a zero-external-npm Node.js v24 backend, vanilla ECMAScript modules, SQLite WAL mode, and the **Sumi & Urushi** editorial design system.
 
----
-
-## 🎯 Fitur & Filosofi Utama
-
-1. **Fokus Murni Membaca (Zero Writing Pressure)**:
-   - Tidak ada tes menulis atau menggambar goresan kanji.
-   - Melatih refleks visual otak dalam mengenali bentuk huruf, bacaan (*on'yomi/kun'yomi*), dan artinya dalam konteks kalimat.
-
-2. **Bite-sized Learning: 10 Menit per Hari**:
-   - Penghitung waktu mundur 10:00 dengan visual *circular timer ring*.
-   - Target optimal 15–25 kartu kanji per sesi.
-   - Peringatan istirahat sehat (*cooling down*) setelah 10 menit selesai untuk memaksimalkan konsolidasi memori jangka panjang (*long-term memory*).
-
-3. **Spaced Repetition System (SRS) & Repetisi Cepat**:
-   - Kartu yang salah dijawab akan langsung dimasukkan kembali ke antrean latihan berikutnya.
-   - Algoritma interval pengulangan berjenjang: 1 hari &rarr; 3 hari &rarr; 7 hari &rarr; 14 hari.
-   - Pelacakan kata-kata lemah (*weak items*) secara transparan.
-
-4. **Transkrip Percakapan Lengkap (Bab 1 - 14)**:
-   - Dilengkapi terjemahan Bahasa Indonesia yang selaras dengan audio transkrip.
-   - **3 Mode Furigana**:
-     - **Tampilkan Semua**: Furigana selalu aktif di atas kanji.
-     - **Hover to Reveal**: Furigana disembunyikan/diburamkan dan baru muncul saat kursor diarahkan ke kanji (sangat efektif menguji ingatan).
-     - **Tanpa Furigana**: Uji membaca kanji murni tanpa bantuan huruf furigana.
-   - Pelafalan audio otomatis menggunakan browser Web Speech API (`ja-JP`) dan efek suara interaktif Web Audio API.
-
-5. **Scorecard Harian & Mingguan (Visual Progress)**:
-   - **Daily Scorecard**: Persentase target 10 menit, jumlah kartu terbaca, persentase akurasi, dan XP.
-   - **Weekly Scorecard**: Grafik batang interaktif SVG 7 hari dengan indikator garis merah target 10 menit.
-   - **SRS Retention Stack**: Visualisasi status penguasaan kosakata (*Mastered*, *Reviewing*, *Learning*, *Unlearned*).
-   - **Ekspor/Impor Cadangan**: Progres belajar tersimpan di `localStorage` peramban dan dapat diekspor/diimpor sebagai berkas `.json`.
+> 📖 **Comprehensive Solution Documentation**: For detailed functional specifications, SRS formulas, randomization algorithms, scoring rules, and database schemas, refer to [`docs/SOLUTION_DOCUMENTATION.md`](docs/SOLUTION_DOCUMENTATION.md).
 
 ---
 
-## 🚀 Cara Menjalankan Aplikasi
+## 🏗️ Solution Architecture
 
-Pastikan **Node.js** telah terpasang di komputer Anda.
+Senjuku is engineered as a lightweight, zero-dependency SPA + REST architecture designed for desktop and mobile browsers, deployable as a container on Cloud Run with Litestream continuous replication.
 
-### Cara 1: Menggunakan Perintah Terminal / PowerShell
-```powershell
-cd c:\my-data\antigravproj\japanese
+```mermaid
+flowchart LR
+    Browser["SPA Frontend\n(index.html, verify.html,\nESM js/*, css/*)"] -->|REST JSON + HttpOnly Cookie| Server["Node.js v24 HTTP Server\n(server.js + .env loader)"]
+    Server --> Static["Static Asset Handler\n(Blocks /server, /database, /tools, *.db)"]
+    Server --> API["Auth, Sync, Leaderboard,\nAdmin & Feature Router\n(server/auth.js)"]
+    API --> DB["SQLite WAL Database\n(server/db.js -> node:sqlite)"]
+    API --> TTS["Neural TTS Engine\n(server/tts.js -> data/tts-cache/)"]
+    API --> Advisor["AI Study Advisor\n(server/advisor.js -> 5-Layer Guardrails)"]
+    API --> Mailer["Zero-Dep TLS SMTP Client\n(server/mailer.js -> node:tls)"]
+    TTS -->|HTTPS REST| GCloudTTS["Google Cloud TTS\n(ja-JP-Neural2-C / B)"]
+    Advisor -->|HTTPS REST| Gemini["Google Gemini API\n(gemini-3.1-flash-lite)"]
+    Mailer -->|Port 465 SSL/TLS| SMTP["smtp.yourdomain.com"]
+    DB -.->|WAL Streaming| Litestream["Litestream Sidecar -> Object Storage"]
+```
+
+### Architectural Highlights
+
+| Layer | Responsibility | Key Technologies |
+|---|---|---|
+| **Core Runtime** | Zero-dependency HTTP routing, static asset serving, path-traversal guards, security headers. | Native `node:http`, Node.js v24+ |
+| **Persistence** | Multi-user progress sync, SRS review tracking, AI advisor cache & quota, activity logging, admin analytics. | Native `node:sqlite` (`DatabaseSync`), WAL mode |
+| **Authentication & RBAC** | Salted `scrypt` hashing, session cookies (`kk_session`), brute-force lockout, single-use token verification, Student/Admin roles. | Native `node:crypto` |
+| **Neural TTS** | Tokyo Japanese speech synthesis with permanent SHA-256 disk cache and browser voice fallback. | Google Cloud TTS Neural2 (`ja-JP-Neural2-C/B`) |
+| **AI Study Advisor** | One-shot analytical coaching bullets based on aggregated user timing and mistake history (zero free-text chat). | Google Gemini API (`gemini-3.1-flash-lite`), 5-layer guardrails |
+| **Transactional Email** | Account activation, password reset, lesson clear, and grade unlock milestone notifications. | Native `node:tls` SMTP client (Port 465 SSL/TLS) |
+| **UI Design System** | Modern dual-theme editorial canvas with mobile ergonomics (`<= 640px`) and tabular numerics. | **Sumi & Urushi** CSS (`css/sumi-urushi.css`) |
+
+---
+
+## 🎯 Core Features
+
+1. **Bite-Sized 8-Question Drill Sessions (`SESSION_BYTE_SIZE = 8`)**:
+   - **Tebak Bacaan (MCQ)**: 4-option reading recognition with unbiased Fisher-Yates answer slot shuffling.
+   - **Tebak Bacaan (Ketik)**: Kana writing enforced via the built-in Japanese Kana On-Screen Keyboard.
+   - **Vocab Booster (Kana & Kanji)**: 3-pair drag-and-drop / click-swap matching with strict derangement shuffling.
+   - **Ketik Kalimat Penuh**: Full-sentence Kana transcription from native audio.
+   - **Kalimat Rumpang (Cloze)**: Context-rich fill-in-the-blank grammar and particle drills with SVG visuals.
+   - **Perbaiki Skor Saya**: Targeted repetition of weak cards failed within the past 7 days.
+
+2. **Session Scoring & Early Exit Penalization**:
+   - Explicit numerical scoring (`X / 100`) and correct count (`X / Y Soal Benar`).
+   - Premature exits penalize all remaining unanswered questions as wrong, demoting cards in the SRS Leitner box.
+
+3. **Audio Transcripts & Tokyo Neural2 TTS**:
+   - Complete *Minna no Nihongo I* transcripts (Bab 1–25, Tracks 001–087).
+   - 3 Furigana display modes (*Tampilkan Semua*, *Hover to Reveal*, *Tanpa Furigana*).
+   - High-fidelity Google Cloud Neural2 speech synthesis with permanent disk caching (`data/tts-cache/`).
+
+4. **Kana Writing Companion (`書 Tulis Kana`)**:
+   - All 46 Hiragana and 46 Katakana characters with KanjiVG animated stroke orders, step-by-step guides, mnemonics, and printable workbook mode (`Klee One` font).
+
+5. **Progression & Gamification**:
+   - 5-Grade gradual block unlock system (Bab 1–5 &rarr; 6–10 &rarr; 11–15 &rarr; 16–20 &rarr; 21–25).
+   - Transparent Bab question-bank coverage score (`score / 100`, or `100 🏆` upon mastery).
+   - Privacy-safe public Leaderboard and Sensei Admin Dashboard.
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+- **Node.js v24.0.0+** (utilizes native `node:sqlite` and built-in modern platform modules).
+- No external npm packages required (`npm install` is not needed).
+
+### 1. Clone & Configure
+```bash
+git clone https://github.com/agralabs/senjuku.git
+cd senjuku
+
+# Create local environment configuration
+cp .env.example .env
+```
+
+### 2. Run the Server
+```bash
 node server.js
 ```
-Lalu buka browser Anda di alamat:
-👉 **[http://localhost:3000](http://localhost:3000)**
+The application will be live at:
+👉 **http://localhost:3000**
 
-### Cara 2: Klik Dua Kali di Windows
-Cukup klik dua kali berkas **`start.bat`** di folder `c:\my-data\antigravproj\japanese`. Berkas ini akan otomatis menyalakan server dan membuka peramban web Anda.
-
----
-
-## ⌨️ Pintasan Keyboard (Daily Drill)
-
-Untuk latihan cepat tanpa menyentuh mouse:
-- **`1`**, **`2`**, **`3`**, **`4`**: Memilih opsi jawaban bacaan.
-- **`Spasi`**: Memutar suara kalimat konteks transkrip.
-- **`R`**: Mengulang pelafalan audio huruf target.
-- **`Enter`**: Melanjutkan ke soal berikutnya setelah menjawab.
+### 3. Production / Container Deployment
+```bash
+docker build -t senjuku .
+docker run -p 3000:3000 --env-file .env senjuku
+```
 
 ---
 
-## 📂 Struktur Berkas
+## 📂 Project Structure
 
 ```
-c:\my-data\antigravproj\japanese\
+senjuku/
+├── index.html                   # Main single-page application entry
+├── verify.html                  # Email verification & password reset page
+├── server.js                    # Zero-dependency Node.js v24 HTTP server
+├── style.css                    # Base layout & components stylesheet
+├── package.json                 # Project metadata & test scripts
+├── Dockerfile                   # Multi-stage production container
+├── litestream.yml               # Litestream SQLite replication config
+├── .env.example                 # Environment template
 │
-├── index.html                   # Halaman utama aplikasi (Semantic HTML5)
-├── style.css                    # Desain responsif, tema gelap/terang, Furigana CSS
-├── server.js                    # Server HTTP statis Node.js ringan (zero-dependency)
-├── start.bat                    # Skrip peluncur otomatis 1-klik di Windows
-├── package.json                 # Konfigurasi npm
+├── css/
+│   ├── sumi-urushi.css          # Sumi & Urushi unified editorial design system
+│   ├── auth-leaderboard.css     # Auth modal, profile & leaderboard styles
+│   ├── kana-companion.css       # Kana stroke workbook & canvas styles
+│   └── ai-advisor.css           # AI Study Advisor report card styles
+│
+├── server/
+│   ├── auth.js                  # Authentication router, RBAC & API endpoints
+│   ├── db.js                    # Native SQLite database layer & migrations
+│   ├── advisor.js               # Gemini AI Study Advisor & guardrails
+│   ├── tts.js                   # Neural TTS synthesizer & disk cache
+│   └── mailer.js                # TLS SMTP client for transactional emails
 │
 ├── data/
-│   ├── lessons-1-5.js           # Transkrip & fokus kanji Bab 1 s/d Bab 5
-│   ├── lessons-6-10.js          # Transkrip & fokus kanji Bab 6 s/d Bab 10
-│   ├── lessons-11-14.js         # Transkrip & fokus kanji Bab 11 s/d Bab 14
-│   └── kanji-vocabulary.js      # Bank soal drill 56+ kanji & katakana pilihan
+│   ├── book-mapping.js          # Minna no Nihongo I Bab 1–25 audio mapping
+│   ├── lessons-*.js             # Transcripts & dialogues (Bab 1–25)
+│   ├── kanji-vocabulary.js      # Kanji vocabulary master bank
+│   ├── cloze-sentences.js       # Cloze fill-in-the-blank question bank
+│   ├── vocab-booster.js         # 3-pair vocabulary matching bank
+│   ├── sentence-romaji.js       # Full-sentence typing bank
+│   └── kana-writing-data.js     # 92 Hiragana/Katakana stroke data (KanjiVG)
 │
-└── js/
-    ├── app.js                   # Inisialisasi dan orkestrator aplikasi
-    ├── audio.js                 # Sintesis suara Web Audio API & pelafalan ja-JP
-    ├── drills.js                # Mesin drill 10 menit, timer, combo & keyboard
-    ├── explorer.js              # Penampil transkrip, mode furigana, modal kanji
-    ├── scorecard.js             # Grafik harian & mingguan SVG, SRS breakdown
-    └── srs.js                   # Sistem kalkulasi repetisi berkala & streak
+├── js/
+│   ├── app.js                   # Main application orchestrator & event bus
+│   ├── drills.js                # Drill engine, timers, shuffle & score logic
+│   ├── srs.js                   # Leitner box spaced repetition engine
+│   ├── audio.js                 # Neural2 & browser audio playback engine
+│   ├── kana-keyboard.js         # Japanese Kana on-screen virtual keyboard
+│   ├── kana-companion.js        # Kana writing workbook & stroke animator
+│   ├── explorer.js              # Audio transcript viewer & shadowing
+│   ├── scorecard.js             # SVG progress charts & coverage calculators
+│   ├── ai-advisor.js            # AI Study Advisor UI integration
+│   ├── progression.js           # Grade block unlock & celebration modals
+│   ├── weakness.js              # Mistake focus (Perbaiki Skor Saya)
+│   └── auth-ui.js               # Auth modals, leaderboard & admin panel
+│
+├── docs/
+│   └── SOLUTION_DOCUMENTATION.md # Comprehensive functional & technical specification
+│
+└── tools/
+    ├── manage-user.cjs          # Admin CLI tool (list, activate, set-admin)
+    ├── verify-answer-randomization.mjs # 2,000-iteration statistical test suite
+    ├── verify-early-exit-and-scores.mjs # Scoring & early exit verification
+    └── verify-*.mjs             # Zero-dependency automated test suites
 ```
+
+---
+
+## 🧪 Verification & Automated Tests
+
+All test suites run natively using Node.js without third-party test runners:
+
+```bash
+# Verify session scoring & early exit penalization
+node tools/verify-early-exit-and-scores.mjs
+
+# Verify 2,000-iteration statistical answer & question randomization
+node tools/verify-answer-randomization.mjs
+
+# Verify multi-user authentication, tokens & security
+node tools/verify-multiuser-auth.mjs
+
+# Verify AI Study Advisor guardrails & quota
+node tools/verify-ai-advisor.mjs
+```
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License.
