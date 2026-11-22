@@ -1030,7 +1030,7 @@ export class JapaneseApp {
   }
 
   applyTheme() {
-    const savedTheme = localStorage.getItem('kirakira_theme') || 'dark';
+    const savedTheme = localStorage.getItem('kirakira_theme') || 'light';
     const isLight = savedTheme === 'light';
     document.body.classList.toggle('light-theme', isLight);
     document.body.classList.toggle('dark-theme', !isLight);
