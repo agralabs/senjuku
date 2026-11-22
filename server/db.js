@@ -46,6 +46,7 @@ export function getDb(customPath = null) {
       bio TEXT DEFAULT '',
       is_verified INTEGER NOT NULL DEFAULT 0,
       is_active INTEGER NOT NULL DEFAULT 1,
+      must_change_password INTEGER NOT NULL DEFAULT 0,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
@@ -174,7 +175,9 @@ export function getDb(customPath = null) {
       if (!cols.some(c => c.name === column)) {
         db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${typeDef};`);
       }
-    } catch (e) {}
+    } catch (e) {
+      console.warn(`[DB Migration] Failed to add column ${table}.${column}:`, e.message);
+    }
   }
   ensureColumn('users', 'membership_tier', "TEXT NOT NULL DEFAULT 'free'");
   ensureColumn('users', 'avatar_emoji', "TEXT DEFAULT '🌸'");
