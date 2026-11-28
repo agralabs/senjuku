@@ -4,15 +4,18 @@ import { MASTER_DRILL_ITEMS } from '../data/kanji-vocabulary.js';
 import { CLOZE_SENTENCE_ITEMS, getContextSvg } from '../data/cloze-sentences.js';
 import { SENTENCE_ROMAJI_ITEMS, checkSentenceRomajiMatch, checkSentenceKanaMatch } from '../data/sentence-romaji.js';
 import { buildVocabBoosterQuestions } from '../data/vocab-booster.js';
+import { buildSpeakAloudQueue } from '../data/speak-aloud.js';
 import { progress } from './srs.js';
 import { sound, PLAYBACK_LIMITS, PlaybackLimiter, getVoicePlaybackLimit } from './audio.js';
 import { checkKanaOnlyMatch } from './kana-converter.js';
 import { renderKanaKeyboardHtml, attachKanaKeyboard } from './kana-keyboard.js';
+import { SpeakAloudRecognizer, isSpeechRecognitionSupported, checkSpokenJapaneseMatch } from './speech.js';
 
 export const SESSION_BYTE_SIZE = 8;
 export const WORD_TYPING_LIMIT_SEC = 30;
 export const FULL_SENTENCE_TYPING_LIMIT_SEC = 50;
 export const QUIZ_NON_TYPING_LIMIT_SEC = 30;
+export const SPEAK_WORD_LIMIT_SEC = 25;
 
 const CHEER_MASCOT_SVG = `
   <svg class="correct-cheer-svg" viewBox="0 0 40 40" width="28" height="28" aria-hidden="true">
@@ -86,6 +89,7 @@ export class DrillEngine {
 
     // DOM cache
     this.elements = {};
+    this.speechRecognizer = new SpeakAloudRecognizer();
   }
 
   init(domElements) {
@@ -286,7 +290,9 @@ export class DrillEngine {
     // Prepare queue based on selected lessons and modes
     let items = [];
 
-    if (mode === 'vocab_booster_kana' || mode === 'vocab_booster_kanji') {
+    if (mode === 'speak_aloud' || inputFormat === 'speak') {
+      this.drillQueue = buildSpeakAloudQueue(this.selectedLessons);
+    } else if (mode === 'vocab_booster_kana' || mode === 'vocab_booster_kanji') {
       const scriptType = (mode === 'vocab_booster_kanji') ? 'kanji' : 'kana';
       this.drillQueue = buildVocabBoosterQuestions(this.selectedLessons, scriptType, SESSION_BYTE_SIZE);
     } else if (mode === 'sentence_romaji') {
@@ -492,6 +498,7 @@ export class DrillEngine {
     clearInterval(this.timerInterval);
     this.clearQuestionTimer();
     clearTimeout(this.autoAdvanceTimeout);
+    this.speechRecognizer?.stop();
     this.sessionActive = false;
 
     const isGraded = (this.sessionType === 'quiz');
@@ -759,6 +766,7 @@ export class DrillEngine {
   renderCurrentView() {
     this.clearQuestionTimer();
     clearTimeout(this.autoAdvanceTimeout);
+    this.speechRecognizer?.stop();
 
     if (this.drillQueue.length === 0 || this.currentIndex >= this.drillQueue.length) {
       this.finishSession();
@@ -771,6 +779,12 @@ export class DrillEngine {
 
     this.currentCard = this.drillQueue[this.currentIndex];
     this.updateStatsUI();
+
+    // Speak Aloud Mode (5 Words + 3 Short Sentences, 50/50 Kana & Kanji)
+    if (this.currentMode === 'speak_aloud' || this.inputFormat === 'speak') {
+      this.renderSpeakAloudCard(this.currentCard);
+      return;
+    }
 
     // Vocabulary Booster 3-Pair Matching Mode (Kana or Kanji, 1-shot all-or-nothing)
     if (this.currentMode === 'vocab_booster_kana' || this.currentMode === 'vocab_booster_kanji') {
@@ -2659,6 +2673,303 @@ export class DrillEngine {
     // Start 25s per-question countdown timer ONLY in Quiz Mode (Learning Mode Vocab Booster is untimed)
     if (!isLearning) {
       this.startQuestionTimer(QUIZ_NON_TYPING_LIMIT_SEC, () => submitVocabBooster(true));
+    }
+  }
+
+  /* =========================================================
+     SPEAK ALOUD MODE (LIVE READING: 5 WORDS + 3 SHORT SENTENCES)
+     Learning Mode: immediate feedback + full answer reveal
+     Quiz Mode: correct/incorrect feedback ONLY (no answer reveal)
+     ========================================================= */
+  renderSpeakAloudCard(card) {
+    if (!this.elements.cardContainer) return;
+
+    const isLearning = (this.sessionType === 'learning');
+    const isSentence = (card.speakKind === 'sentence');
+    const scriptLabel = card.displayScript === 'kanji' ? 'Kanji' : 'Kana';
+    const supported = isSpeechRecognitionSupported();
+    const totalCount = this.drillQueue.length || SESSION_BYTE_SIZE;
+    const isLast = (this.currentIndex >= totalCount - 1);
+
+    if (isLearning && card.id && !this.viewedCardIds.has(card.id)) {
+      this.viewedCardIds.add(card.id);
+      this.cardsReviewed++;
+      this.xpEarned += isSentence ? 5 : 3;
+      progress.recordLearningCardCoverage(card.id);
+      this.updateStatsUI();
+    }
+
+    const dotsHtml = Array.from({ length: 16 }, () => `<span class="speak-dot"></span>`).join('');
+    const audioText = card.expectedKana || card.promptText;
+    const speakLimitSec = isSentence ? FULL_SENTENCE_TYPING_LIMIT_SEC : SPEAK_WORD_LIMIT_SEC;
+
+    this.elements.cardContainer.innerHTML = `
+      <div class="drill-card-inner animate-in ${isLearning ? 'learning-card' : ''}">
+        <div class="drill-card-header">
+          <div class="speak-meta-row">
+            <span class="badge">${isLearning ? '💡 Learning' : '⚡ Quiz'} • Bab ${card.lesson || 1}</span>
+            <span class="speak-pos-badge">${card.posLabel || (isSentence ? 'Kalimat Pendek' : 'Kosakata')}</span>
+            <span class="speak-script-badge">${scriptLabel}</span>
+            <span class="badge badge-multiplier">${isSentence ? '3.5× Skor Tertinggi' : '2.5× Skor'}</span>
+            ${!isLearning ? `<span class="badge badge-timer-type">⏱️ ${speakLimitSec} dtk</span>` : ''}
+          </div>
+          <span class="card-counter">Soal ${this.currentIndex + 1} / ${totalCount}</span>
+        </div>
+
+        ${!isLearning ? `
+          <div class="q-timer-wrap" id="qTimerWrap">
+            <div class="q-timer-header">
+              <span class="q-timer-label">⏳ Waktu Tersisa Soal Ini</span>
+              <strong class="q-timer-sec" id="qTimerSec">${speakLimitSec} dtk</strong>
+            </div>
+            <div class="q-timer-track">
+              <div class="q-timer-fill" id="qTimerFill" style="width: 100%;"></div>
+            </div>
+          </div>
+        ` : ''}
+
+        <div class="speak-prompt-card">
+          <div class="speak-hero-text ${isSentence ? 'is-sentence' : ''}">${card.promptText}</div>
+          ${isLearning ? `
+            ${card.expectedKana ? `<div class="speak-reading-sub">${card.expectedKana}</div>` : ''}
+            ${card.expectedRomaji ? `<div class="speak-romaji-sub">${card.expectedRomaji}</div>` : ''}
+            <hr class="speak-divider" />
+            ${card.meaningText ? `<div class="speak-meaning-sub">${card.meaningText}</div>` : ''}
+            <div class="speak-audio-row">
+              <button type="button" class="speak-audio-pill is-primary" id="speakPlayNormalBtn">
+                🔊 Play Normal
+              </button>
+              <button type="button" class="speak-audio-pill" id="speakPlaySlowBtn">
+                ↺ Play Slow (0.7×)
+              </button>
+            </div>
+          ` : `
+            <div class="speak-quiz-hint">Baca frasa/kalimat diatas</div>
+          `}
+        </div>
+
+        <div class="speak-aloud-stage">
+          ${!supported ? `
+            <div class="speak-unsupported-note">
+              ⚠️ Pengenalan suara browser tidak tersedia di browser ini. Gunakan <strong>Chrome</strong>, <strong>Edge</strong>, atau <strong>Safari (HTTPS)</strong>.
+            </div>
+          ` : ''}
+
+          <button type="button" class="speak-mic-btn" id="speakMicBtn" ${!supported ? 'disabled' : ''}>
+            <span id="speakMicIcon">🎙️</span>
+            <span id="speakMicLabel">Tekan &amp; Ucapkan</span>
+          </button>
+
+          <div class="speak-dots-bar" id="speakDotsBar" aria-hidden="true">${dotsHtml}</div>
+          <div class="speak-interim-line" id="speakTranscriptBox"></div>
+        </div>
+
+        <div class="speak-feedback-wrap" id="feedbackDrawer" hidden>
+          <div class="speak-result-card" id="speakResultCard">
+            <div class="speak-result-left">
+              <div class="speak-result-eyebrow">Pronunciation Result</div>
+              <div class="speak-result-title" id="speakResultTitle"></div>
+              <div class="speak-result-heard" id="speakResultHeard"></div>
+              <div class="speak-result-desc" id="speakResultDesc"></div>
+            </div>
+            <div class="speak-result-score" id="speakResultScore"></div>
+          </div>
+
+          <div class="speak-footer-bar">
+            <div class="speak-footer-status" id="feedbackBanner"></div>
+            <button type="button" class="btn btn-primary" id="speakNextBtn">
+              ${isLast ? 'Lihat Ringkasan →' : 'Soal Berikutnya →'}
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const micBtn = document.getElementById('speakMicBtn');
+    const micIcon = document.getElementById('speakMicIcon');
+    const micLabel = document.getElementById('speakMicLabel');
+    const dotsBar = document.getElementById('speakDotsBar');
+    const transcriptBox = document.getElementById('speakTranscriptBox');
+    const drawer = document.getElementById('feedbackDrawer');
+    const resultCard = document.getElementById('speakResultCard');
+    const resultTitle = document.getElementById('speakResultTitle');
+    const resultHeard = document.getElementById('speakResultHeard');
+    const resultDesc = document.getElementById('speakResultDesc');
+    const resultScore = document.getElementById('speakResultScore');
+    const banner = document.getElementById('feedbackBanner');
+    const playNormalBtn = document.getElementById('speakPlayNormalBtn');
+    const playSlowBtn = document.getElementById('speakPlaySlowBtn');
+    const nextBtn = document.getElementById('speakNextBtn');
+
+    let isAnswered = false;
+
+    const advance = () => {
+      this.speechRecognizer?.stop();
+      sound.stopSpeech();
+      this.currentIndex++;
+      this.renderCurrentView();
+    };
+
+    if (nextBtn) {
+      nextBtn.onclick = advance;
+    }
+
+    if (playNormalBtn) {
+      playNormalBtn.onclick = () => {
+        this.speechRecognizer?.stop();
+        sound.speakJapanese(audioText, null, { rate: 1.0 });
+      };
+    }
+
+    if (playSlowBtn) {
+      playSlowBtn.onclick = () => {
+        this.speechRecognizer?.stop();
+        sound.speakJapanese(audioText, null, { rate: 0.7 });
+      };
+    }
+
+    const setListeningUI = (listening) => {
+      if (micBtn) micBtn.classList.toggle('is-listening', listening);
+      if (dotsBar) dotsBar.classList.toggle('is-listening', listening);
+      if (micIcon) micIcon.textContent = listening ? '⏹️' : '🎙️';
+      if (micLabel) micLabel.textContent = listening ? 'Mendengarkan... (Ketuk Stop)' : 'Tekan & Ucapkan';
+    };
+
+    const renderResultUI = ({ isCorrect, matchedTranscript, score, earnedXP = 0, isTimeout = false }) => {
+      if (resultCard) {
+        resultCard.className = `speak-result-card ${isCorrect ? 'is-correct' : 'is-wrong'}`;
+      }
+      if (resultTitle) {
+        resultTitle.textContent = isTimeout
+          ? '⏱️ Waktu Habis'
+          : (isCorrect ? (score >= 95 ? 'Excellent' : 'Bagus!') : '💪 Belum benar');
+      }
+      if (resultHeard) {
+        resultHeard.textContent = matchedTranscript ? `Heard: ${matchedTranscript}` : (isTimeout ? 'Tidak ada suara terdeteksi' : '');
+      }
+      if (resultDesc) {
+        const descText = isCorrect
+          ? 'Ritme jelas dan pengucapan Bahasa Jepang sesuai.'
+          : (isLearning
+            ? 'Coba dengarkan audio di atas lalu ucapkan ulang, atau lanjut ke soal berikutnya.'
+            : '');
+        resultDesc.textContent = descText;
+        resultDesc.hidden = !descText;
+      }
+      if (resultScore) {
+        resultScore.textContent = `${score}%`;
+      }
+      if (banner) {
+        const meaningSpan = card.meaningText ? `<span class="speak-footer-meaning"> — ${card.meaningText}</span>` : '';
+        if (isCorrect) {
+          banner.innerHTML = isLearning
+            ? `<span class="speak-status-ok">✔ Correct</span> <span><strong>${card.promptText}</strong>${meaningSpan}</span>`
+            : renderCorrectBannerHtml(earnedXP, 'Hebat');
+        } else {
+          banner.innerHTML = isLearning
+            ? `<span class="speak-status-err">✖ Belum Tepat</span> <span><strong>${card.promptText}</strong>${meaningSpan}</span>`
+            : `<span class="speak-status-err">✖ Kurang Tepat</span>`;
+        }
+      }
+      if (drawer) {
+        drawer.hidden = false;
+        drawer.classList.add('slide-up');
+      }
+    };
+
+    const handleEvaluated = (alternatives) => {
+      const { isCorrect, matchedTranscript, score } = checkSpokenJapaneseMatch(alternatives, card);
+      if (transcriptBox) transcriptBox.textContent = '';
+
+      if (isLearning) {
+        renderResultUI({ isCorrect, matchedTranscript, score });
+        return;
+      }
+
+      // Quiz Mode: show correct/not ONLY — DO NOT reveal the answer
+      if (isAnswered) return;
+      isAnswered = true;
+      this.clearQuestionTimer();
+      if (micBtn) micBtn.disabled = true;
+
+      this.cardsReviewed++;
+      const speakMult = isSentence ? 3.5 : 2.5;
+      if (card.id) {
+        progress.recordCardReview(card.id, isCorrect, speakMult);
+      }
+
+      let earnedXP = 0;
+      if (isCorrect) {
+        this.correctCount++;
+        this.combo++;
+        if (this.combo > this.maxCombo) this.maxCombo = this.combo;
+        earnedXP = isSentence
+          ? 35 + Math.min(this.combo * 3, 25)
+          : 25 + Math.min(this.combo * 2, 20);
+        this.xpEarned += earnedXP;
+      } else {
+        this.wrongCount++;
+        this.combo = 0;
+      }
+
+      this.updateStatsUI();
+      renderResultUI({ isCorrect, matchedTranscript, score, earnedXP });
+      if (nextBtn) nextBtn.focus();
+    };
+
+    if (micBtn && supported) {
+      micBtn.onclick = () => {
+        if (this.speechRecognizer.isListening) {
+          this.speechRecognizer.stop();
+          setListeningUI(false);
+          return;
+        }
+        if (!isLearning && isAnswered) return;
+
+        this.speechRecognizer.start({
+          onStart: () => {
+            setListeningUI(true);
+            if (transcriptBox) {
+              transcriptBox.textContent = 'Mendengarkan... silakan ucapkan sekarang';
+            }
+          },
+          onInterim: (text) => {
+            if (transcriptBox) {
+              transcriptBox.textContent = `"${text}"`;
+            }
+          },
+          onResult: (alternatives) => {
+            setListeningUI(false);
+            handleEvaluated(alternatives);
+          },
+          onError: (_code, friendlyMsg) => {
+            setListeningUI(false);
+            if (transcriptBox) {
+              transcriptBox.textContent = friendlyMsg;
+            }
+          },
+          onEnd: () => {
+            setListeningUI(false);
+          }
+        });
+      };
+    }
+
+    if (!isLearning) {
+      this.startQuestionTimer(speakLimitSec, () => {
+        if (isAnswered) return;
+        this.speechRecognizer?.stop();
+        isAnswered = true;
+        if (micBtn) micBtn.disabled = true;
+        this.cardsReviewed++;
+        this.wrongCount++;
+        this.combo = 0;
+        if (card.id) {
+          progress.recordCardReview(card.id, false);
+        }
+        this.updateStatsUI();
+        renderResultUI({ isCorrect: false, matchedTranscript: '', score: 0, isTimeout: true });
+      });
     }
   }
 }

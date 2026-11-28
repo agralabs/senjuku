@@ -51,33 +51,35 @@ On the **Daily Drill** screen, you always choose between two practice modes:
 
 ## 4. Walkthrough of Every Learning & Quiz Type
 
-### A. Learning Mode
-1. **Kartu Bacaan (Flashcard)**
+### A. Mode Latihan (Learning Mode)
+1. **Flashcard**
    - Shows vocabulary or Kanji on the front. Press **Space** or click the card to flip and reveal the reading, Romaji, meaning, and example sentence.
    - Click the audio icon (or press `R`) to play native Tokyo pronunciation.
-2. **Latihan Ketik Santai (Relaxed Typing)**
+2. **Tulis Cepat**
    - **Word Typing**: Practice typing Kana/Kanji readings at your own pace using the built-in Kana Keyboard.
    - **Full Sentence Typing**: Practice transcribing full audio sentences calmly without timer stress.
-3. **Vocab Booster (3 Pairs)**
+3. **Vocab Booster** *(cascading: **Vocab Booster: Kana** & **Vocab Booster: Kanji**)*
    - Match **3 Indonesian meanings** on the left with **3 Kana or Kanji cards** on the right, then submit all 3 pairs at once (`1× submit`).
+4. **Speak Aloud**
+   - Practice speaking 5 words and 3 short sentences aloud with `Play Normal` / `Play Slow (0.7×)` audio cues (`+3 XP` Word / `+5 XP` Sentence warm-up, defaulting to **Romaji: OFF**, **Meaning: ON**).
 
-### B. Quiz Mode (8 Questions per Session)
+### B. Mode Quiz (8 Questions per Session)
 Every Quiz Mode session consists of **8 bite-sized questions** to keep your focus sharp:
 
-1. **Tebak Bacaan (MCQ)**
-   - Choose 1 of 4 reading options (keyboard shortcuts `1`–`4`). Option positions are uniformly randomized on every question.
-2. **Tebak Bacaan (Ketik / Typing)**
-   - Type the Kana/Kanji reading directly. Romaji input automatically converts to Hiragana/Katakana, or you can tap keys on the built-in *Kana On-Screen Keyboard*.
-3. **Vocab Booster: Kana** & **Vocab Booster: Kanji**
+1. **Pilihan Ganda** *(cascading: **Tebak Baca** & **Kalimat Rumpang**)*
+   - **Tebak Baca**: Choose 1 of 4 reading options (keyboard shortcuts `1`–`4`). Option positions are uniformly randomized on every question.
+   - **Kalimat Rumpang**: Fill in the missing word or particle inside a complete sentence with visual context cues. Requires **100% accuracy** for `100 🏆` and awards **2× weight**.
+2. **Ketik Cepat** *(cascading: **Kosa Kata** & **Kalimat Penuh**)*
+   - **Kosa Kata**: Type the Kana reading directly using the built-in *Kana On-Screen Keyboard*.
+   - **Kalimat Penuh**: Listen to native audio (up to **2× plays**) and type the full sentence in Kana within **50 seconds**.
+3. **Vocab Booster** *(cascading: **Vocab Booster: Kana** & **Vocab Booster: Kanji**)*
    - Match 3 meanings with 3 Kana (or Kanji) cards on a single screen. Cards are strictly shuffled so no pair starts pre-aligned.
-4. **Ketik Kalimat Penuh (Full Sentence Typing)**
-   - Listen to native audio (up to **2× plays**) and type the full sentence in Kana within **50 seconds**.
-5. **Kalimat Rumpang (Cloze Sentence)** *(Hardest Mode — 2× Weight)*
-   - Fill in the missing word or particle inside a complete sentence with visual context cues. Requires **100% accuracy** and awards **2× weight** for progress and XP.
-6. **Perbaiki Skor Saya (Weakness Focus)**
+4. **Perbaiki Skor Saya**
    - Automatically gathers words and sentences you answered incorrectly in the **past 7 days** for targeted repetition.
-7. **Spesial Katakana (Katakana Blitz)**
+5. **Spesial Katakana**
    - Fast-paced reading drill focused specifically on foreign loanwords in Katakana.
+6. **Speak Aloud** *(Highest Score Multiplier — 2.5× Word / 3.5× Sentence)*
+   - 8-question session (`5` words + `3` short sentences, 50/50 random Kana/Kanji). Tap **Tekan & Ucapkan** to read aloud via microphone (`25s` timer for words with `2.5×` multiplier / `+25 XP` base, `50s` for sentences with `3.5×` multiplier / `+35 XP` base — highest score per question).
 
 ### Quick Keyboard Shortcuts
 - `1`–`4` : Select a Multiple Choice (MCQ) option
@@ -110,7 +112,8 @@ Every Quiz Mode session consists of **8 bite-sized questions** to keep your focu
 
 ### 3. XP, Combo & Levels
 - Every correct answer earns **XP**. Consecutive correct answers build a **Combo** multiplier for bonus XP.
-- **Kalimat Rumpang (Cloze)** carries **2× weight** for progress and XP.
+- **Kalimat Rumpang (Cloze)** carries **2× weight** for coverage progress.
+- **Speak Aloud** awards the highest multipliers & XP: **Speak Aloud (Word)** = **2.5×** (`+25 XP` base), and **Speak Aloud (Sentence)** = **3.5×** (`+35 XP` base — highest score per question).
 - Accumulating XP raises your **Level** and unlocks achievement **Badges**.
 
 ### 4. Spaced Repetition System (SRS — Leitner Boxes)
@@ -126,7 +129,7 @@ Every Quiz Mode session consists of **8 bite-sized questions** to keep your focu
   - **Learning Mode (viewing a card)** = `10%` warm-up credit (upgrades to `100%` once answered correctly in Quiz Mode).
   - **Wrong answers** never reduce credit you already earned.
 - **Question Weights & `100 🏆` Requirement**:
-  - **Vocab/Kanji** and **Sentence Romaji Typing** carry **1×** weight, while **Kalimat Rumpang (Cloze)** carries **2×** weight.
+  - **Vocab/Kanji** and **Sentence Romaji Typing** carry **1×** weight, **Kalimat Rumpang (Cloze)** carries **2×** weight, **Speak Aloud (Word)** carries **2.5×** weight, and **Speak Aloud (Sentence)** carries **3.5×** weight (highest score per question).
   - Earning **`100 🏆`** on a lesson requires **≥ 80% total weighted coverage** **and** **100% of Kalimat Rumpang** answered correctly in Quiz Mode (otherwise the lesson score is capped at **89**).
 - **Repeating Quizzes**: Answering new cards correctly increases **Total Score**. Repeating cards already at `100%` still increases **XP, Level, Weekly Minutes, and SRS strength**, without inflating Total Score.
 
@@ -136,9 +139,10 @@ Every Quiz Mode session consists of **8 bite-sized questions** to keep your focu
 
 The **位 Papan Peringkat (Leaderboard)** lets you track your standing alongside other verified learners:
 
-- **Ranking Criteria**:
-  1. **All-Time (Sepanjang Waktu)**: Ranked primarily by **Total Score (`/ 2,500`)**, then **Total XP**, **Daily Streak**, and **Mastered Cards**.
-  2. **Weekly (Minggu Ini)**: Ranked by **Weekly Study Minutes**.
+- **Ranking Criteria** *(applied to both **All-Time** and **Weekly**)*:
+  1. **Total Score (`/ 2,500`)** as the primary rank.
+  2. **Total XP** as the first tie-breaker.
+  3. **Weekly Study Minutes** as the next tie-breaker (followed by *Daily Streak* and *Mastered Cards*).
 - **Period Filters & Score Guide**: Switch between **Sepanjang Waktu** and **Minggu Ini**, and click **ℹ️ Cara Hitung Skor** directly on the page for a quick breakdown.
 - **100% Privacy-Safe**:
   - The Leaderboard **only** displays *Nickname*, *Avatar*, *Total Score*, *Level*, *XP*, *Streak*, *Mastered Cards*, *Weekly Minutes*, and *Badges*.

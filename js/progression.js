@@ -196,7 +196,9 @@ export function renderScoreGuideCardHtml(cardId = 'scoreGuideCard') {
           </div>
           <ul>
             <li><strong>Kosakata/Kanji</strong> &amp; <strong>Ketik Romaji Kalimat</strong>: bobot <strong>1×</strong>.</li>
-            <li><strong>Kalimat Rumpang</strong>: bobot <strong>2×</strong> (nilai tertinggi!).</li>
+            <li><strong>Kalimat Rumpang</strong>: bobot <strong>2×</strong>.</li>
+            <li><strong>Speak Aloud (Kosakata)</strong>: pengali skor <strong>2.5×</strong> (+25 XP dasar).</li>
+            <li><strong>Speak Aloud (Kalimat)</strong>: pengali skor <strong>3.5×</strong> (nilai tertinggi per soal! +35 XP dasar).</li>
             <li><strong>Skor 100 🏆</strong> per Bab diraih saat cakupan materi <strong>≥ 80%</strong> <em>dan</em> <strong>100% Kalimat Rumpang</strong> dijawab benar di Quiz Mode (tanpa itu, skor Bab maks. <strong>89</strong>).</li>
           </ul>
         </div>

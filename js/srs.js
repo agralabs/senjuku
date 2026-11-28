@@ -208,7 +208,7 @@ export class ProgressManager {
   // 2: 3 days
   // 3: 7 days
   // 4: 14 days (mastered)
-  recordCardReview(cardId, isCorrect) {
+  recordCardReview(cardId, isCorrect, scoreMultiplier = 1.0) {
     if (!this.data.cards[cardId]) {
       this.data.cards[cardId] = {
         stage: 0,
@@ -218,7 +218,8 @@ export class ProgressManager {
         nextDue: null,
         mistakeTimestamps: [],
         coverageCredit: 0,
-        learningViews: 0
+        learningViews: 0,
+        scoreMultiplier: 1.0
       };
     }
 
@@ -234,6 +235,8 @@ export class ProgressManager {
       c.stage = Math.min(4, c.stage + 1);
       // Full 100% (1.0) question credit when answered correctly in Quiz Mode
       c.coverageCredit = 1.0;
+      const incomingMult = Number(scoreMultiplier) || 1.0;
+      c.scoreMultiplier = Math.max(Number(c.scoreMultiplier) || 1.0, incomingMult);
 
       const intervals = [1, 2, 4, 7, 14];
       const daysToAdd = intervals[c.stage] || 1;
@@ -287,6 +290,13 @@ export class ProgressManager {
     return c.correct > 0 ? 1.0 : 0;
   }
 
+  getCardScoreMultiplier(cardId) {
+    const c = this.data.cards[cardId];
+    if (!c) return 1.0;
+    const mult = Number(c.scoreMultiplier);
+    return Number.isFinite(mult) && mult >= 1.0 ? mult : 1.0;
+  }
+
   // Per-lesson question bank coverage & score across ALL question types:
   // - Vocab/Kanji: weight 1.0 (Quiz = 1.0, Learning = 0.1)
   // - Audio Sentence Romaji: weight 1.0 (Quiz = 1.0, Learning = 0.1)
@@ -312,14 +322,14 @@ export class ProgressManager {
 
     lessonVocab.forEach(it => {
       const credit = this.getCardCoverageCredit(it.id);
-      earnedWeight += credit * 1.0;
+      earnedWeight += credit * this.getCardScoreMultiplier(it.id);
       if (credit >= 1.0) { quizCoveredCount++; vocabQuizCovered++; }
       else if (credit > 0) learningOnlyCount++;
     });
 
     lessonSentence.forEach(it => {
       const credit = this.getCardCoverageCredit(it.id);
-      earnedWeight += credit * 1.0;
+      earnedWeight += credit * this.getCardScoreMultiplier(it.id);
       if (credit >= 1.0) { quizCoveredCount++; sentenceQuizCovered++; }
       else if (credit > 0) learningOnlyCount++;
     });

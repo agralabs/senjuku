@@ -33,8 +33,8 @@
     <!-- App Main Navigation Tabs (Inline in Header on Desktop; Fixed 5-Tab Bottom Bar on Mobile) -->
     <nav class="app-tab-nav" id="appTabNav" aria-label="Navigasi Utama">
       <button type="button" class="nav-tab-btn active" data-tab="drill">
-        <span class="tab-emoji tab-kanji" aria-hidden="true">練</span>
-        <span class="tab-text">Latihan</span>
+        <span class="tab-emoji tab-kanji" aria-hidden="true">開始</span>
+        <span class="tab-text">Kaishi</span>
       </button>
       <button type="button" class="nav-tab-btn" data-tab="kana" id="navTabKana">
         <span class="tab-emoji tab-kanji" aria-hidden="true">書</span>
@@ -42,7 +42,7 @@
       </button>
       <button type="button" class="nav-tab-btn" data-tab="explorer">
         <span class="tab-emoji tab-kanji" aria-hidden="true">読</span>
-        <span class="tab-text">Transkrip</span>
+        <span class="tab-text">Audio Bank</span>
       </button>
       <button type="button" class="nav-tab-btn" data-tab="scorecard">
         <span class="tab-emoji tab-kanji" aria-hidden="true">進</span>
@@ -208,12 +208,12 @@
             <div class="session-type-pills">
               <button type="button" class="type-pill-btn" id="btnTypeQuiz" data-type="quiz">
                 <span class="pill-icon">⚡</span>
-                <span class="pill-title">Quiz Mode (Uji Refleks)</span>
+                <span class="pill-title">Mode Quiz</span>
                 <span class="pill-desc">Terima tantangan dan raih nilai penuh</span>
               </button>
               <button type="button" class="type-pill-btn" id="btnTypeLearning" data-type="learning">
                 <span class="pill-icon">💡</span>
-                <span class="pill-title">Learning Mode (Flashcard)</span>
+                <span class="pill-title">Mode Latihan</span>
                 <span class="pill-desc">Latihan santai pendalaman materi, bobot nilai 10%</span>
               </button>
             </div>
@@ -225,20 +225,25 @@
             <div class="format-pills" id="formatPillsGrid">
               <button type="button" class="format-pill-btn" id="btnFormatMcq" data-format="mcq">
                 <span class="pill-icon">🔘</span>
-                <span class="pill-title" id="mcqFormatTitle">Pilihan Ganda (MCQ)</span>
+                <span class="pill-title" id="mcqFormatTitle">Pilihan Ganda</span>
                 <span class="pill-desc" id="mcqFormatDesc">4 opsi bacaan cepat untuk melatih refleks mengenali</span>
               </button>
               <button type="button" class="format-pill-btn" id="btnFormatTyping" data-format="typing" data-guest-locked="true">
                 <span class="pill-icon">⌨️</span>
-                <span class="pill-title" id="typingFormatTitle">Ketik Langsung (Typing)</span>
+                <span class="pill-title" id="typingFormatTitle">Ketik Cepat</span>
                 <span class="pill-desc" id="typingFormatDesc">Ketik kata/bacaan Kana & Kanji secara langsung</span>
                 <span class="teaser-lock-badge" hidden>🔒 Perlu Akun</span>
               </button>
               <button type="button" class="format-pill-btn" id="btnFormatBooster" data-format="booster" data-guest-locked="true" hidden>
                 <span class="pill-icon">🔗</span>
-                <span class="pill-title">Vocab Booster (3 Pasang)</span>
+                <span class="pill-title">Vocab Booster</span>
                 <span class="pill-desc">Pasangkan 3 arti Indonesia dengan Kana atau Kanji (1× kirim)</span>
                 <span class="teaser-lock-badge" hidden>🔒 Perlu Akun</span>
+              </button>
+              <button type="button" class="format-pill-btn" id="btnFormatSpeak" data-format="speak" hidden>
+                <span class="pill-icon">🎙️</span>
+                <span class="pill-title">Speak Aloud</span>
+                <span class="pill-desc">Baca 5 kata &amp; 3 kalimat Kana/Kanji lewat mikrofon (koreksi langsung)</span>
               </button>
             </div>
           </div>
@@ -249,12 +254,12 @@
             <div class="format-pills">
               <button type="button" class="format-pill-btn" id="btnLearnTypingWord" data-learning-typing="word">
                 <span class="pill-icon">📝</span>
-                <span class="pill-title">Ketik Kosakata (Word Typing)</span>
+                <span class="pill-title">Ketik Kosakata</span>
                 <span class="pill-desc">Latihan mengetik satu kata Kana/Kanji santai dengan audio</span>
               </button>
               <button type="button" class="format-pill-btn" id="btnLearnTypingSentence" data-learning-typing="sentence">
                 <span class="pill-icon">✍️</span>
-                <span class="pill-title">Ketik Kalimat Penuh (Full Sentence)</span>
+                <span class="pill-title">Ketik Kalimat Penuh</span>
                 <span class="pill-desc">Tulis Romaji kalimat penuh dari daftar audio (timer 50 dtk)</span>
               </button>
             </div>
@@ -282,38 +287,21 @@
             <div class="config-col select-col" style="width: 100%;">
               <span class="config-label">2. Pilih Kategori Materi:</span>
               <div class="quiz-category-cards-grid" id="quizCategoryCardsGrid" role="radiogroup" aria-label="Kategori Materi Quiz">
-                <button type="button" class="quiz-cat-card active" data-mode="kanji_match" data-format="mcq" aria-checked="true">
+                <button type="button" class="quiz-cat-card active" data-quiz-parent="mcq" data-mode="kanji_match" data-format="mcq" aria-checked="true">
                   <span class="qcat-icon">🈸</span>
-                  <span class="qcat-title">Tebak Bacaan (MCQ)</span>
-                  <span class="qcat-desc">4 opsi pilihan ganda cepat</span>
+                  <span class="qcat-title">Pilihan Ganda</span>
+                  <span class="qcat-desc">Padanan Kana &amp; Kalimat Rumpang</span>
                 </button>
-                <button type="button" class="quiz-cat-card" data-mode="kanji_match" data-format="typing" data-guest-locked="true" aria-checked="false">
+                <button type="button" class="quiz-cat-card" data-quiz-group="typing" data-mode="kanji_match" data-format="typing" data-guest-locked="true" aria-checked="false">
                   <span class="qcat-icon">⌨️</span>
-                  <span class="qcat-title">Tebak Bacaan (Ketik)</span>
+                  <span class="qcat-title">Ketik Cepat</span>
                   <span class="qcat-desc">Ketik langsung Kana/Kanji</span>
                   <span class="teaser-lock-badge" hidden>🔒 Perlu Akun</span>
                 </button>
-                <button type="button" class="quiz-cat-card" data-mode="vocab_booster_kana" data-format="booster" aria-checked="false">
+                <button type="button" class="quiz-cat-card" data-quiz-group="booster" data-mode="vocab_booster_kana" data-format="booster" aria-checked="false">
                   <span class="qcat-icon">🔗</span>
-                  <span class="qcat-title">Vocab Booster: Kana</span>
+                  <span class="qcat-title">Vocab Booster</span>
                   <span class="qcat-desc">3 pasang • 1× kirim</span>
-                </button>
-                <button type="button" class="quiz-cat-card" data-mode="vocab_booster_kanji" data-format="booster" aria-checked="false">
-                  <span class="qcat-icon">🈳</span>
-                  <span class="qcat-title">Vocab Booster: Kanji</span>
-                  <span class="qcat-desc">3 pasang • 1× kirim</span>
-                </button>
-                <button type="button" class="quiz-cat-card" data-mode="sentence_romaji" data-format="typing" data-guest-locked="true" aria-checked="false">
-                  <span class="qcat-icon">✍️</span>
-                  <span class="qcat-title">Ketik Kalimat Penuh</span>
-                  <span class="qcat-desc">Audio • 50 dtk (2× putar)</span>
-                  <span class="teaser-lock-badge" hidden>🔒 Perlu Akun</span>
-                </button>
-                <button type="button" class="quiz-cat-card" data-mode="sentence_cloze" data-format="typing" data-guest-locked="true" aria-checked="false">
-                  <span class="qcat-icon">🔥</span>
-                  <span class="qcat-title">Kalimat Rumpang</span>
-                  <span class="qcat-desc">Bobot 2× • Wajib 100%</span>
-                  <span class="teaser-lock-badge" hidden>🔒 Perlu Akun</span>
                 </button>
                 <button type="button" class="quiz-cat-card" data-mode="weakness_focus" data-format="mcq" data-guest-locked="true" aria-checked="false">
                   <span class="qcat-icon">🎯</span>
@@ -327,10 +315,64 @@
                   <span class="qcat-desc">Kata serapan asing</span>
                   <span class="teaser-lock-badge" hidden>🔒 Perlu Akun</span>
                 </button>
+                <button type="button" class="quiz-cat-card" data-mode="speak_aloud" data-format="speak" aria-checked="false">
+                  <span class="qcat-icon">🎙️</span>
+                  <span class="qcat-title">Speak Aloud</span>
+                  <span class="qcat-desc">5 kata + 3 kalimat • 50/50 Kana/Kanji</span>
+                </button>
               </div>
+              <!-- 2b. Staged Sub-Menu for Pilihan Ganda: Padanan Kana & Kalimat Rumpang -->
+              <div class="format-toggle-container quiz-mcq-sub-container" id="quizMcqSubContainer" style="margin-top:0.85rem;">
+                <span class="config-label">2b. Pilih Jenis Pilihan Ganda:</span>
+                <div class="format-pills" id="quizMcqSubGrid">
+                  <button type="button" class="format-pill-btn quiz-cat-card active" data-mode="kanji_match" data-format="mcq" aria-checked="true">
+                    <span class="pill-icon">🈸</span>
+                    <span class="pill-title qcat-title">Padanan Kana</span>
+                    <span class="pill-desc">4 opsi bacaan cepat untuk melatih refleks</span>
+                  </button>
+                  <button type="button" class="format-pill-btn quiz-cat-card" data-mode="sentence_cloze" data-format="typing" data-guest-locked="true" aria-checked="false">
+                    <span class="pill-icon">🔥</span>
+                    <span class="pill-title qcat-title">Kalimat Rumpang</span>
+                    <span class="pill-desc">Lengkapi bagian rumpang dalam kalimat • Bobot 2×</span>
+                    <span class="teaser-lock-badge" hidden>🔒 Perlu Akun</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- 2b (Quiz Mode): Cascading Sub-Option for Ketik Cepat (Kosa Kata vs Kalimat Penuh) -->
+              <div class="format-toggle-container quiz-typing-sub-container" id="quizTypingSubContainer" hidden>
+                <span class="config-label">2b. Pilih Tipe Ketik Cepat:</span>
+                <div class="format-pills">
+                  <button type="button" class="format-pill-btn" id="btnQuizTypingWord" data-quiz-typing="word">
+                    <span class="pill-icon">📝</span>
+                    <span class="pill-title">Kosa Kata</span>
+                  </button>
+                  <button type="button" class="format-pill-btn" id="btnQuizTypingSentence" data-quiz-typing="sentence">
+                    <span class="pill-icon">✍️</span>
+                    <span class="pill-title">Kalimat Penuh</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- 2c (Quiz Mode): Cascading Sub-Option for Vocab Booster (Kana vs Kanji) -->
+              <div class="format-toggle-container quiz-booster-sub-container" id="quizBoosterSubContainer" hidden>
+                <span class="config-label">2b. Pilih Jenis Vocab Booster:</span>
+                <div class="format-pills">
+                  <button type="button" class="format-pill-btn" id="btnQuizBoosterKana" data-quiz-booster="kana">
+                    <span class="pill-icon">🔗</span>
+                    <span class="pill-title">Kana</span>
+                  </button>
+                  <button type="button" class="format-pill-btn" id="btnQuizBoosterKanji" data-quiz-booster="kanji">
+                    <span class="pill-icon">🈳</span>
+                    <span class="pill-title">Kanji</span>
+                  </button>
+                </div>
+              </div>
+
               <!-- Hidden synced select for backward compatibility -->
               <select id="drillModeSelect" class="select-input custom-select" hidden aria-hidden="true" tabindex="-1">
                 <option value="kanji_match">🈸 Tebak Bacaan Kanji & Kana (Pilihan Ganda / Ketik)</option>
+                <option value="speak_aloud">🎙️ Speak Aloud (Baca Keras 5 Kata + 3 Kalimat)</option>
                 <option value="vocab_booster_kana">🔗 Vocab Booster: Pasangkan Kana (3 Pasang • 1× Kirim)</option>
                 <option value="vocab_booster_kanji">🈳 Vocab Booster: Pasangkan Kanji (3 Pasang • 1× Kirim)</option>
                 <option value="sentence_romaji">✍️ Ketik Romaji Kalimat Penuh (Audio List • 50 dtk)</option>
@@ -583,13 +625,13 @@
           <section class="session-summary-card" id="sessionSummaryCard">
             <h3 class="summary-card-eyebrow">SESI ANDA</h3>
             <dl class="summary-dl">
-              <dt>Jenis</dt><dd id="summarySessionType">Quiz Mode</dd>
-              <dt>Kategori</dt><dd id="summaryCategory">Tebak Bacaan (MCQ)</dd>
+              <dt>Jenis</dt><dd id="summarySessionType">Mode Quiz</dd>
+              <dt>Kategori</dt><dd id="summaryCategory">Pilihan Ganda</dd>
               <dt>Bab</dt><dd id="summaryLessons">Belum dipilih</dd>
               <dt>Durasi</dt><dd id="summaryDuration">15 menit · 8 soal</dd>
             </dl>
             <div class="mobile-sticky-summary" aria-hidden="true">
-              <span class="mobile-sticky-title" id="mobileStickyTitle">Tebak Bacaan</span>
+              <span class="mobile-sticky-title" id="mobileStickyTitle">Pilihan Ganda</span>
               <span class="mobile-sticky-sub" id="mobileStickySub">Pilih bab · 8 soal · 15 mnt</span>
             </div>
             <div class="hero-primary-action">

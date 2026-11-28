@@ -24,12 +24,13 @@ Each drill session draws a **bite-sized byte of 8 questions** (`SESSION_BYTE_SIZ
 
 | Mode | Format | Quiz Mode Timer | Learning Mode Timer | Audio Limit |
 |---|---|---:|---:|---|
-| **Tebak Bacaan (MCQ)** | 4-option reading recognition | **25 s / Q** | No limit (Flashcard) | Quiz: **3× manual**<br>Learning: **5× manual** (autoplay exempt) |
-| **Tebak Bacaan (Ketik)** | Kana writing via **Japanese Kana On-Screen Keyboard** (no Romaji auto-convert) | **25 s / Q** | **25 s / Q** | Quiz: **3× manual**<br>Learning: **5× manual** |
-| **Vocab Booster: Kana** | 3 Indonesian ↔ 3 Kana pairing (click-swap, ▲/▼, drag-and-drop; 1-shot all-or-nothing) | **25 s / Q** | No limit | Learning: **5× manual** |
-| **Vocab Booster: Kanji** | 3 Indonesian ↔ 3 Kanji pairing (1-shot all-or-nothing) | **25 s / Q** | No limit | Learning: **5× manual** |
-| **Ketik Kalimat Penuh** | Full-sentence Kana writing from audio transcripts via Kana On-Screen Keyboard | **45 s / Q** | **45 s / Q** | Quiz: **3× manual**<br>Learning: **5× manual** |
-| **Kalimat Rumpang (Cloze)** | Fill-in-the-blank Kana/Kanji only + SVG context visual (2× highest weight, mandatory 100%) | **25 s / Q** | No limit | Quiz: **3× manual**<br>Learning: **5× manual** |
+| **Pilihan Ganda: Tebak Baca** | 4-option reading recognition | **30 s / Q** | No limit (Flashcard) | Quiz: **3× manual**<br>Learning: **5× manual** (autoplay exempt) |
+| **Ketik Cepat: Kosa Kata** | Kana writing via **Japanese Kana On-Screen Keyboard** (no Romaji auto-convert) | **30 s / Q** | **30 s / Q** (`Tulis Cepat`) | Quiz: **3× manual**<br>Learning: **5× manual** |
+| **Vocab Booster: Kana** | 3 Indonesian ↔ 3 Kana pairing (click-swap, ▲/▼, drag-and-drop; 1-shot all-or-nothing) | **30 s / Q** | No limit | Learning: **5× manual** |
+| **Vocab Booster: Kanji** | 3 Indonesian ↔ 3 Kanji pairing (1-shot all-or-nothing) | **30 s / Q** | No limit | Learning: **5× manual** |
+| **Ketik Cepat: Kalimat Penuh** | Full-sentence Kana writing from audio transcripts via Kana On-Screen Keyboard | **50 s / Q** | **50 s / Q** (`Tulis Cepat`) | Quiz: **3× manual**<br>Learning: **5× manual** |
+| **Pilihan Ganda: Kalimat Rumpang** | Fill-in-the-blank Kana/Kanji only + SVG context visual (2× weight, mandatory 100%) | **30 s / Q** | No limit | Quiz: **3× manual**<br>Learning: **5× manual** |
+| **Speak Aloud (Word / Sentence)** | Live reading via Web Speech API (`ja-JP`), 5 words + 3 short sentences, 50/50 Kana/Kanji (`2.5×` Word / `3.5×` Sentence) | **25 s / Word**<br>**50 s / Sentence** | No limit | Quiz (no answer reveal) & Learning (`Play Normal` / `Play Slow 0.7×`) |
 | **Perbaiki Skor Saya** | Targeted repetition of mistakes made in the last 7 days | **25 s / Q** | No limit | Quiz: **3× manual**<br>Learning: **5× manual** |
 | **Spesial Katakana** | Loanword Katakana reading blitz | **25 s / Q** | No limit | Quiz: **3× manual**<br>Learning: **5× manual** |
 
@@ -102,22 +103,22 @@ Learning Mode is engineered as an instructional study guide rather than an exam,
 
 | Tipe Soal (Question Type) | Bagian / Komponen (Part) | Mode Kuis: Romaji | Mode Kuis: Arti | Mode Belajar: Romaji | Mode Belajar: Arti | Penjelasan Tampilan & Shortcut |
 |---|---|:---:|:---:|:---:|:---:|---|
-| **1. Tebak Bacaan (MCQ)** | **Pilihan Jawaban (Opsi 1–4)** | ❌ **OFF** | ❌ **OFF** | *N/A (Flashcard)* | *N/A (Flashcard)* | Opsi tombol kuis hanya berisi Kana murni (`opt-text`) |
+| **1. Pilihan Ganda: Tebak Baca** | **Pilihan Jawaban (Opsi 1–4)** | ❌ **OFF** | ❌ **OFF** | *N/A (Flashcard)* | *N/A (Flashcard)* | Opsi tombol kuis hanya berisi Kana murni (`opt-text`) |
 | | **Kalimat Contoh Soal** | ❌ **OFF** | ✅ **ON (`T`)** | *N/A (Flashcard)* | *N/A (Flashcard)* | Terjemahan kalimat konteks sebagai kutipan (`T`) |
 | | **Flashcard: Sisi Depan** | *N/A (Opsi MCQ)* | *N/A (Opsi MCQ)* | ❌ **OFF** | ❌ **OFF** | Hanya Kanji target besar untuk memicu *active recall* |
 | | **Flashcard: Sisi Belakang** | *N/A (Opsi MCQ)* | *N/A (Opsi MCQ)* | ✅ **ON (`M`)** | ✅ **ON (`T`)** | Muncul setelah klik/spasi: `kana (romaji)` & baris arti |
 | | **Laci Pembahasan (Feedback)** | ✅ **ON (`M`)** | ✅ **ON (`T`)** | *N/A (Flashcard)* | *N/A (Flashcard)* | Lencana bacaan + `(romaji)` dan baris arti terjemahan |
-| **2. Tebak Bacaan (Ketik)** | **Kotak Input Jawaban** | ❌ **OFF** | ❌ **OFF** | ❌ **OFF** | ❌ **OFF** | Wajib Keyboard Kana (input Romaji ditolak sistem) |
+| **2. Ketik Cepat: Kosa Kata** | **Kotak Input Jawaban** | ❌ **OFF** | ❌ **OFF** | ❌ **OFF** | ❌ **OFF** | Wajib Keyboard Kana (input Romaji ditolak sistem) |
 | | **Hint Bar Pembelajaran** | ❌ **OFF** | ❌ **OFF** | ✅ **ON (`M`)** | ✅ **ON (`T`)** | `.learning-hints-bar` di atas input: `Kana (Romaji)` & Arti |
 | | **Kalimat Contoh Soal** | ❌ **OFF** | ✅ **ON (`T`)** | ❌ **OFF** | ✅ **ON (`T`)** | Terjemahan konteks di bawah kalimat Jepang (`T`) |
 | | **Laci Pembahasan (Feedback)** | ✅ **ON (`M`)** | ✅ **ON (`T`)** | ✅ **ON (`M`)** | ✅ **ON (`T`)** | Kunci bacaan Kana + Romaji dan arti kata |
-| **3. Vocab Booster (Kana)** | **Kartu Kiri (Makna)** | ❌ **OFF** | 🔒 **ON (Tetap)** | ❌ **OFF** | 🔒 **ON (Tetap)** | Makna Indonesia = prompt soal (selalu tampil) |
+| **3. Vocab Booster: Kana** | **Kartu Kiri (Makna)** | ❌ **OFF** | 🔒 **ON (Tetap)** | ❌ **OFF** | 🔒 **ON (Tetap)** | Makna Indonesia = prompt soal (selalu tampil) |
 | | **Kartu Kanan (Kana)** | ❌ **OFF** | ❌ **OFF** | ❌ **OFF** | ❌ **OFF** | Tombol pasangan hanya menampilkan Kana |
-| **4. Vocab Booster (Kanji)**| **Kartu Kiri (Makna)** | ❌ **OFF** | 🔒 **ON (Tetap)** | ❌ **OFF** | 🔒 **ON (Tetap)** | Makna Indonesia = prompt soal (selalu tampil) |
+| **4. Vocab Booster: Kanji**| **Kartu Kiri (Makna)** | ❌ **OFF** | 🔒 **ON (Tetap)** | ❌ **OFF** | 🔒 **ON (Tetap)** | Makna Indonesia = prompt soal (selalu tampil) |
 | | **Kartu Kanan (Kanji)** | ❌ **OFF** | ❌ **OFF** | ✅ **ON (`M`)** | ❌ **OFF** | Sub-pill Kana (`.vb-kana-hint`) di bawah Kanji + audio `🔊` |
-| **5. Ketik Kalimat Penuh** | **Saat Mengetik (Timer)** | ❌ **OFF** | ❌ **OFF** | ✅ **ON (`M`)** | ✅ **ON (`T`)** | Kuis: disembunyikan. Belajar: kotak hint + *"Lihat Kunci"* |
+| **5. Ketik Cepat: Kalimat Penuh** | **Saat Mengetik (Timer)** | ❌ **OFF** | ❌ **OFF** | ✅ **ON (`M`)** | ✅ **ON (`T`)** | Kuis: disembunyikan. Belajar: kotak hint + *"Lihat Kunci"* |
 | | **Laci Pembahasan (Feedback)** | ✅ **ON (`M`)** | ✅ **ON (`T`)** | ✅ **ON (`M`)** | ✅ **ON (`T`)** | Transkrip Romaji dan arti kalimat lengkap |
-| **6. Kalimat Rumpang (Cloze)**| **Saat Soal Aktif** | ❌ **OFF** | ❌ **OFF** | ❌ **OFF** | ✅ **ON (`T`)** | Kuis: tanpa terjemahan. Belajar: terjemahan kalimat aktif (`T`) |
+| **6. Pilihan Ganda: Kalimat Rumpang**| **Saat Soal Aktif** | ❌ **OFF** | ❌ **OFF** | ❌ **OFF** | ✅ **ON (`T`)** | Kuis: tanpa terjemahan. Belajar: terjemahan kalimat aktif (`T`) |
 | | **Laci Pembahasan (Feedback)** | ✅ **ON (`M`)** | ✅ **ON (`T`)** | ✅ **ON (`M`)** | ✅ **ON (`T`)** | Kalimat utuh + bacaan Romaji & terjemahan Indonesia |
 | **7. Audio Transcript** | **Gelembung Dialog** | ✅ **ON (`M`)** | ✅ **ON (`T`)** | ✅ **ON (`M`)** | ✅ **ON (`T`)** | Bubble Romaji & terjemahan dialog per baris percakapan |
 | **8. Tulis Kana (Workbook)** | **Header Karakter** | 🔒 **ON (Tetap)** | *N/A* | 🔒 **ON (Tetap)** | *N/A* | Fonem rōmaji (`a, i, u...`) pemandu goresan |
@@ -152,13 +153,13 @@ Learning Mode is engineered as an instructional study guide rather than an exam,
   5. **Persistent 3×/day per-user SQLite quota** (`ai_advisor_daily_usage`), `60s` refresh cooldown, and `6h` fingerprint-keyed SQLite cache (`ai_advisor_cache`).
 
 ### 1.7 Progression, Gradual 5-Lesson Unlock, Badges & Engagement Emails
-- **Scorecard & Coverage Rule**: Full score (`100 🏆`) per lesson requires **≥80% weighted question-bank coverage** AND **100% Kalimat Rumpang** (Quiz = 1.0× weight, Cloze = 2.0× weight, Learning = 10% weight). Total max score across Bab 1–25 is **2,500**. Presented in a slim, high-density 2-column grid on desktop (1-column on mobile).
+- **Scorecard & Coverage Rule**: Full score (`100 🏆`) per lesson requires **≥80% weighted question-bank coverage** AND **100% Kalimat Rumpang** (Quiz = `1.0×` weight, Cloze = `2.0×` weight, Speak Aloud Word = `2.5×`, Speak Aloud Sentence = `3.5×` highest per-question weight, Learning = 10% weight). Total max score across Bab 1–25 is **2,500**. Presented in a slim, high-density 2-column grid on desktop (1-column on mobile).
 - **Gradual 5-Lesson Block Unlock**:
   - **Grade 1 (Bab 1–5)** unlocked by default → clearing all 5 unlocks **Grade 2 (Bab 6–10)** → **Grade 3 (Bab 11–15)** → **Grade 4 (Bab 16–20)** → **Grade 5 Master (Bab 21–25)**.
 - **Celebrations & Engagement Emails**:
   - Clearing 1 lesson triggers a **golden starburst animation** + idempotent congratulatory email (`POST /api/achievements/notify`).
   - Clearing a 5-lesson block triggers a **Grade Unlock celebration modal** + idempotent Grade Unlock email.
-- **Public Badges, Total Skor & Leaderboard**: Earned badges, `total_score` (`/ 2,500`), and `cleared_lessons_count` are computed server-side from persisted `user_srs_cards` and displayed on **位 Papan Peringkat** (`Sepanjang Waktu` sorted by `total_score DESC, xp DESC`, and `Minggu Ini` sorted by `weekly_minutes DESC`). An interactive **`ℹ️ Cara Hitung Skor`** collapsible guide (`js/progression.js`) is available on both the Leaderboard and Progres tabs, explaining Total Skor vs. XP, card credits, `2×` Cloze weights, and SRS (`Stage 0–4`, `1 → 2 → 4 → 7 → 14` day intervals).
+- **Public Badges, Total Skor & Leaderboard**: Earned badges, `total_score` (`/ 2,500`), and `cleared_lessons_count` are computed server-side from persisted `user_srs_cards` and displayed on **位 Papan Peringkat** (both `Sepanjang Waktu` and `Minggu Ini` sorted by `total_score DESC, xp DESC, weekly_minutes DESC, streak_days DESC, mastered_cards DESC`). An interactive **`ℹ️ Cara Hitung Skor`** collapsible guide (`js/progression.js`) is available on both the Leaderboard and Progres tabs, explaining Total Skor vs. XP, card credits, `2×` Cloze, `2.5×`/`3.5×` Speak Aloud multipliers, and SRS (`Stage 0–4`, `1 → 2 → 4 → 7 → 14` day intervals).
 - **Per-Question Timers**: Word Typing and Quiz non-typing modes use a **30s** countdown (`WORD_TYPING_LIMIT_SEC = 30`, `QUIZ_NON_TYPING_LIMIT_SEC = 30`); Full-Sentence Romaji Typing uses a **50s** countdown (`FULL_SENTENCE_TYPING_LIMIT_SEC = 50`).
 
 ### 1.8 "Sumi & Urushi" + "Casual Pop" Dual-Theme Design System (`css/sumi-urushi.css`, `css/casual-pop.css`)

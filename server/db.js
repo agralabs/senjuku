@@ -40,6 +40,13 @@ function resolveCardCoverageCredit(card) {
   return 0;
 }
 
+function resolveCardScoreMultiplier(card) {
+  if (!card) return 1.0;
+  const raw = card.score_multiplier ?? card.mult ?? card.scoreMultiplier;
+  const num = Number(raw);
+  return Number.isFinite(num) && num >= 1.0 ? num : 1.0;
+}
+
 export function computeTotalScoreFromCards(cardsById) {
   let totalScore = 0;
   let clearedLessonsCount = 0;
@@ -51,10 +58,10 @@ export function computeTotalScoreFromCards(cardsById) {
     let clozeQuizCovered = 0;
 
     for (const id of bank.vocabIds) {
-      earnedWeight += resolveCardCoverageCredit(cardsById[id]) * 1.0;
+      earnedWeight += resolveCardCoverageCredit(cardsById[id]) * resolveCardScoreMultiplier(cardsById[id]);
     }
     for (const id of bank.sentenceIds) {
-      earnedWeight += resolveCardCoverageCredit(cardsById[id]) * 1.0;
+      earnedWeight += resolveCardCoverageCredit(cardsById[id]) * resolveCardScoreMultiplier(cardsById[id]);
     }
     for (const id of bank.clozeIds) {
       const credit = resolveCardCoverageCredit(cardsById[id]);
@@ -78,7 +85,7 @@ export function computeTotalScoreFromCards(cardsById) {
 
 function computeUserTotalScoreFromDb(db, userId) {
   const rows = db.prepare(`
-    SELECT card_id, correct, wrong, coverage_credit
+    SELECT card_id, correct, wrong, coverage_credit, score_multiplier
     FROM user_srs_cards
     WHERE user_id = ?
   `).all(userId) || [];
@@ -175,6 +182,7 @@ export function getDb(customPath = null) {
       wrong INTEGER NOT NULL DEFAULT 0,
       coverage_credit REAL,
       learning_views INTEGER NOT NULL DEFAULT 0,
+      score_multiplier REAL NOT NULL DEFAULT 1.0,
       next_due DATETIME,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       PRIMARY KEY (user_id, card_id),
@@ -277,6 +285,7 @@ export function getDb(customPath = null) {
   ensureColumn('user_progress', 'cleared_lessons_count', "INTEGER NOT NULL DEFAULT 0");
   ensureColumn('user_srs_cards', 'coverage_credit', "REAL");
   ensureColumn('user_srs_cards', 'learning_views', "INTEGER NOT NULL DEFAULT 0");
+  ensureColumn('user_srs_cards', 'score_multiplier', "REAL NOT NULL DEFAULT 1.0");
 
   // Backfill total_score for existing users who already have SRS cards in the DB
   try {
@@ -342,12 +351,13 @@ export function getPublicLeaderboard(db, period = 'all', currentUserId = null, l
     JOIN user_progress p ON u.id = p.user_id
     WHERE u.is_verified = 1 AND (u.is_active IS NULL OR u.is_active = 1)
     ORDER BY 
-      CASE WHEN ? = 'week' THEN p.weekly_minutes ELSE COALESCE(p.total_score, 0) END DESC,
+      COALESCE(p.total_score, 0) DESC,
       p.xp DESC,
+      p.weekly_minutes DESC,
       p.streak_days DESC,
       mastered_cards DESC
     LIMIT ?
-  `).all(period, limit);
+  `).all(limit);
 
   return rows.map((r, index) => {
     let badges = [];
@@ -384,7 +394,7 @@ export function getUserPrivateProgress(db, userId) {
   `).get(userId);
 
   const cardsRows = db.prepare(`
-    SELECT card_id, stage, streak, correct, wrong, coverage_credit, learning_views, next_due
+    SELECT card_id, stage, streak, correct, wrong, coverage_credit, learning_views, score_multiplier, next_due
     FROM user_srs_cards
     WHERE user_id = ?
   `).all(userId) || [];
@@ -399,6 +409,7 @@ export function getUserPrivateProgress(db, userId) {
       wrong: c.wrong,
       coverageCredit,
       learningViews: Number(c.learning_views) || 0,
+      scoreMultiplier: resolveCardScoreMultiplier(c),
       nextDue: c.next_due
     };
   }
@@ -480,8 +491,8 @@ export function syncUserProgress(db, userId, payload = {}, mode = 'merge') {
   // Merge SRS Cards first so we can compute authoritative total_score from persisted cards
   if (payload.cards && typeof payload.cards === 'object') {
     const cardStmt = db.prepare(`
-      INSERT INTO user_srs_cards (user_id, card_id, stage, streak, correct, wrong, coverage_credit, learning_views, next_due, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+      INSERT INTO user_srs_cards (user_id, card_id, stage, streak, correct, wrong, coverage_credit, learning_views, score_multiplier, next_due, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
       ON CONFLICT(user_id, card_id) DO UPDATE SET
         stage = CASE
           WHEN ? = 'merge' THEN MAX(user_srs_cards.stage, excluded.stage)
@@ -507,6 +518,10 @@ export function syncUserProgress(db, userId, payload = {}, mode = 'merge') {
           WHEN ? = 'merge' THEN MAX(COALESCE(user_srs_cards.learning_views, 0), COALESCE(excluded.learning_views, 0))
           ELSE excluded.learning_views
         END,
+        score_multiplier = CASE
+          WHEN ? = 'merge' THEN MAX(COALESCE(user_srs_cards.score_multiplier, 1.0), COALESCE(excluded.score_multiplier, 1.0))
+          ELSE excluded.score_multiplier
+        END,
         next_due = excluded.next_due,
         updated_at = datetime('now')
     `);
@@ -519,6 +534,8 @@ export function syncUserProgress(db, userId, payload = {}, mode = 'merge') {
       const creditVal = typeof rawCredit === 'number' && !Number.isNaN(rawCredit)
         ? Math.max(0, Math.min(1, rawCredit))
         : (correctVal > 0 ? 1.0 : (wrongVal === 0 ? 0.1 : 0));
+      const rawMult = typeof card.mult === 'number' ? card.mult : Number(card.scoreMultiplier);
+      const multVal = Number.isFinite(rawMult) && rawMult >= 1.0 ? rawMult : 1.0;
       cardStmt.run(
         userId,
         cardId,
@@ -528,7 +545,9 @@ export function syncUserProgress(db, userId, payload = {}, mode = 'merge') {
         wrongVal,
         creditVal,
         Number(card.learningViews) || 0,
+        multVal,
         card.nextDue || null,
+        mode,
         mode,
         mode,
         mode,

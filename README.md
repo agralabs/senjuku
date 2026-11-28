@@ -1,7 +1,7 @@
 # Senjuku (せんじゅく) — Senjuku Nihongo (せんじゅく日本語)
 ### Japanese Reading Gym & Kana-Writing Web Application
 
-An interactive Japanese reading, vocabulary, and Kana-writing web application inspired by *Minna no Nihongo I* (Lessons 1–25). This app is intended as a classroom teaching companion, providing a 20-minute daily drill to accelerate classical learning.
+An interactive Japanese reading, vocabulary, speaking, and Kana-writing web application covering structured Lessons 1–25. This app is intended as a classroom teaching companion, providing a 20-minute daily drill to accelerate classical learning.
 
 It is built with a zero-external-npm Node.js v24 backend, vanilla ECMAScript modules, SQLite WAL mode, and the **Sumi & Urushi** + **Casual Pop** dual-theme design system.
 
@@ -47,18 +47,18 @@ flowchart LR
 ## 🎯 Core Features
 
 1. **Bite-Sized 8-Question Drill Sessions (`SESSION_BYTE_SIZE = 8`)**:
-   - **Tebak Bacaan (MCQ)**: 4-option reading recognition with unbiased Fisher-Yates answer slot shuffling.
-   - **Tebak Bacaan (Ketik)**: Kana writing enforced via the built-in Japanese Kana On-Screen Keyboard.
-   - **Vocab Booster (Kana & Kanji)**: 3-pair drag-and-drop / click-swap matching with strict derangement shuffling.
-   - **Ketik Kalimat Penuh**: Full-sentence Kana transcription from native audio.
-   - **Kalimat Rumpang (Cloze)**: Context-rich fill-in-the-blank grammar and particle drills with SVG visuals.
-   - **Perbaiki Skor Saya**: Targeted repetition of weak cards failed within the past 7 days.
+   - **Mode Latihan (Learning Mode)**: **Flashcard**, **Tulis Cepat**, **Vocab Booster** (cascading *Kana* / *Kanji*), and **Speak Aloud** (`+3 XP` Word / `+5 XP` Sentence warm-up).
+   - **Mode Quiz — Pilihan Ganda**: Cascading **Tebak Baca** (4-option reading recognition with unbiased Fisher-Yates answer slot shuffling) and **Kalimat Rumpang** (context-rich fill-in-the-blank grammar & particle drills with SVG visuals, `2×` coverage weight).
+   - **Mode Quiz — Ketik Cepat**: Cascading **Kosa Kata** and **Kalimat Penuh** Kana writing enforced via the built-in Japanese Kana On-Screen Keyboard.
+   - **Mode Quiz — Vocab Booster**: Cascading **Vocab Booster: Kana** and **Vocab Booster: Kanji** 3-pair drag-and-drop / click-swap matching with strict derangement shuffling.
+   - **Mode Quiz — Speak Aloud**: Live Japanese pronunciation drill (`5` words + `3` short sentences, 50/50 random Kana/Kanji) via Web Speech API (`ja-JP`), awarding the **highest score multipliers** (`2.5×` Word / `+25 XP` base, `3.5×` Sentence / `+35 XP` base) with `25s`/`50s` Quiz timers and `Play Normal` / `Play Slow (0.7×)` in Learning Mode.
+   - **Perbaiki Skor Saya & Spesial Katakana**: Targeted repetition of weak cards failed within the past 7 days, plus Katakana loanword blitz.
 
 2. **Session Scoring & Early Exit Penalty**:
    - Explicit numerical scoring (`X / 100`) and correct count (`X / Y Soal Benar`).
    - Premature exits penalize all remaining unanswered questions as wrong, demoting cards in the SRS Leitner box.
 
-3. **Audio Transcripts & Tokyo Neural2 TTS**:
+3. **Audio Bank (`読 Audio Bank`) & Tokyo Neural2 TTS**:
    - Complete conversation transcripts (Bab 1–25, Tracks 001–087).
    - 3 Furigana display modes (*Tampilkan Semua*, *Hover to Reveal*, *Tanpa Furigana*).
    - High-fidelity Google Cloud Neural2 speech synthesis with permanent disk caching (`data/tts-cache/`).
@@ -66,10 +66,10 @@ flowchart LR
 4. **Kana Writing Companion (`書 Tulis Kana`)**:
    - All 46 Hiragana and 46 Katakana characters with KanjiVG animated stroke orders, step-by-step guides, mnemonics, and printable workbook mode (`Klee One` font).
 
-5. **Progression & Gamification**:
+5. **Progression, Scoring & Leaderboard**:
    - 5-Grade gradual block unlock system (Bab 1–5 &rarr; 6–10 &rarr; 11–15 &rarr; 16–20 &rarr; 21–25).
-   - Transparent Bab question-bank coverage score (`score / 100`, or `100 🏆` upon mastery) and **Total Skor (`/ 2.500`)** synced to the Leaderboard (with interactive `ℹ️ Cara Hitung Skor` guide).
-   - Privacy-safe public Leaderboard and Sensei Admin Dashboard.
+   - Transparent Bab question-bank coverage score (`score / 100`, or `100 🏆` upon mastery) with weighted multipliers (`1×` standard, `2×` Kalimat Rumpang, `2.5×` Speak Aloud Word, `3.5×` Speak Aloud Sentence) and **Total Skor (`/ 2.500`)** synced to the Leaderboard (with interactive `ℹ️ Cara Hitung Skor` guide).
+   - Privacy-safe public Leaderboard (Weekly & All-Time ranked by `Total Skor → Total XP → Weekly Minutes`) and Sensei Admin Dashboard.
 
 ---
 
@@ -147,12 +147,13 @@ senjuku/
 │   └── mailer.js                # TLS/STARTTLS SMTP client for transactional emails
 │
 ├── data/
-│   ├── book-mapping.js          # Minna no Nihongo I Bab 1–25 audio mapping
+│   ├── book-mapping.js          # Lessons 1–25 audio & chapter mapping
 │   ├── lessons-*.js             # Transcripts & dialogues (Bab 1–25)
 │   ├── kanji-vocabulary.js      # Kanji vocabulary master bank
 │   ├── cloze-sentences.js       # Cloze fill-in-the-blank question bank
 │   ├── vocab-booster.js         # 3-pair vocabulary matching bank
 │   ├── sentence-romaji.js       # Full-sentence typing bank
+│   ├── speak-aloud.js           # Speak Aloud word & sentence generator
 │   └── kana-writing-data.js     # 92 Hiragana/Katakana stroke data (KanjiVG)
 │
 ├── js/

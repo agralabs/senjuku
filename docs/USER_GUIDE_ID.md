@@ -51,33 +51,35 @@ Di halaman **Daily Drill**, Anda selalu memilih salah satu dari dua jenis latiha
 
 ## 4. Mengenal Semua Jenis Latihan
 
-### A. Learning Mode (Mode Belajar)
-1. **Kartu Bacaan (Flashcard)**
+### A. Mode Latihan (Learning Mode)
+1. **Flashcard**
    - Menampilkan kosakata/Kanji di sisi depan. Tekan **Spasi** atau klik kartu untuk membalik dan melihat cara baca, Romaji, arti bahasa Indonesia, serta contoh kalimat.
    - Klik ikon suara (atau tekan `R`) untuk memutar audio pelafalan native Tokyo.
-2. **Latihan Ketik Santai (Typing)**
-   - **Ketik Kosakata (Word Typing)**: Latihan mengetik bacaan Kana/Kanji secara langsung menggunakan *Kana Keyboard* bawaan tanpa tekanan skor.
-   - **Ketik Kalimat Penuh (Full Sentence Typing)**: Latihan menyalin kalimat lengkap dari audio secara santai.
-3. **Vocab Booster (3 Pasang)**
+2. **Tulis Cepat**
+   - **Ketik Kosakata**: Latihan mengetik bacaan Kana secara langsung menggunakan *Kana Keyboard* bawaan tanpa tekanan skor.
+   - **Ketik Kalimat Penuh**: Latihan menyalin kalimat lengkap dari audio secara santai.
+3. **Vocab Booster** *(sub-menu: **Vocab Booster: Kana** & **Vocab Booster: Kanji**)*
    - Pasangkan **3 arti bahasa Indonesia** di kolom kiri dengan **3 kartu Kana atau Kanji** di kolom kanan, lalu kirim sekaligus (`1× kirim`) untuk melatih asosiasi cepat.
+4. **Speak Aloud**
+   - Latihan membaca 5 kata dan 3 kalimat pendek secara santai dengan bantuan tombol `Play Normal` / `Play Slow (0.7×)` (`+3 XP` kata / `+5 XP` kalimat, dengan default **Romaji: OFF**, **Arti: ON**).
 
-### B. Quiz Mode (Uji Refleks — 8 Soal per Sesi)
-Setiap sesi Quiz Mode terdiri dari **8 soal ringkas** agar fokus tetap tajam:
+### B. Mode Quiz (Uji Refleks — 8 Soal per Sesi)
+Setiap sesi Mode Quiz terdiri dari **8 soal ringkas** agar fokus tetap tajam:
 
-1. **Tebak Bacaan (MCQ)**
-   - Pilih 1 dari 4 opsi bacaan yang benar (bisa pakai tombol angka `1`–`4` di keyboard). Posisi jawaban selalu diacak merata.
-2. **Tebak Bacaan (Ketik)**
-   - Ketik bacaan Kana/Kanji secara langsung. Keyboard otomatis mengonversi ketikan Romaji ke Hiragana/Katakana, atau Anda bisa memakai tombol *Kana On-Screen Keyboard*.
-3. **Vocab Booster: Kana** & **Vocab Booster: Kanji**
+1. **Pilihan Ganda** *(sub-menu: **Tebak Baca** & **Kalimat Rumpang**)*
+   - **Tebak Baca**: Pilih 1 dari 4 opsi bacaan yang benar (bisa pakai tombol angka `1`–`4` di keyboard). Posisi jawaban selalu diacak merata.
+   - **Kalimat Rumpang**: Lengkapi bagian kata/partikel yang kosong di dalam kalimat utuh dengan bantuan konteks visual. Wajib tuntas **100%** untuk skor `100 🏆` dan berbobot **2×**.
+2. **Ketik Cepat** *(sub-menu: **Kosa Kata** & **Kalimat Penuh**)*
+   - **Kosa Kata**: Ketik bacaan Kana secara langsung menggunakan tombol *Kana On-Screen Keyboard*.
+   - **Kalimat Penuh**: Dengarkan audio kalimat native (maksimal **2× putar**) dan ketik kalimat lengkap dalam huruf Kana dalam batas waktu **50 detik**.
+3. **Vocab Booster** *(sub-menu: **Vocab Booster: Kana** & **Vocab Booster: Kanji**)*
    - Pasangkan 3 arti Indonesia dengan 3 kartu Kana (atau Kanji) dalam satu layar. Semua pasangan selalu diacak sehingga tidak ada yang sudah sejajar sejak awal.
-4. **Ketik Kalimat Penuh**
-   - Dengarkan audio kalimat native (maksimal **2× putar**) dan ketik kalimat lengkap dalam huruf Kana dalam batas waktu **50 detik**.
-5. **Kalimat Rumpang (Cloze)** *(Mode Tersulit — Bobot 2×)*
-   - Lengkapi bagian kata/partikel yang kosong di dalam kalimat utuh dengan bantuan konteks visual. Menuntut ketelitian tinggi (**wajib 100%**) dan memberikan bobot nilai/XP **2× lipat**.
-6. **Perbaiki Skor Saya (Weakness Focus)**
+4. **Perbaiki Skor Saya**
    - Secara otomatis mengumpulkan kata dan kalimat yang paling sering salah Anda jawab dalam **7 hari terakhir** untuk dilatih ulang hingga hafal.
-7. **Spesial Katakana (Katakana Blitz)**
+5. **Spesial Katakana**
    - Latihan kilat khusus membaca kata serapan asing dalam huruf Katakana.
+6. **Speak Aloud** *(Pengali Skor Tertinggi — 2.5× Kata / 3.5× Kalimat)*
+   - Sesi 8 soal (`5` kata + `3` kalimat pendek, acak 50/50 Kana & Kanji). Ketuk **Tekan & Ucapkan** untuk membaca lewat mikrofon (`25 dtk` untuk kata dengan pengali `2.5×` / `+25 XP` dasar; `50 dtk` untuk kalimat dengan pengali `3.5×` / `+35 XP` dasar — skor per soal tertinggi).
 
 ### Pintasan Keyboard Cepat
 - `1`–`4` : Memilih opsi Pilihan Ganda (MCQ)
@@ -110,7 +112,8 @@ Setiap sesi Quiz Mode terdiri dari **8 soal ringkas** agar fokus tetap tajam:
 
 ### 3. XP, Combo & Level
 - Setiap jawaban benar memberi **XP**. Menjawab benar secara beruntun membangun **Combo** yang memberi bonus XP tambahan.
-- Mode **Kalimat Rumpang** memiliki **bobot 2×** untuk progres dan XP.
+- Mode **Kalimat Rumpang** memiliki **bobot 2×** untuk progres cakupan.
+- Mode **Speak Aloud** memberi pengali skor & XP tertinggi: **Speak Aloud (Kosakata)** = **2.5×** (`+25 XP` dasar), dan **Speak Aloud (Kalimat)** = **3.5×** (`+35 XP` dasar — skor per soal tertinggi).
 - Akumulasi XP otomatis menaikkan **Level** Anda dan membuka berbagai **Badge** pencapaian.
 
 ### 4. Sistem Pengulangan Berjarak (SRS — Leitner Box)
@@ -126,7 +129,7 @@ Setiap sesi Quiz Mode terdiri dari **8 soal ringkas** agar fokus tetap tajam:
   - **Learning Mode (lihat kartu)** = `10%` kredit sebagai pemanasan (naik menjadi `100%` jika dijawab benar di Quiz Mode).
   - **Jawab salah** tidak mengurangi kredit kartu yang sudah diraih.
 - **Bobot Soal & Syarat Skor 100 🏆**:
-  - **Kosakata/Kanji** & **Ketik Romaji Kalimat** berbobot **1×**, sedangkan **Kalimat Rumpang** berbobot **2×**.
+  - **Kosakata/Kanji** & **Ketik Romaji Kalimat** berbobot **1×**, **Kalimat Rumpang** berbobot **2×**, **Speak Aloud (Kosakata)** berbobot **2.5×**, dan **Speak Aloud (Kalimat)** berbobot **3.5×** (tertinggi per soal).
   - Untuk meraih **100 🏆** pada satu Bab, Anda perlu mencapai **≥ 80% total cakupan** bank soal **dan** menjawab benar **100% soal Kalimat Rumpang** di Quiz Mode (jika Kalimat Rumpang belum tuntas, skor Bab dibatasi maksimal **89**).
 - **Mengulang Kuis**: Menjawab benar kartu baru menaikkan **Total Skor**. Mengulang kartu yang sudah `100%` dikuasai tetap menambah **XP, Level, Menit Mingguan, dan kekuatan SRS**, tetapi Total Skor tidak bertambah lagi.
 
@@ -136,9 +139,10 @@ Setiap sesi Quiz Mode terdiri dari **8 soal ringkas** agar fokus tetap tajam:
 
 Menu **位 Papan Peringkat** memungkinkan Anda melihat progres dan termotivasi bersama siswa lainnya:
 
-- **Kriteria Pemeringkatan**:
-  1. **Sepanjang Waktu**: Diurutkan berdasarkan **Total Skor (`/ 2.500`)** tertinggi, lalu **Total XP**, **Streak Harian**, dan **Kartu Dikuasai**.
-  2. **Minggu Ini**: Diurutkan berdasarkan **Menit Belajar Mingguan** tertinggi.
+- **Kriteria Pemeringkatan** *(berlaku untuk **Sepanjang Waktu** maupun **Minggu Ini**)*:
+  1. **Total Skor (`/ 2.500`)** tertinggi sebagai peringkat utama.
+  2. **Total XP** tertinggi sebagai penentu jika Total Skor sama.
+  3. **Menit Belajar Mingguan** tertinggi sebagai penentu berikutnya (lalu *Streak Harian* dan *Kartu Dikuasai*).
 - **Filter Periode**: Anda dapat beralih antara peringkat **Sepanjang Waktu** maupun **Minggu Ini**, serta membuka panduan **ℹ️ Cara Hitung Skor** langsung di halaman ini.
 - **Privasi Terjaga 100%**:
   - Papan Peringkat **hanya** menampilkan *Nickname*, *Avatar*, *Total Skor*, *Level*, *XP*, *Streak*, *Jumlah Kartu Dikuasai*, *Menit/Minggu*, dan *Badge*.

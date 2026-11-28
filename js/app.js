@@ -76,12 +76,19 @@ export class JapaneseApp {
       btnFormatMcq: document.getElementById('btnFormatMcq'),
       btnFormatTyping: document.getElementById('btnFormatTyping'),
       btnFormatBooster: document.getElementById('btnFormatBooster'),
+      btnFormatSpeak: document.getElementById('btnFormatSpeak'),
       learningTypingSubContainer: document.getElementById('learningTypingSubContainer'),
       btnLearnTypingWord: document.getElementById('btnLearnTypingWord'),
       btnLearnTypingSentence: document.getElementById('btnLearnTypingSentence'),
       learningBoosterSubContainer: document.getElementById('learningBoosterSubContainer'),
       btnLearnBoosterKana: document.getElementById('btnLearnBoosterKana'),
       btnLearnBoosterKanji: document.getElementById('btnLearnBoosterKanji'),
+      quizTypingSubContainer: document.getElementById('quizTypingSubContainer'),
+      btnQuizTypingWord: document.getElementById('btnQuizTypingWord'),
+      btnQuizTypingSentence: document.getElementById('btnQuizTypingSentence'),
+      quizBoosterSubContainer: document.getElementById('quizBoosterSubContainer'),
+      btnQuizBoosterKana: document.getElementById('btnQuizBoosterKana'),
+      btnQuizBoosterKanji: document.getElementById('btnQuizBoosterKanji'),
       quizSubconfigBox: document.getElementById('quizSubconfigBox'),
       quizCategoryCardsGrid: document.getElementById('quizCategoryCardsGrid'),
       drillModeSelect: document.getElementById('drillModeSelect'),
@@ -238,6 +245,9 @@ export class JapaneseApp {
         this.setInputFormat('booster');
       });
     }
+    if (this.dom.btnFormatSpeak) {
+      this.dom.btnFormatSpeak.addEventListener('click', () => this.setInputFormat('speak'));
+    }
 
     // Learning Mode -> Latihan Ketik Santai Sub-Options (Word Typing vs Full Sentence Typing)
     if (this.dom.btnLearnTypingWord && this.dom.btnLearnTypingSentence) {
@@ -251,7 +261,7 @@ export class JapaneseApp {
       this.dom.btnLearnBoosterKanji.addEventListener('click', () => this.setLearningBoosterSubtype('kanji'));
     }
 
-    // Quiz Mode -> Compact Kategori Materi Small Cards
+    // Quiz Mode -> Compact Kategori Materi Small Cards + Cascading Sub-Options
     if (this.dom.quizCategoryCardsGrid) {
       this.dom.quizCategoryCardsGrid.addEventListener('click', (e) => {
         const card = e.target.closest('.quiz-cat-card');
@@ -262,6 +272,39 @@ export class JapaneseApp {
           return;
         }
         this.selectQuizCategory(card.dataset.mode, card.dataset.format || 'mcq');
+      });
+    }
+
+    // Quiz Mode -> Staged Pilihan Ganda Sub-Menu (Padanan Kana / Kalimat Rumpang)
+    const quizMcqSubGrid = document.getElementById('quizMcqSubGrid');
+    if (quizMcqSubGrid) {
+      quizMcqSubGrid.addEventListener('click', (e) => {
+        const card = e.target.closest('.quiz-cat-card');
+        if (!card) return;
+        if (!authUI.user && card.dataset.guestLocked === 'true') {
+          const title = card.querySelector('.qcat-title')?.textContent || 'Latihan Ini';
+          authUI.openAuthModal('register', `🔒 <strong>Fitur Siswa Terdaftar</strong>: Kategori <em>${title}</em> memerlukan akun gratis. Daftar sekarang dalam 10 detik!`);
+          return;
+        }
+        this.selectQuizCategory(card.dataset.mode, card.dataset.format || 'mcq');
+      });
+    }
+
+    if (this.dom.btnQuizTypingWord && this.dom.btnQuizTypingSentence) {
+      this.dom.btnQuizTypingWord.addEventListener('click', () => {
+        this.selectQuizCategory('kanji_match', 'typing');
+      });
+      this.dom.btnQuizTypingSentence.addEventListener('click', () => {
+        this.selectQuizCategory('sentence_romaji', 'typing');
+      });
+    }
+
+    if (this.dom.btnQuizBoosterKana && this.dom.btnQuizBoosterKanji) {
+      this.dom.btnQuizBoosterKana.addEventListener('click', () => {
+        this.selectQuizCategory('vocab_booster_kana', 'booster');
+      });
+      this.dom.btnQuizBoosterKanji.addEventListener('click', () => {
+        this.selectQuizCategory('vocab_booster_kanji', 'booster');
       });
     }
 
@@ -297,7 +340,9 @@ export class JapaneseApp {
         }
         let mode = this.dom.drillModeSelect?.value || 'kanji_match';
         if (this.currentSessionType === 'learning') {
-          if (this.currentInputFormat === 'booster') {
+          if (this.currentInputFormat === 'speak') {
+            mode = 'speak_aloud';
+          } else if (this.currentInputFormat === 'booster') {
             mode = (this.learningBoosterSubtype === 'kanji') ? 'vocab_booster_kanji' : 'vocab_booster_kana';
           } else if (this.currentInputFormat === 'typing' && this.learningTypingSubtype === 'sentence') {
             mode = 'sentence_romaji';
@@ -527,7 +572,7 @@ export class JapaneseApp {
      READING PREFERENCES (ROMAJI & TRANSLATION VISIBILITY)
      ========================================================= */
   initReadingPreferences() {
-    let prefs = { showRomaji: true, showTranslation: true };
+    let prefs = { showRomaji: false, showTranslation: true };
     const saved = localStorage.getItem('kirakira_reading_prefs');
     if (saved) {
       try {
@@ -542,7 +587,7 @@ export class JapaneseApp {
 
   setReadingPreference(key, val) {
     if (!this.readingPrefs) {
-      this.readingPrefs = { showRomaji: true, showTranslation: true };
+      this.readingPrefs = { showRomaji: false, showTranslation: true };
     }
     this.readingPrefs[key] = !!val;
     localStorage.setItem('kirakira_reading_prefs', JSON.stringify(this.readingPrefs));
@@ -551,7 +596,7 @@ export class JapaneseApp {
 
   toggleReadingPreference(key) {
     if (!this.readingPrefs) {
-      this.readingPrefs = { showRomaji: true, showTranslation: true };
+      this.readingPrefs = { showRomaji: false, showTranslation: true };
     }
     this.setReadingPreference(key, !this.readingPrefs[key]);
   }
@@ -597,7 +642,9 @@ export class JapaneseApp {
   }
 
   setInputFormat(format) {
-    if (format === 'booster') {
+    if (format === 'speak') {
+      this.currentInputFormat = 'speak';
+    } else if (format === 'booster') {
       this.currentInputFormat = 'booster';
     } else if (format === 'typing') {
       this.currentInputFormat = 'typing';
@@ -608,10 +655,12 @@ export class JapaneseApp {
     const isMcq = (this.currentInputFormat === 'mcq');
     const isTyping = (this.currentInputFormat === 'typing');
     const isBooster = (this.currentInputFormat === 'booster');
+    const isSpeak = (this.currentInputFormat === 'speak');
 
     if (this.dom.btnFormatMcq) this.dom.btnFormatMcq.classList.toggle('active', isMcq);
     if (this.dom.btnFormatTyping) this.dom.btnFormatTyping.classList.toggle('active', isTyping);
     if (this.dom.btnFormatBooster) this.dom.btnFormatBooster.classList.toggle('active', isBooster);
+    if (this.dom.btnFormatSpeak) this.dom.btnFormatSpeak.classList.toggle('active', isSpeak);
 
     // Show Step 2b (Word Typing vs Full Sentence Typing) ONLY for Learning Mode -> Latihan Ketik Santai
     const showLearningTypingSub = (this.currentSessionType === 'learning' && isTyping);
@@ -659,6 +708,7 @@ export class JapaneseApp {
     if (this.dom.btnFormatMcq) this.dom.btnFormatMcq.classList.remove('active');
     if (this.dom.btnFormatTyping) this.dom.btnFormatTyping.classList.remove('active');
     if (this.dom.btnFormatBooster) this.dom.btnFormatBooster.classList.remove('active');
+    if (this.dom.btnFormatSpeak) this.dom.btnFormatSpeak.classList.remove('active');
     if (this.dom.learningTypingSubContainer) this.dom.learningTypingSubContainer.hidden = true;
     if (this.dom.btnLearnTypingWord) this.dom.btnLearnTypingWord.classList.remove('active');
     if (this.dom.btnLearnTypingSentence) this.dom.btnLearnTypingSentence.classList.remove('active');
@@ -673,13 +723,55 @@ export class JapaneseApp {
     }
     this.currentInputFormat = format || 'mcq';
 
+    const isQuizMcqGroup = (mode === 'kanji_match' && this.currentInputFormat === 'mcq') || mode === 'sentence_cloze';
+    const isQuizTypingGroup = (mode === 'sentence_romaji') || (mode === 'kanji_match' && this.currentInputFormat === 'typing');
+    const isQuizBoosterGroup = (mode === 'vocab_booster_kana' || mode === 'vocab_booster_kanji');
+
     if (this.dom.quizCategoryCardsGrid) {
       const cards = this.dom.quizCategoryCardsGrid.querySelectorAll('.quiz-cat-card');
       cards.forEach(card => {
+        const group = card.dataset.quizGroup;
+        const isParentMcq = card.dataset.quizParent === 'mcq';
+        const isMatch = isParentMcq
+          ? isQuizMcqGroup
+          : group === 'typing'
+            ? isQuizTypingGroup
+            : group === 'booster'
+              ? isQuizBoosterGroup
+              : (card.dataset.mode === mode && (card.dataset.format || 'mcq') === this.currentInputFormat);
+        card.classList.toggle('active', isMatch);
+        card.setAttribute('aria-checked', isMatch ? 'true' : 'false');
+      });
+    }
+
+    const quizMcqSubContainer = document.getElementById('quizMcqSubContainer');
+    const quizMcqSubGrid = document.getElementById('quizMcqSubGrid');
+    if (quizMcqSubContainer) {
+      quizMcqSubContainer.hidden = !isQuizMcqGroup;
+    }
+    if (quizMcqSubGrid) {
+      const subCards = quizMcqSubGrid.querySelectorAll('.quiz-cat-card');
+      subCards.forEach(card => {
         const isMatch = card.dataset.mode === mode && (card.dataset.format || 'mcq') === this.currentInputFormat;
         card.classList.toggle('active', isMatch);
         card.setAttribute('aria-checked', isMatch ? 'true' : 'false');
       });
+    }
+
+    if (this.dom.quizTypingSubContainer) {
+      this.dom.quizTypingSubContainer.hidden = !isQuizTypingGroup;
+    }
+    if (this.dom.btnQuizTypingWord && this.dom.btnQuizTypingSentence) {
+      this.dom.btnQuizTypingWord.classList.toggle('active', isQuizTypingGroup && mode === 'kanji_match');
+      this.dom.btnQuizTypingSentence.classList.toggle('active', isQuizTypingGroup && mode === 'sentence_romaji');
+    }
+
+    if (this.dom.quizBoosterSubContainer) {
+      this.dom.quizBoosterSubContainer.hidden = !isQuizBoosterGroup;
+    }
+    if (this.dom.btnQuizBoosterKana && this.dom.btnQuizBoosterKanji) {
+      this.dom.btnQuizBoosterKana.classList.toggle('active', isQuizBoosterGroup && mode === 'vocab_booster_kana');
+      this.dom.btnQuizBoosterKanji.classList.toggle('active', isQuizBoosterGroup && mode === 'vocab_booster_kanji');
     }
 
     this.updateStartButtonLabels();
@@ -695,9 +787,12 @@ export class JapaneseApp {
     // Reset Step 2 (Format Latihan) selection every time Step 1 changes
     this.resetInputFormat();
 
-    // Show 3rd card (Vocab Booster) in Step 2 for Learning Mode
+    // Show 3rd & 4th cards (Vocab Booster & Speak Aloud) in Step 2 for Learning Mode
     if (this.dom.btnFormatBooster) {
       this.dom.btnFormatBooster.hidden = isQuiz;
+    }
+    if (this.dom.btnFormatSpeak) {
+      this.dom.btnFormatSpeak.hidden = isQuiz;
     }
     if (this.dom.formatPillsGrid) {
       this.dom.formatPillsGrid.classList.toggle('cols-3', !isQuiz);
@@ -708,11 +803,11 @@ export class JapaneseApp {
     const mcqDesc = document.getElementById('mcqFormatDesc');
     const typingTitle = document.getElementById('typingFormatTitle');
     const typingDesc = document.getElementById('typingFormatDesc');
-    if (mcqTitle) mcqTitle.textContent = isQuiz ? 'Pilihan Ganda (MCQ)' : 'Kartu Bacaan (Flashcard)';
+    if (mcqTitle) mcqTitle.textContent = isQuiz ? 'Pilihan Ganda' : 'Flashcard';
     if (mcqDesc) mcqDesc.textContent = isQuiz
       ? '4 opsi bacaan cepat untuk melatih refleks mengenali'
       : 'Buka kartu, dengarkan audio, dan hafalkan bacaan santai';
-    if (typingTitle) typingTitle.textContent = isQuiz ? 'Ketik Langsung (Typing)' : 'Latihan Ketik Santai (Typing)';
+    if (typingTitle) typingTitle.textContent = isQuiz ? 'Ketik Cepat' : 'Tulis Cepat';
     if (typingDesc) typingDesc.textContent = isQuiz
       ? 'Ketik kata/bacaan Kana & Kanji secara langsung'
       : 'Latihan mengetik kosakata Kana & Kanji tanpa nilai';
@@ -779,19 +874,32 @@ export class JapaneseApp {
     const mobTitle = document.getElementById('mobileStickyTitle');
     const mobSub = document.getElementById('mobileStickySub');
 
-    let categoryLabel = 'Tebak Bacaan (MCQ)';
+    let categoryLabel = 'Pilihan Ganda';
     if (!isQuiz) {
-      if (this.currentInputFormat === 'booster') {
+      if (this.currentInputFormat === 'speak') {
+        categoryLabel = 'Speak Aloud';
+      } else if (this.currentInputFormat === 'booster') {
         categoryLabel = this.learningBoosterSubtype === 'kanji' ? 'Vocab Booster: Kanji' : 'Vocab Booster: Kana';
       } else if (this.currentInputFormat === 'typing') {
-        categoryLabel = this.learningTypingSubtype === 'sentence' ? 'Ketik Kalimat Santai' : 'Ketik Kosakata Santai';
+        categoryLabel = this.learningTypingSubtype === 'sentence' ? 'Ketik Kalimat Penuh' : 'Ketik Kosakata';
       } else {
-        categoryLabel = 'Kartu Bacaan (Flashcard)';
+        categoryLabel = 'Flashcard';
       }
     } else {
-      const activeCard = this.dom.quizCategoryCardsGrid?.querySelector('.quiz-cat-card.active');
-      const cardTitle = activeCard?.querySelector('.qcat-title')?.textContent?.trim();
-      if (cardTitle) categoryLabel = cardTitle;
+      const selectedMode = this.dom.drillModeSelect?.value;
+      if (selectedMode === 'sentence_romaji') {
+        categoryLabel = 'Ketik Cepat: Kalimat Penuh';
+      } else if (selectedMode === 'kanji_match' && this.currentInputFormat === 'typing') {
+        categoryLabel = 'Ketik Cepat: Kosa Kata';
+      } else if (selectedMode === 'vocab_booster_kana') {
+        categoryLabel = 'Vocab Booster: Kana';
+      } else if (selectedMode === 'vocab_booster_kanji') {
+        categoryLabel = 'Vocab Booster: Kanji';
+      } else {
+        const activeCard = this.dom.quizCategoryCardsGrid?.querySelector('.quiz-cat-card.active');
+        const cardTitle = activeCard?.querySelector('.qcat-title')?.textContent?.trim();
+        if (cardTitle) categoryLabel = cardTitle;
+      }
     }
 
     let lessonsLabel = 'Belum dipilih';
@@ -803,7 +911,7 @@ export class JapaneseApp {
         : `${selected.length} bab (${selected[0]}–${selected[selected.length - 1]})`;
     }
 
-    if (typeEl) typeEl.textContent = isQuiz ? 'Quiz Mode' : 'Learning Mode';
+    if (typeEl) typeEl.textContent = isQuiz ? 'Mode Quiz' : 'Mode Latihan';
     if (catEl) catEl.textContent = categoryLabel;
     if (babEl) babEl.textContent = lessonsLabel;
     if (mobTitle) mobTitle.textContent = categoryLabel;
@@ -1505,7 +1613,11 @@ export class JapaneseApp {
     // Enforce display toggle availability:
     // - Quiz Mode: NO Romaji/Translation switches
     // - Kalimat Rumpang: NO Romaji/Translation switches
-    // - Learning Mode (non-cloze): Romaji/Translation switches available
+    // - Learning Mode (non-cloze): default Romaji OFF, Arti ON
+    if (this.activeSessionType === 'learning' && !isCloze) {
+      this.setReadingPreference('showRomaji', false);
+      this.setReadingPreference('showTranslation', true);
+    }
     this.syncDisplayTogglesForContext();
 
     drillEngine.startSession({

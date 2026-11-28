@@ -142,12 +142,14 @@ class AuthUIController {
     const normalizedCards = {};
     for (const [cardId, card] of Object.entries(rawCards)) {
       if (!card || typeof card !== 'object') continue;
-      const { cov, ...rest } = card;
+      const { cov, mult, ...rest } = card;
+      const rawMult = typeof card.scoreMultiplier === 'number' ? card.scoreMultiplier : mult;
       normalizedCards[cardId] = {
         ...rest,
         coverageCredit: typeof card.coverageCredit === 'number'
           ? card.coverageCredit
-          : (typeof cov === 'number' ? cov : (card.correct > 0 ? 1.0 : 0))
+          : (typeof cov === 'number' ? cov : (card.correct > 0 ? 1.0 : 0)),
+        scoreMultiplier: (typeof rawMult === 'number' && Number.isFinite(rawMult) && rawMult >= 1.0) ? rawMult : 1.0
       };
     }
 
@@ -176,11 +178,12 @@ class AuthUIController {
     const wireCards = {};
     for (const [cardId, card] of Object.entries(rawCards)) {
       if (!card || typeof card !== 'object') continue;
-      // Rename coverageCredit -> cov over the wire to avoid WAF/ModSecurity false-positive 403s
-      const { coverageCredit, ...rest } = card;
+      // Rename coverageCredit -> cov and scoreMultiplier -> mult over the wire to avoid WAF/ModSecurity false-positive 403s
+      const { coverageCredit, scoreMultiplier, ...rest } = card;
       wireCards[cardId] = {
         ...rest,
-        ...(typeof coverageCredit === 'number' ? { cov: coverageCredit } : {})
+        ...(typeof coverageCredit === 'number' ? { cov: coverageCredit } : {}),
+        ...(typeof scoreMultiplier === 'number' && scoreMultiplier > 1 ? { mult: scoreMultiplier } : {})
       };
     }
     return {
