@@ -402,7 +402,7 @@ export class JapaneseApp {
         }
         this.setSessionType('quiz');
         if (this.dom.drillModeSelect) this.dom.drillModeSelect.value = 'katakana_blitz';
-        this.launchDrill('quiz', 'katakana_blitz', selected, this.currentInputFormat);
+        this.launchDrill('quiz', 'katakana_blitz', selected, 'mcq');
       });
     }
 
@@ -435,7 +435,7 @@ export class JapaneseApp {
     if (this.dom.startSentenceRomajiBtn) {
       this.dom.startSentenceRomajiBtn.addEventListener('click', () => {
         if (!authUI.user) {
-          authUI.openAuthModal('register', '🔒 <strong>Fitur Siswa Terdaftar</strong>: Mode <em>Ketik Kalimat (45s)</em> memerlukan akun gratis.');
+          authUI.openAuthModal('register', '🔒 <strong>Fitur Siswa Terdaftar</strong>: Mode <em>Ketik Kalimat (50s)</em> memerlukan akun gratis.');
           return;
         }
         const selected = this.getSelectedLessons();
@@ -1134,6 +1134,7 @@ export class JapaneseApp {
       this.dom.lessonDropdownTrigger.setAttribute('aria-expanded', 'true');
     }
     if (this.dom.lessonsSelectionWrapper) {
+      this.dom.lessonsSelectionWrapper.scrollIntoView({ behavior: 'smooth', block: 'center' });
       this.dom.lessonsSelectionWrapper.classList.remove('needs-selection-shake');
       // Force reflow for repeated shake animation
       void this.dom.lessonsSelectionWrapper.offsetWidth;

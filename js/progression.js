@@ -27,7 +27,7 @@ export function showLockedLessonPopup(lessonNumOrLabel, lockInfo) {
         <p id="lockedPopupBody" class="locked-popup-body"></p>
         <div id="lockedRemainingChips" class="locked-remaining-chips"></div>
         <button type="button" class="btn btn-primary btn-full" id="btnOkLockedModal" style="margin-top:1rem;">
-          Mengerti, Selesaikan Blok Sebelumnya
+          Mengerti
         </button>
       </div>
     `;
@@ -43,10 +43,9 @@ export function showLockedLessonPopup(lessonNumOrLabel, lockInfo) {
   const reqBlock = lockInfo?.blockingBlock?.rangeLabel || 'Bab 1–5';
   const remaining = lockInfo?.remainingLessons || [];
 
-  backdrop.querySelector('#lockedPopupTitle').textContent = `🔒 ${label} Belum Terbuka`;
+  backdrop.querySelector('#lockedPopupTitle').textContent = `🔒 ${label} Terkunci`;
   backdrop.querySelector('#lockedPopupBody').innerHTML = `
-    Sistem buka bertahap per <strong>5 Bab</strong> aktif! Untuk mengakses <strong>${escapeHtml(label)}</strong>,
-    Anda harus menyelesaikan Scorecard (Skor 100) seluruh blok <strong>${escapeHtml(reqBlock)}</strong> terlebih dahulu.
+    Selesaikan blok sebelumnya <strong>${escapeHtml(reqBlock)}</strong> untuk membuka.
   `;
 
   const chipsEl = backdrop.querySelector('#lockedRemainingChips');
