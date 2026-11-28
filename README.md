@@ -1,7 +1,7 @@
 # Senjuku (せんじゅく) — Senjuku Nihongo (せんじゅく日本語)
 ### Japanese Reading Gym & Kana-Writing Web Application
 
-An interactive Japanese reading, vocabulary, and Kana-writing web application (Lessons 1–25). This app is intended as a classroom teaching companion, providing a 20-minute daily drill to accelerate classical learning.
+An interactive Japanese reading, vocabulary, and Kana-writing web application inspired by *Minna no Nihongo I* (Lessons 1–25). This app is intended as a classroom teaching companion, providing a 20-minute daily drill to accelerate classical learning.
 
 It is built with a zero-external-npm Node.js v24 backend, vanilla ECMAScript modules, SQLite WAL mode, and the **Sumi & Urushi** + **Casual Pop** dual-theme design system.
 
