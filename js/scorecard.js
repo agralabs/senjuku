@@ -1,6 +1,7 @@
 // Daily & Weekly Scorecard Component with Visual SVG Charts and SRS Retention Metrics
 
 import { progress, LESSON_BLOCKS } from './srs.js';
+import { renderScoreGuideCardHtml, bindScoreGuideToggle } from './progression.js';
 import { MASTER_DRILL_ITEMS } from '../data/kanji-vocabulary.js';
 import { CLOZE_SENTENCE_ITEMS } from '../data/cloze-sentences.js';
 import { SENTENCE_ROMAJI_ITEMS } from '../data/sentence-romaji.js';
@@ -281,11 +282,15 @@ export class ScorecardView {
               <span class="subheading-tag">Cakupan Bank Soal & Skor Tiap Bab</span>
               <h3 class="card-title">Skor Penguasaan per Bab (Bab 1 - 25)</h3>
             </div>
-            <span class="badge badge-coverage-summary">${(() => {
-              const totalScore = Object.values(allCov.lessons).reduce((s, st) => s + st.score, 0);
-              return `🏆 ${totalScore.toLocaleString('id-ID')} / 2.500 Skor • ${allCov.fullScoreCount}/25 Bab Lulus`;
-            })()}</span>
+            <div class="sc-header-actions">
+              <button type="button" class="lb-filter-btn sc-guide-toggle-btn" id="btnScScoreGuide" aria-expanded="false" aria-controls="scScoreGuideCard">ℹ️ Cara Hitung Skor</button>
+              <span class="badge badge-coverage-summary">${(() => {
+                const totalScore = Object.values(allCov.lessons).reduce((s, st) => s + st.score, 0);
+                return `🏆 ${totalScore.toLocaleString('id-ID')} / 2.500 Skor • ${allCov.fullScoreCount}/25 Bab Lulus`;
+              })()}</span>
+            </div>
           </div>
+          ${renderScoreGuideCardHtml('scScoreGuideCard')}
           <p class="card-desc">
             Setiap sesi menarik <strong>8 soal</strong> dari bank soal. <strong>Skor Penuh (100 🏆)</strong> diraih dengan <strong>≥80% cakupan seluruh tipe soal</strong> (Kosakata/Kanji, Ketik Romaji Kalimat, & Kalimat Rumpang) <strong>serta 100% benar pada Kalimat Rumpang</strong> (bobot nilai tertinggi <strong>2×</strong>).
             <span class="scoring-weight-note">Mode Belajar bernilai <strong>10%</strong> dibanding Mode Kuis.</span>
@@ -299,6 +304,10 @@ export class ScorecardView {
     `;
 
     this.bindEvents();
+    bindScoreGuideToggle(
+      this.container.querySelector('#btnScScoreGuide'),
+      this.container.querySelector('#scScoreGuideCard')
+    );
     this.container.querySelector('#scContinueDrillBtn')?.addEventListener('click', () => {
       window.japaneseApp?.switchTab('drill');
     });

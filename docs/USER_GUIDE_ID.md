@@ -114,12 +114,21 @@ Setiap sesi Quiz Mode terdiri dari **8 soal ringkas** agar fokus tetap tajam:
 - Akumulasi XP otomatis menaikkan **Level** Anda dan membuka berbagai **Badge** pencapaian.
 
 ### 4. Sistem Pengulangan Berjarak (SRS — Leitner Box)
-- Setiap kosakata/kalimat memiliki tahap penguasaan (*Stage*).
-- **Jawaban Benar**: Kartu naik ke tahap lebih tinggi sehingga interval kemunculannya makin panjang (tanda Anda mulai hafal).
-- **Jawaban Salah**: Kartu turun tahap dan otomatis masuk ke daftar **Perbaiki Skor Saya** agar muncul lebih cepat di latihan berikutnya.
+- **SRS (*Spaced Repetition System*)** adalah metode mengulang kosakata tepat sebelum Anda hampir lupa: soal sulit muncul lebih sering, sedangkan yang sudah hafal muncul makin jarang.
+- Setiap kosakata/kalimat memiliki tahap penguasaan (**Stage 0 – 4**):
+- **Jawaban Benar**: Kartu naik 1 tahap dengan jadwal muncul berikutnya makin panjang (**1 → 2 → 4 → 7 → 14 hari**). Kartu yang mencapai **Stage ≥ 3** dihitung sebagai *kartu dikuasai* di Papan Peringkat.
+- **Jawaban Salah**: *Streak* kembali ke 0, kartu turun 1 tahap, langsung siap diulang lagi, dan otomatis masuk ke daftar **Perbaiki Skor Saya**.
 
-### 5. Skor Cakupan Bab (*Bab Coverage Score*)
-- Di halaman **My Progress** dan ringkasan akhir sesi, tiap Bab menampilkan progres penguasaan bank soal (`0–100`). Saat seluruh materi Bab dikuasai hingga tuntas, Bab ditandai **`100 🏆` (Cleared)**.
+### 5. Total Skor (`/ 2.500`) & Skor Cakupan Bab (`0 – 100`)
+- Setiap Bab (Bab 1–25) memiliki skor penguasaan `0–100`, sehingga **Total Skor maksimal = 2.500**.
+- **Kredit per Kartu**:
+  - **Quiz Mode (jawab benar)** = `100%` kredit untuk kartu tersebut.
+  - **Learning Mode (lihat kartu)** = `10%` kredit sebagai pemanasan (naik menjadi `100%` jika dijawab benar di Quiz Mode).
+  - **Jawab salah** tidak mengurangi kredit kartu yang sudah diraih.
+- **Bobot Soal & Syarat Skor 100 🏆**:
+  - **Kosakata/Kanji** & **Ketik Romaji Kalimat** berbobot **1×**, sedangkan **Kalimat Rumpang** berbobot **2×**.
+  - Untuk meraih **100 🏆** pada satu Bab, Anda perlu mencapai **≥ 80% total cakupan** bank soal **dan** menjawab benar **100% soal Kalimat Rumpang** di Quiz Mode (jika Kalimat Rumpang belum tuntas, skor Bab dibatasi maksimal **89**).
+- **Mengulang Kuis**: Menjawab benar kartu baru menaikkan **Total Skor**. Mengulang kartu yang sudah `100%` dikuasai tetap menambah **XP, Level, Menit Mingguan, dan kekuatan SRS**, tetapi Total Skor tidak bertambah lagi.
 
 ---
 
@@ -128,11 +137,11 @@ Setiap sesi Quiz Mode terdiri dari **8 soal ringkas** agar fokus tetap tajam:
 Menu **位 Papan Peringkat** memungkinkan Anda melihat progres dan termotivasi bersama siswa lainnya:
 
 - **Kriteria Pemeringkatan**:
-  1. Diurutkan berdasarkan **Total XP** tertinggi.
-  2. Jika XP sama, urutan ditentukan oleh **Streak Harian** dan jumlah **Kartu Dikuasai (Mastered Cards)**.
-- **Filter Periode**: Anda dapat beralih antara peringkat **Semua Waktu (All-Time)** maupun **Mingguan (Weekly)**.
+  1. **Sepanjang Waktu**: Diurutkan berdasarkan **Total Skor (`/ 2.500`)** tertinggi, lalu **Total XP**, **Streak Harian**, dan **Kartu Dikuasai**.
+  2. **Minggu Ini**: Diurutkan berdasarkan **Menit Belajar Mingguan** tertinggi.
+- **Filter Periode**: Anda dapat beralih antara peringkat **Sepanjang Waktu** maupun **Minggu Ini**, serta membuka panduan **ℹ️ Cara Hitung Skor** langsung di halaman ini.
 - **Privasi Terjaga 100%**:
-  - Papan Peringkat **hanya** menampilkan *Nickname*, *Avatar*, *Level*, *XP*, *Streak*, *Jumlah Kartu Dikuasai*, dan *Badge*.
+  - Papan Peringkat **hanya** menampilkan *Nickname*, *Avatar*, *Total Skor*, *Level*, *XP*, *Streak*, *Jumlah Kartu Dikuasai*, *Menit/Minggu*, dan *Badge*.
   - Alamat **email**, riwayat kesalahan detail, dan data privat Anda **tidak pernah** ditampilkan kepada siapa pun.
 
 ---

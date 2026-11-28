@@ -2,7 +2,7 @@
 // Modular & self-contained; integrates cleanly with ProgressManager (srs.js) and app.js.
 
 import { progress } from './srs.js';
-import { renderBadgeIconsHtml } from './progression.js';
+import { renderBadgeIconsHtml, renderScoreGuideCardHtml, bindScoreGuideToggle } from './progression.js';
 
 const AVATAR_OPTIONS = ['🌸', '🦊', '🐱', '🐼', '🗻', '⛩️', '🎎', '🍙', '🍡', '🥷', '🏯', '🎌'];
 
@@ -812,6 +812,16 @@ class AuthUIController {
       this.updateLeaderboardFilterUI();
       this.loadLeaderboard();
     });
+
+    const guideSlot = document.getElementById('lbScoreGuideSlot');
+    if (guideSlot && !guideSlot.dataset.rendered) {
+      guideSlot.dataset.rendered = '1';
+      guideSlot.innerHTML = renderScoreGuideCardHtml('lbScoreGuideCard');
+      bindScoreGuideToggle(
+        document.getElementById('btnLbScoreGuide'),
+        document.getElementById('lbScoreGuideCard')
+      );
+    }
   }
 
   updateLeaderboardFilterUI() {

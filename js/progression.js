@@ -156,3 +156,91 @@ export function renderBadgeIconsHtml(badgeIds = [], maxVisible = 6) {
   const extra = badgeIds.length > maxVisible ? `<span class="lb-badge-more">+${badgeIds.length - maxVisible}</span>` : '';
   return `<div class="lb-badges-wrap">${items.join('')}${extra}</div>`;
 }
+
+export function renderScoreGuideCardHtml(cardId = 'scoreGuideCard') {
+  return `
+    <div class="score-guide-card" id="${escapeHtml(cardId)}" hidden>
+      <div class="score-guide-header">
+        <div>
+          <span class="subheading-tag">Panduan Penilaian</span>
+          <h3 class="score-guide-title">💡 Cara Hitung Skor &amp; XP di Senjuku Nihongo</h3>
+        </div>
+        <button type="button" class="score-guide-close-btn" data-close-guide="${escapeHtml(cardId)}" aria-label="Tutup panduan skor">&times;</button>
+      </div>
+      <div class="score-guide-grid">
+        <div class="score-guide-item">
+          <div class="score-guide-item-head">
+            <span class="score-guide-icon">🏆</span>
+            <strong>Total Skor (/ 2.500) vs Total XP</strong>
+          </div>
+          <p>
+            <strong>Total Skor</strong> adalah gabungan skor <strong>Bab 1–25</strong> (maks. 100 per Bab) yang mengukur <em>luas materi unik</em> yang sudah kamu kuasai.
+            <strong>Total XP</strong> adalah poin keaktifan yang terus naik setiap kali kamu menyelesaikan latihan.
+          </p>
+        </div>
+        <div class="score-guide-item">
+          <div class="score-guide-item-head">
+            <span class="score-guide-icon">⚡</span>
+            <strong>Nilai Kartu: Quiz vs Learning</strong>
+          </div>
+          <ul>
+            <li><strong>Quiz Mode (jawab benar)</strong> → kartu mendapat <strong>100% kredit</strong>.</li>
+            <li><strong>Learning Mode (lihat kartu)</strong> → <strong>10% kredit</strong> sebagai pemanasan (naik jadi 100% saat dijawab benar di Quiz Mode).</li>
+            <li><strong>Jawab salah</strong> → kredit yang sudah diraih <strong>tidak turun</strong>, dan kartu masuk ke <em>Perbaiki Skor Saya</em>.</li>
+          </ul>
+        </div>
+        <div class="score-guide-item">
+          <div class="score-guide-item-head">
+            <span class="score-guide-icon">🔥</span>
+            <strong>Bobot Soal &amp; Syarat Skor 100</strong>
+          </div>
+          <ul>
+            <li><strong>Kosakata/Kanji</strong> &amp; <strong>Ketik Romaji Kalimat</strong>: bobot <strong>1×</strong>.</li>
+            <li><strong>Kalimat Rumpang</strong>: bobot <strong>2×</strong> (nilai tertinggi!).</li>
+            <li><strong>Skor 100 🏆</strong> per Bab diraih saat cakupan materi <strong>≥ 80%</strong> <em>dan</em> <strong>100% Kalimat Rumpang</strong> dijawab benar di Quiz Mode (tanpa itu, skor Bab maks. <strong>89</strong>).</li>
+          </ul>
+        </div>
+        <div class="score-guide-item">
+          <div class="score-guide-item-head">
+            <span class="score-guide-icon">🔄</span>
+            <strong>Kalau Mengulang Kuis Berkali-kali?</strong>
+          </div>
+          <p>
+            Menjawab benar <strong>kartu baru</strong> akan menaikkan <strong>Total Skor</strong>.
+            Mengulang kartu yang sudah 100% dikuasai tetap menambah <strong>XP, Level, Menit Mingguan, dan kekuatan SRS</strong>, tetapi Total Skor tidak bertambah lagi karena tiap kartu unik dihitung maksimal 100%.
+          </p>
+        </div>
+        <div class="score-guide-item score-guide-item-wide">
+          <div class="score-guide-item-head">
+            <span class="score-guide-icon">🧠</span>
+            <strong>Apa itu SRS (Sistem Pengulangan Berjarak)?</strong>
+          </div>
+          <p>
+            <strong>SRS (<em>Spaced Repetition System</em>)</strong> mengulang kosakata tepat sebelum kamu hampir lupa: soal sulit muncul lebih sering, yang sudah hafal muncul makin jarang.
+            Setiap jawaban benar menaikkan tahap kartu (<strong>Stage 0 → 4</strong>) dengan jeda ulang <strong>1 → 2 → 4 → 7 → 14 hari</strong>.
+            Kartu di <strong>Stage ≥ 3</strong> dihitung sebagai <em>kartu dikuasai</em> di Papan Peringkat; jika salah, kartu turun tahap dan langsung siap diulang lagi.
+          </p>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+export function bindScoreGuideToggle(toggleBtn, cardEl) {
+  if (!toggleBtn || !cardEl || toggleBtn.dataset.guideBound) return;
+  toggleBtn.dataset.guideBound = '1';
+
+  const setOpen = (isOpen) => {
+    cardEl.hidden = !isOpen;
+    toggleBtn.classList.toggle('active', isOpen);
+    toggleBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  };
+
+  toggleBtn.addEventListener('click', () => {
+    setOpen(cardEl.hidden);
+  });
+
+  cardEl.querySelector('[data-close-guide]')?.addEventListener('click', () => {
+    setOpen(false);
+  });
+}
