@@ -457,6 +457,27 @@ body.light-theme .flashcard-face {
   transform: translateY(-3px);
 }
 
+.drill-mode-banner.weakness-focus-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.75rem;
+  padding: 0.35rem 0.9rem;
+  border-radius: 9999px;
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 800;
+  background: var(--cp-urushi-tint);
+  color: var(--cp-urushi);
+  border: 1.5px solid var(--cp-urushi);
+}
+
+body:not(.light-theme) .drill-mode-banner.weakness-focus-banner {
+  background: rgba(179, 32, 47, 0.24);
+  color: #fecaca;
+  border-color: #f87171;
+}
+
 body.light-theme .option-btn:hover:not(:disabled) {
   box-shadow: 4px 4px 0 var(--cp-ink) !important;
 }

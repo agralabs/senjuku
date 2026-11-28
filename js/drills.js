@@ -10,9 +10,9 @@ import { checkKanaOnlyMatch } from './kana-converter.js';
 import { renderKanaKeyboardHtml, attachKanaKeyboard } from './kana-keyboard.js';
 
 export const SESSION_BYTE_SIZE = 8;
-export const WORD_TYPING_LIMIT_SEC = 25;
-export const FULL_SENTENCE_TYPING_LIMIT_SEC = 45;
-export const QUIZ_NON_TYPING_LIMIT_SEC = 25;
+export const WORD_TYPING_LIMIT_SEC = 30;
+export const FULL_SENTENCE_TYPING_LIMIT_SEC = 50;
+export const QUIZ_NON_TYPING_LIMIT_SEC = 30;
 
 /**
  * Unbiased Fisher-Yates (Knuth) array shuffle.
@@ -846,7 +846,6 @@ export class DrillEngine {
             </div>
             
             <div class="flashcard-meaning-row disp-translation">
-              <span class="flashcard-meaning-label">Arti:</span>
               <span class="flashcard-meaning-text">${card.meaningId}</span>
             </div>
 
@@ -988,8 +987,13 @@ export class DrillEngine {
 
     const options = this.generateOptions(card);
 
+    const weaknessTitleHtml = this.currentMode === 'weakness_focus'
+      ? `<div class="drill-mode-banner weakness-focus-banner">🎯 Fokus perbaikan skor Kamu</div>`
+      : '';
+
     let html = `
       <div class="drill-card-inner animate-in">
+        ${weaknessTitleHtml}
         <div class="drill-card-header">
           <div class="header-badges">
             <span class="badge lesson-badge">Bab ${card.lesson}</span>
@@ -1045,7 +1049,7 @@ export class DrillEngine {
             <div class="feedback-status" id="feedbackStatus"></div>
             <div class="feedback-details">
               <p><strong>Bacaan:</strong> <span class="badge-reading">${card.kana}</span> <span class="quiz-romaji disp-romaji">(${card.romaji})</span></p>
-              <p class="quiz-meaning-row disp-translation"><strong>Arti:</strong> ${card.meaningId}</p>
+              <p class="quiz-meaning-row disp-translation">${card.meaningId}</p>
             </div>
             <button type="button" class="btn btn-primary" id="nextCardBtn">Lanjut (Enter / Spasi) &rarr;</button>
           </div>
@@ -1583,7 +1587,7 @@ export class DrillEngine {
             <div class="feedback-status" id="feedbackStatus"></div>
             <div class="feedback-details">
               <p><strong>Jawaban Benar:</strong> <span class="badge-reading">${card.kana}</span> <span class="quiz-romaji disp-romaji">(${card.romaji})</span></p>
-              <p class="quiz-meaning-row disp-translation"><strong>Arti:</strong> ${card.meaningId}</p>
+              <p class="quiz-meaning-row disp-translation">${card.meaningId}</p>
             </div>
             <button type="button" class="btn btn-primary" id="nextCardBtn">Lanjut (Enter) &rarr;</button>
           </div>
@@ -1789,7 +1793,7 @@ export class DrillEngine {
             Bacaan: <strong class="hint-kana">${card.kana}</strong> <span class="hint-romaji">(${card.romaji})</span>
           </span>
           <span class="learning-hint-item disp-translation">
-            Arti: <strong class="hint-meaning">${card.meaningId}</strong>
+            <strong class="hint-meaning">${card.meaningId}</strong>
           </span>
         </div>
 
@@ -1987,7 +1991,7 @@ export class DrillEngine {
     const learningHintHtml = isLearning ? `
       <div class="sentence-romaji-learning-hints">
         <span class="learning-hint-item disp-romaji"><strong>Romaji:</strong> ${card.romaji}</span>
-        <span class="learning-hint-item disp-translation"><strong>Arti:</strong> ${card.translation}</span>
+        <span class="learning-hint-item disp-translation">${card.translation}</span>
       </div>
     ` : '';
 
@@ -2067,7 +2071,7 @@ export class DrillEngine {
           <div class="feedback-details">
             <p><strong>Kana:</strong> <span class="badge-reading">${card.kana || card.text}</span></p>
             <p class="disp-romaji"><strong>Romaji:</strong> ${card.romaji}</p>
-            <p><strong>Arti:</strong> ${card.translation}</p>
+            <p class="disp-translation">${card.translation}</p>
           </div>
           <button type="button" class="btn btn-primary btn-next-card" id="btnNextSRomaji">
             ${isLastInByte ? `Lihat Hasil (${this.drillQueue.length}/${this.drillQueue.length}) ✔` : 'Lanjut Soal Berikutnya &rarr;'}

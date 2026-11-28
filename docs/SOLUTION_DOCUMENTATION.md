@@ -1,14 +1,14 @@
-# Senjuku Nihongo (せんじゅく日本語) — Complete Solution Documentation
+# Senjuku Nihongo (せんじゅく日本語) — Solution Design Document
 
 **Branding:** Senjuku (Full Name: Senjuku Nihongo / せんじゅく日本語)  
-**Version:** 2.5 (Minna no Nihongo I — Bab 1–25, Kana Writing Companion, Google Cloud Neural2 TTS, Gemini AI Study Advisor, Sumi & Urushi Web + Mobile UI, Multi-User RBAC, SQLite + Litestream)  
+**Version:** 2.6 (Bab 1–25, Kana Writing Companion, Google Cloud Neural2 TTS, Gemini AI Study Advisor, Sumi & Urushi + Casual Pop Web/Mobile UI, Total Skor Leaderboard, Multi-User RBAC, SQLite + Litestream)  
 **Runtime:** Node.js v24+ (Zero External npm Dependencies — Native `node:http`, `node:sqlite`, `node:crypto`, `node:tls`, `fetch`)
 
 ---
 
 ## 1. Application Functionality
 
-**Senjuku Nihongo Reading Gym** (brand: **Senjuku**) is an interactive Japanese reading & Kana-writing web application aligned 1:1 with *Minna no Nihongo I* (**Bab 1–25**, Audio Tracks **001–087**), engineered as a single responsive web app for desktop and mobile browsers.
+**Senjuku Nihongo Reading Gym** (brand: **Senjuku**) is an interactive Japanese reading & Kana-writing web application (**Bab 1–25**, Audio Tracks **001–087**), engineered as a single responsive web app for desktop and mobile browsers.
 
 ### 1.1 Access Control & Multi-User Accounts
 - **Registered Users Only (Auth Gate)**: Anonymous browsing is blocked both in the UI (`body.auth-gate-locked`) and on the API (`/api/leaderboard`, `/api/progress/*`, `/api/profile`, `/api/achievements/*`, `/api/tts*`, `/api/activity/*`, `/api/advisor/*`, `/api/admin/*` return `401 Unauthorized` without a valid session cookie).
@@ -77,7 +77,7 @@ To ensure pedagogical rigor (preventing cognitive crutches during active testing
 #### B. How Reading Aids Appear in Learning Mode (Mode Belajar)
 Learning Mode is engineered as an instructional study guide rather than an exam, making rich reading and translation scaffolding readily accessible across distinct interactive components:
 - **Flashcard Format (Tebak Bacaan Belajar)**:
-  - **Front Face**: Displays only the large target Kanji (`.large-kanji.flashcard-kanji-target`) and an instruction hint: *"💡 Klik kartu atau tekan Spasi untuk melihat bacaan & arti"*. Romaji and Translation are intentionally absent from the front face to encourage initial active memory recall.
+  - **Front Face**: Displays only the large target Kanji (`.large-kanji.flashcard-kanji-target`), paired with the **`Tampilkan Kartu (tekan spasi)`** reveal button below. Romaji and Translation are intentionally absent from the front face to encourage initial active memory recall.
   - **Back Face (Flipped on Card Click or Spacebar)**:
     - **Romaji**: Displayed prominently in parentheses right beside the large Kana reading: `<span class="flashcard-kana">${card.kana}</span> <span class="flashcard-romaji disp-romaji">(${card.romaji})</span>`. Controlled by the Romaji toggle (**`M`**).
     - **Translation (Arti)**: Displayed in two dedicated locations:
@@ -132,7 +132,7 @@ Learning Mode is engineered as an instructional study guide rather than an exam,
 - Authentic **KanjiVG stroke-order SVG paths** with animated stroke playback, numbered stroke guides, step-by-step inspection, mnemonic memory tips, native Japanese pronunciation audio, and printable paper-workbook practice sheet mode (`Klee One` brush-terminal font).
 
 ### 1.5 Audio Transcript & Native Japanese Neural TTS (`js/explorer.js`, `js/audio.js`, `server/tts.js`)
-- Full *Minna no Nihongo I* transcripts (**Bab 1–25**, Tracks **001–087**) with exact book mapping badges (`会話 (Conversation)`, `問題 1番 (Exercise 1)`, `問題 2番/3番`), hairline dialogue row separators, and horizontal scrollable Bab chip strip on mobile.
+- Complete conversation transcripts (**Bab 1–25**, Tracks **001–087**) with exact section mapping badges (`会話 (Conversation)`, `問題 1番 (Exercise 1)`, `問題 2番/3番`), hairline dialogue row separators, and horizontal scrollable Bab chip strip on mobile.
 - 3 Furigana modes (**Tampilkan Semua**, **Hover to Reveal**, **Tanpa Furigana**), Romaji & Indonesian toggles, interactive Kanji detail modal, **Shadowing Auto-Play**, and a **🎙️ Suara** voice diagnostic/test panel.
 - **Native Tokyo Japanese Neural TTS (`/api/tts`)**:
   - **Priority 1 — Google Cloud Text-to-Speech (Neural2)** *(1M free chars/month)*: `ja-JP-Neural2-C` (native Tokyo male) and `ja-JP-Neural2-B` (native Tokyo female), `MP3` at `speakingRate: 0.96`.
@@ -158,10 +158,12 @@ Learning Mode is engineered as an instructional study guide rather than an exam,
 - **Celebrations & Engagement Emails**:
   - Clearing 1 lesson triggers a **golden starburst animation** + idempotent congratulatory email (`POST /api/achievements/notify`).
   - Clearing a 5-lesson block triggers a **Grade Unlock celebration modal** + idempotent Grade Unlock email.
-- **Public Badges & Leaderboard**: Earned badges are synced to SQLite and displayed on **位 Papan Peringkat** (`All Time` and `This Week`) with a dark-red editorial table header.
+- **Public Badges, Total Skor & Leaderboard**: Earned badges, `total_score` (`/ 2,500`), and `cleared_lessons_count` are computed server-side from persisted `user_srs_cards` and displayed on **位 Papan Peringkat** (`Sepanjang Waktu` sorted by `total_score DESC, xp DESC`, and `Minggu Ini` sorted by `weekly_minutes DESC`). An interactive **`ℹ️ Cara Hitung Skor`** collapsible guide (`js/progression.js`) is available on both the Leaderboard and Progres tabs, explaining Total Skor vs. XP, card credits, `2×` Cloze weights, and SRS (`Stage 0–4`, `1 → 2 → 4 → 7 → 14` day intervals).
+- **Per-Question Timers**: Word Typing and Quiz non-typing modes use a **30s** countdown (`WORD_TYPING_LIMIT_SEC = 30`, `QUIZ_NON_TYPING_LIMIT_SEC = 30`); Full-Sentence Romaji Typing uses a **50s** countdown (`FULL_SENTENCE_TYPING_LIMIT_SEC = 50`).
 
-### 1.8 "Sumi & Urushi" Unified Web + Mobile Design System (`css/sumi-urushi.css`)
+### 1.8 "Sumi & Urushi" + "Casual Pop" Dual-Theme Design System (`css/sumi-urushi.css`, `css/casual-pop.css`)
 - **5-Token Palette** (Light & Dark themes): **Urushi Red** (`#7A131E` / `#991B1B`), **Sumi Ink** (`#10131A` / `#F4F5F7`), **Washi / Obsidian Canvas** (`#F3F4F6` / `#0B0E14`), **Paper / Charcoal Surface** (`#FFFFFF` / `#131720`) with **Slate Rule** (`#D8DEE6` / `#232A38`), and **Aizome Blue** (`#1D3E8A` / `#60A5FA`).
+- **Casual Pop Layer (`css/casual-pop.css`)**: Adds `Plus Jakarta Sans` display headings, subtle Urushi/Aizome ambient blur orbs, compact 34px header nav pills, Neo-Brutalist tactile mode/category cards with offset shadows and bouncy hover transitions, and a clickable funny Ninja SVG shortcut (`#btnNinjaClozeShortcut`) in the hero header that launches Quiz Mode Kalimat Rumpang.
 - **Modern Platform Theming**: `<meta name="color-scheme" content="light dark">`, root `color-scheme`, `accent-color`, `scrollbar-color` (with WebKit fallback), `@media (prefers-reduced-motion: reduce)`, and `@media (forced-colors: active)`.
 - **Typography**: `IBM Plex Sans` (with `font-variant-numeric: tabular-nums` for scores, XP, streaks, and timers) + `Noto Sans JP` for reading + `Klee One` for Kana stroke practice.
 - **Japanese Kanji Hanko Navigation**: Main tabs use crisp Kanji markers (`練` Daily Drill · `書` Tulis Kana · `読` Audio Transcript · `進` My Progress · `復` Perbaiki Skor Saya · `位` Papan Peringkat · `教` Dashboard Sensei) that highlight in Urushi Red when active.
@@ -198,10 +200,10 @@ flowchart LR
 | **Neural TTS** | `server/tts.js` | Google Cloud TTS Neural2 (`ja-JP-Neural2-C` / `B`), Azure Speech, and VOICEVOX synthesis with permanent SHA-256 disk caching (`data/tts-cache/`). |
 | **AI Advisor** | `server/advisor.js` | Zero-PII SQLite performance/timing aggregator, Gemini REST integration, 5-layer non-chatbot guardrails (`<= 300` words, no markdown/code/chat), deterministic fallback, 6h cache, and 3×/day persistent SQLite quota. |
 | **SMTP Mailer** | `server/mailer.js` | Zero-dependency `node:tls` SMTP client (`AUTH LOGIN`, RFC 5321 dot-stuffing, UTF-8 Base64 MIME) with HTML + text templates for verification, password reset, lesson clear, and grade unlock. |
-| **Data Banks** | `data/book-mapping.js`, `data/lessons-*.js`, `data/kanji-vocabulary.js`, `data/cloze-sentences.js`, `data/vocab-booster.js`, `data/sentence-romaji.js`, `data/bank-15-25.js`, `data/kana-writing-data.js` | Canonical *Minna no Nihongo I* Bab 1–25 book mapping, transcripts, furigana, multi-mode question banks, and 92-character Hiragana/Katakana KanjiVG stroke-order definitions. |
+| **Data Banks** | `data/book-mapping.js`, `data/lessons-*.js`, `data/kanji-vocabulary.js`, `data/cloze-sentences.js`, `data/vocab-booster.js`, `data/sentence-romaji.js`, `data/bank-15-25.js`, `data/kana-writing-data.js` | Canonical Bab 1–25 section mapping, transcripts, furigana, multi-mode question banks, and 92-character Hiragana/Katakana KanjiVG stroke-order definitions. |
 | **Frontend Core** | `js/app.js`, `js/srs.js`, `js/drills.js`, `js/audio.js`, `js/kana-keyboard.js`, `js/kana-converter.js` | App orchestrator, theme switcher (`data-theme` + `color-scheme`), per-user scoped SRS/progress engine (`kirakira_nihongo_user_<id>`), drill engine (timers + manual playback limits), Neural2 + browser TTS engine, and Kana on-screen keyboard. |
-| **Frontend Views** | `js/kana-companion.js`, `js/explorer.js`, `js/scorecard.js`, `js/ai-advisor.js`, `js/weakness.js`, `js/progression.js`, `js/auth-ui.js` | Kana Writing Companion, Audio Transcript Explorer, My Progress (Scorecard + AI Advisor), Weakness Focus, Block Unlock popups & Star/Grade celebrations, Auth Gate, Profile, Leaderboard, and Admin Dashboard. |
-| **Stylesheets** | `style.css`, `css/auth-leaderboard.css`, `css/kana-companion.css`, `css/ai-advisor.css`, `css/sumi-urushi.css` | Base layout, auth/leaderboard/compact scorecard grid, Kana workbook sheet, AI Advisor report cards, and the **Sumi & Urushi** editorial design system layer. |
+| **Frontend Views** | `js/kana-companion.js`, `js/explorer.js`, `js/scorecard.js`, `js/ai-advisor.js`, `js/weakness.js`, `js/progression.js`, `js/auth-ui.js` | Kana Writing Companion, Audio Transcript Explorer, My Progress (Scorecard + AI Advisor), Weakness Focus, Block Unlock popups & Score Guide, Auth Gate, Profile, Leaderboard, and Admin Dashboard. |
+| **Stylesheets** | `style.css`, `css/auth-leaderboard.css`, `css/kana-companion.css`, `css/ai-advisor.css`, `css/sumi-urushi.css`, `css/casual-pop.css` | Base layout, auth/leaderboard/compact scorecard grid, Kana workbook sheet, AI Advisor report cards, **Sumi & Urushi** design system, and **Casual Pop** Neo-Brutalist/glass layer. |
 | **CLI & Tests** | `tools/manage-user.cjs`, `tools/verify-ai-advisor.mjs`, `tools/verify-ai-advisor-ui.mjs`, `tools/verify-audio-playback-limits.mjs`, `tools/verify-layout.mjs`, `tools/verify-multiuser-auth.mjs`, `tools/verify-answer-randomization.mjs`, `tools/verify-early-exit-and-scores.mjs` | Admin CLI (`list`, `set-admin`, `set-student`, `verify`, `create-admin`) and zero-dependency automated verification suites for auth, layout, audio limits, AI advisor, answer/question randomization, and session scoring/early exit penalization. |
 
 ### 2.3 Entity-Relationship Diagram (SQLite Schema)
@@ -253,6 +255,8 @@ erDiagram
         INTEGER streak_days
         TEXT last_active_date "YYYY-MM-DD"
         REAL weekly_minutes
+        INTEGER total_score "0..2500 server-computed"
+        INTEGER cleared_lessons_count "0..25"
         TEXT badges_json "JSON array of badge IDs"
         TEXT history_json "Private daily history JSON"
         DATETIME updated_at
@@ -265,6 +269,8 @@ erDiagram
         INTEGER streak
         INTEGER correct
         INTEGER wrong
+        REAL coverage_credit "0..1.0 (wire key: cov)"
+        INTEGER learning_views
         DATETIME next_due
     }
 
@@ -338,8 +344,8 @@ erDiagram
 | `GET` | `/api/auth/me` | Session | Return current authenticated user profile. |
 | `PATCH` | `/api/profile` | Session | Update nickname, avatar emoji, bio, and membership tier. |
 | `GET` | `/api/progress/me` | Session | Fetch full private progress (XP, level, streak, badges, history, SRS cards). |
-| `POST` | `/api/progress/sync` | Session | Atomically sync progress & SRS cards (`replace` or `merge`). |
-| `GET` | `/api/leaderboard?period=all\|week` | Session | Privacy-safe ranking (Nickname, Avatar, Tier, Level, XP, Streak, Mastered Cards, Weekly Minutes, Badges). |
+| `POST` | `/api/progress/sync` | Session | Atomically sync progress & SRS cards (`replace` or `merge`; client maps `coverageCredit` → `cov` over the wire to avoid WAF/ModSecurity `403` false positives, and `pullCloudProgress` auto-merges unsynced scoped `localStorage` data). |
+| `GET` | `/api/leaderboard?period=all\|week` | Session | Privacy-safe ranking (Nickname, Avatar, Tier, Total Skor `/ 2,500`, Level, XP, Streak, Mastered Cards, Weekly Minutes, Badges). |
 | `POST` | `/api/achievements/notify` | Session | Idempotent lesson-clear (`1..25`) and grade-unlock (`1..5`) email trigger. |
 | `GET` | `/api/tts/status` | Session | Check whether server-side Neural TTS is enabled and which male/female voices are active. |
 | `GET` | `/api/tts?text=...&gender=male\|female` | Session | Synthesize (or serve cached MP3/WAV from `data/tts-cache/`) native Japanese audio. |

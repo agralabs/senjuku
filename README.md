@@ -1,9 +1,9 @@
 # Senjuku (せんじゅく) — Senjuku Nihongo (せんじゅく日本語)
 ### Japanese Reading Gym & Kana-Writing Web Application
 
-An interactive Japanese reading, vocabulary, and Kana-writing web application inspired by *Minna no Nihongo I*. This app is intended as a classroom teaching companion, providing a 20-minute daily drill to accelerate classical learning.
+An interactive Japanese reading, vocabulary, and Kana-writing web application (Lessons 1–25). This app is intended as a classroom teaching companion, providing a 20-minute daily drill to accelerate classical learning.
 
-It is built with a zero-external-npm Node.js v24 backend, vanilla ECMAScript modules, SQLite WAL mode, and the **Sumi & Urushi** editorial design system.
+It is built with a zero-external-npm Node.js v24 backend, vanilla ECMAScript modules, SQLite WAL mode, and the **Sumi & Urushi** + **Casual Pop** dual-theme design system.
 
 > 📖 **Documentation**:
 > - **Student User Guide**: [🇬🇧 English](docs/USER_GUIDE.md) | [🇮🇩 Bahasa Indonesia](docs/USER_GUIDE_ID.md)
@@ -59,7 +59,7 @@ flowchart LR
    - Premature exits penalize all remaining unanswered questions as wrong, demoting cards in the SRS Leitner box.
 
 3. **Audio Transcripts & Tokyo Neural2 TTS**:
-   - Complete *Minna no Nihongo I* transcripts (Bab 1–25, Tracks 001–087).
+   - Complete conversation transcripts (Bab 1–25, Tracks 001–087).
    - 3 Furigana display modes (*Tampilkan Semua*, *Hover to Reveal*, *Tanpa Furigana*).
    - High-fidelity Google Cloud Neural2 speech synthesis with permanent disk caching (`data/tts-cache/`).
 
@@ -68,7 +68,7 @@ flowchart LR
 
 5. **Progression & Gamification**:
    - 5-Grade gradual block unlock system (Bab 1–5 &rarr; 6–10 &rarr; 11–15 &rarr; 16–20 &rarr; 21–25).
-   - Transparent Bab question-bank coverage score (`score / 100`, or `100 🏆` upon mastery).
+   - Transparent Bab question-bank coverage score (`score / 100`, or `100 🏆` upon mastery) and **Total Skor (`/ 2.500`)** synced to the Leaderboard (with interactive `ℹ️ Cara Hitung Skor` guide).
    - Privacy-safe public Leaderboard and Sensei Admin Dashboard.
 
 ---
@@ -133,6 +133,7 @@ senjuku/
 │
 ├── css/
 │   ├── sumi-urushi.css          # Sumi & Urushi unified editorial design system
+│   ├── casual-pop.css           # Casual & dynamic Neo-Brutalist/glass pop layer
 │   ├── auth-leaderboard.css     # Auth modal, profile & leaderboard styles
 │   ├── kana-companion.css       # Kana stroke workbook & canvas styles
 │   └── ai-advisor.css           # AI Study Advisor report card styles

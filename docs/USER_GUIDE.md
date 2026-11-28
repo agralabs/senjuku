@@ -71,7 +71,7 @@ Every Quiz Mode session consists of **8 bite-sized questions** to keep your focu
 3. **Vocab Booster: Kana** & **Vocab Booster: Kanji**
    - Match 3 meanings with 3 Kana (or Kanji) cards on a single screen. Cards are strictly shuffled so no pair starts pre-aligned.
 4. **Ketik Kalimat Penuh (Full Sentence Typing)**
-   - Listen to native audio (up to **2× plays**) and type the full sentence in Kana within **45 seconds**.
+   - Listen to native audio (up to **2× plays**) and type the full sentence in Kana within **50 seconds**.
 5. **Kalimat Rumpang (Cloze Sentence)** *(Hardest Mode — 2× Weight)*
    - Fill in the missing word or particle inside a complete sentence with visual context cues. Requires **100% accuracy** and awards **2× weight** for progress and XP.
 6. **Perbaiki Skor Saya (Weakness Focus)**
@@ -114,12 +114,21 @@ Every Quiz Mode session consists of **8 bite-sized questions** to keep your focu
 - Accumulating XP raises your **Level** and unlocks achievement **Badges**.
 
 ### 4. Spaced Repetition System (SRS — Leitner Boxes)
-- Each vocabulary item/sentence tracks a mastery **Stage**.
-- **Correct Answer**: Promotes the card to a higher stage with a longer review interval.
-- **Wrong Answer**: Demotes the card and adds it to **Perbaiki Skor Saya** so it reappears sooner.
+- **SRS (*Spaced Repetition System*)** repeats vocabulary right before you are about to forget it: harder cards appear more often, while mastered cards appear less frequently.
+- Each vocabulary item/sentence tracks a mastery **Stage (`0 – 4`)**:
+- **Correct Answer**: Promotes the card by 1 stage with longer review intervals (**1 → 2 → 4 → 7 → 14 days**). Cards at **Stage ≥ 3** count as *mastered cards* on the Leaderboard.
+- **Wrong Answer**: Resets the card's streak to 0, demotes it by 1 stage, makes it immediately due again, and adds it to **Perbaiki Skor Saya**.
 
-### 5. Lesson Coverage Score (`0 – 100`)
-- In **My Progress** and the end-of-session summary, each lesson shows your question-bank mastery coverage (`0–100`). Mastering a lesson marks it as **`100 🏆` (Cleared)**.
+### 5. Total Score (`/ 2,500`) & Lesson Coverage Score (`0 – 100`)
+- Each lesson (Lessons 1–25) has a mastery score from `0–100`, giving a **maximum Total Score of 2,500**.
+- **Per-Card Credit**:
+  - **Quiz Mode (correct answer)** = `100%` credit for that card.
+  - **Learning Mode (viewing a card)** = `10%` warm-up credit (upgrades to `100%` once answered correctly in Quiz Mode).
+  - **Wrong answers** never reduce credit you already earned.
+- **Question Weights & `100 🏆` Requirement**:
+  - **Vocab/Kanji** and **Sentence Romaji Typing** carry **1×** weight, while **Kalimat Rumpang (Cloze)** carries **2×** weight.
+  - Earning **`100 🏆`** on a lesson requires **≥ 80% total weighted coverage** **and** **100% of Kalimat Rumpang** answered correctly in Quiz Mode (otherwise the lesson score is capped at **89**).
+- **Repeating Quizzes**: Answering new cards correctly increases **Total Score**. Repeating cards already at `100%` still increases **XP, Level, Weekly Minutes, and SRS strength**, without inflating Total Score.
 
 ---
 
@@ -128,11 +137,11 @@ Every Quiz Mode session consists of **8 bite-sized questions** to keep your focu
 The **位 Papan Peringkat (Leaderboard)** lets you track your standing alongside other verified learners:
 
 - **Ranking Criteria**:
-  1. Ranked primarily by **Total XP**.
-  2. Ties are broken by **Daily Streak** and **Mastered Cards**.
-- **Period Filters**: Switch between **All-Time (Semua Waktu)** and **Weekly (Mingguan)** rankings.
+  1. **All-Time (Sepanjang Waktu)**: Ranked primarily by **Total Score (`/ 2,500`)**, then **Total XP**, **Daily Streak**, and **Mastered Cards**.
+  2. **Weekly (Minggu Ini)**: Ranked by **Weekly Study Minutes**.
+- **Period Filters & Score Guide**: Switch between **Sepanjang Waktu** and **Minggu Ini**, and click **ℹ️ Cara Hitung Skor** directly on the page for a quick breakdown.
 - **100% Privacy-Safe**:
-  - The Leaderboard **only** displays *Nickname*, *Avatar*, *Level*, *XP*, *Streak*, *Mastered Cards*, and *Badges*.
+  - The Leaderboard **only** displays *Nickname*, *Avatar*, *Total Score*, *Level*, *XP*, *Streak*, *Mastered Cards*, *Weekly Minutes*, and *Badges*.
   - Your **email address**, detailed mistake history, and private records are **never** exposed.
 
 ---

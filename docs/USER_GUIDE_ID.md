@@ -71,7 +71,7 @@ Setiap sesi Quiz Mode terdiri dari **8 soal ringkas** agar fokus tetap tajam:
 3. **Vocab Booster: Kana** & **Vocab Booster: Kanji**
    - Pasangkan 3 arti Indonesia dengan 3 kartu Kana (atau Kanji) dalam satu layar. Semua pasangan selalu diacak sehingga tidak ada yang sudah sejajar sejak awal.
 4. **Ketik Kalimat Penuh**
-   - Dengarkan audio kalimat native (maksimal **2× putar**) dan ketik kalimat lengkap dalam huruf Kana dalam batas waktu **45 detik**.
+   - Dengarkan audio kalimat native (maksimal **2× putar**) dan ketik kalimat lengkap dalam huruf Kana dalam batas waktu **50 detik**.
 5. **Kalimat Rumpang (Cloze)** *(Mode Tersulit — Bobot 2×)*
    - Lengkapi bagian kata/partikel yang kosong di dalam kalimat utuh dengan bantuan konteks visual. Menuntut ketelitian tinggi (**wajib 100%**) dan memberikan bobot nilai/XP **2× lipat**.
 6. **Perbaiki Skor Saya (Weakness Focus)**
