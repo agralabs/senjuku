@@ -1137,10 +1137,10 @@ export class DrillEngine {
     const isCorrect = !isTimeout && (selectedKana === card.kana);
     this.cardsReviewed++;
 
-    // Disable all options
+    // Disable all options; in Quiz Mode do NOT reveal the correct answer when wrong
     allBtns.forEach(btn => {
       btn.disabled = true;
-      if (btn.dataset.answer === card.kana) {
+      if (isCorrect && btn.dataset.answer === card.kana) {
         btn.classList.add('correct');
       } else if (btn === buttonElement && !isCorrect) {
         btn.classList.add('wrong');
@@ -1149,7 +1149,12 @@ export class DrillEngine {
 
     const drawer = this.elements.cardContainer.querySelector('#feedbackDrawer');
     const status = this.elements.cardContainer.querySelector('#feedbackStatus');
+    const details = drawer?.querySelector('.feedback-details');
     const nextBtn = this.elements.cardContainer.querySelector('#nextCardBtn');
+
+    if (details) {
+      details.hidden = !isCorrect;
+    }
 
     if (isCorrect) {
       this.correctCount++;
@@ -1173,7 +1178,7 @@ export class DrillEngine {
       progress.recordCardReview(card.id, false);
 
       if (status) {
-        status.innerHTML = `<span class="icon-error">✖</span> <strong>Perlu diingat!</strong>`;
+        status.innerHTML = `<span class="icon-error">✖</span> <strong>Masih salah 💪</strong>`;
         status.className = 'feedback-status error';
       }
     }
@@ -1316,7 +1321,7 @@ export class DrillEngine {
 
     allBtns.forEach(btn => {
       btn.disabled = true;
-      if (btn.dataset.kana === card.correctKana) {
+      if (isCorrect && btn.dataset.kana === card.correctKana) {
         btn.classList.add('correct');
       } else if (btn === buttonElement && !isCorrect) {
         btn.classList.add('wrong');
@@ -1324,13 +1329,20 @@ export class DrillEngine {
     });
 
     const blankSlot = this.elements.cardContainer.querySelector('#clozeBlankSlot');
-    if (blankSlot) {
-      blankSlot.innerHTML = `<span class="filled-cloze-target ${isCorrect ? 'correct' : 'wrong'}">${card.targetWord} (${card.correctKana})</span>`;
+    if (blankSlot && isCorrect) {
+      blankSlot.innerHTML = `<span class="filled-cloze-target correct">${card.targetWord} (${card.correctKana})</span>`;
+    } else if (blankSlot && !isCorrect) {
+      blankSlot.classList.add('wrong');
     }
 
     const drawer = this.elements.cardContainer.querySelector('#clozeFeedbackDrawer');
     const status = this.elements.cardContainer.querySelector('#clozeFeedbackStatus');
+    const details = drawer?.querySelector('.feedback-details');
     const nextBtn = this.elements.cardContainer.querySelector('#nextClozeBtn');
+
+    if (details) {
+      details.hidden = !isCorrect;
+    }
 
     if (isCorrect) {
       this.correctCount++;
@@ -1356,11 +1368,9 @@ export class DrillEngine {
       progress.recordCardReview(card.id, false);
 
       if (status) {
-        status.innerHTML = `<span class="icon-error">✖</span> <strong>残念！ Perhatikan kalimatnya:</strong>`;
+        status.innerHTML = `<span class="icon-error">✖</span> <strong>残念！ Belum tepat.</strong>`;
         status.className = 'feedback-status error';
       }
-
-      sound.speakJapanese(card.fullSentence || card.audioSentence);
     }
 
     this.updateStatsUI();
@@ -1668,6 +1678,7 @@ export class DrillEngine {
     const submitBtn = this.elements.cardContainer.querySelector('#submitTypingBtn');
     const drawer = this.elements.cardContainer.querySelector('#feedbackDrawer');
     const status = this.elements.cardContainer.querySelector('#feedbackStatus');
+    const details = drawer?.querySelector('.feedback-details');
     const nextBtn = this.elements.cardContainer.querySelector('#nextCardBtn');
 
     if (input && input.disabled) return;
@@ -1715,9 +1726,13 @@ export class DrillEngine {
       if (status) {
         status.innerHTML = isTimeout
           ? `<span class="icon-error">⏰</span> <strong>Waktu Habis (${WORD_TYPING_LIMIT_SEC} dtk)! Pindah ke soal berikutnya...</strong>`
-          : `<span class="icon-error">✖</span> <strong>Perlu diingat lagi!</strong>`;
+          : `<span class="icon-error">✖</span> <strong>Masih salah 💪</strong>`;
         status.className = 'feedback-status error';
       }
+    }
+
+    if (details) {
+      details.hidden = !isCorrect;
     }
 
     this.updateStatsUI();
@@ -2155,9 +2170,13 @@ export class DrillEngine {
           if (status) {
             status.innerHTML = isTimeout
               ? `<span class="icon-error">⏰</span> <strong>Waktu Habis (${limitSec} dtk)! Pindah ke soal berikutnya...</strong>`
-              : `<span class="icon-error">✖</span> <strong>Belum tepat! Perhatikan bacaan Romaji-nya:</strong>`;
+              : `<span class="icon-error">✖</span> <strong>Belum tepat!</strong>`;
             status.className = 'feedback-status error';
           }
+        }
+        const details = drawer?.querySelector('.feedback-details');
+        if (details) {
+          details.hidden = !isCorrect;
         }
         this.updateStatsUI();
       } else {
@@ -2594,18 +2613,24 @@ export class DrillEngine {
           }
         }
 
-        // Show full answer key for all 3 pairs
+        // Show full answer key only in Learning Mode or when all 3 pairs are correct in Quiz Mode
         if (keyBox) {
-          keyBox.innerHTML = leftItems.map((left, idx) => {
-            const matched = (rightOrder[idx].id === left.id);
-            const kanjiDisplay = left.kanji ? `<strong>${left.kanji}</strong> (${left.kana})` : `<strong>${left.kana}</strong>`;
-            return `
-              <div class="vb-key-item ${matched ? 'ok' : 'miss'}">
-                <span>${matched ? '✔' : '✖'} ${left.meaning}</span>
-                <span>&rarr; ${kanjiDisplay}</span>
-              </div>
-            `;
-          }).join('');
+          if (!isLearning && !isAllCorrect) {
+            keyBox.innerHTML = '';
+            keyBox.hidden = true;
+          } else {
+            keyBox.hidden = false;
+            keyBox.innerHTML = leftItems.map((left, idx) => {
+              const matched = (rightOrder[idx].id === left.id);
+              const kanjiDisplay = left.kanji ? `<strong>${left.kanji}</strong> (${left.kana})` : `<strong>${left.kana}</strong>`;
+              return `
+                <div class="vb-key-item ${matched ? 'ok' : 'miss'}">
+                  <span><span class="vb-key-icon ${matched ? 'ok' : 'miss'}">${matched ? '✔' : '✖'}</span> ${left.meaning}</span>
+                  <span>&rarr; ${kanjiDisplay}</span>
+                </div>
+              `;
+            }).join('');
+          }
         }
 
         this.updateStatsUI();
