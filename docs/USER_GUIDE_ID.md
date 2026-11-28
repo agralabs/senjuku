@@ -2,7 +2,7 @@
 
 # Panduan Pengguna Siswa — Senjuku Nihongo (せんじゅく日本語)
 
-Selamat datang di **Senjuku Nihongo**, gym membaca bahasa Jepang dan latihan menulis Kana yang terinspirasi dari *Minna no Nihongo I* — dirancang sebagai pendamping pembelajaran kelas dengan latihan harian 20 menit untuk mempercepat pembelajaran klasikal.
+Selamat datang di **Senjuku Nihongo**, gym membaca bahasa Jepang dan latihan menulis Kana (Bab 1–25) — dirancang sebagai pendamping pembelajaran kelas dengan latihan harian 20 menit untuk mempercepat pembelajaran klasikal.
 
 Panduan ini ditulis khusus dari sudut pandang **siswa** untuk membantu Anda memulai dari pendaftaran hingga menguasai seluruh 25 Bab dan naik peringkat di Leaderboard.
 
@@ -91,7 +91,7 @@ Setiap sesi Quiz Mode terdiri dari **8 soal ringkas** agar fokus tetap tajam:
 ## 5. Menu Pendukung Belajar Lainnya
 
 - **書 Tulis Kana**: Pelajari urutan goresan (*stroke order*) seluruh 46 Hiragana & 46 Katakana lengkap dengan animasi, mnemonik, kanvas latihan menulis, dan mode cetak lembar kerja (*workbook*).
-- **読 Audio Transcript**: Baca dan dengarkan transkrip percakapan lengkap *Minna no Nihongo I* (Bab 1–25, Track 001–087) dengan 3 mode Furigana (*Tampilkan Semua*, *Hover to Reveal*, *Tanpa Furigana*).
+- **読 Audio Transcript**: Baca dan dengarkan transkrip percakapan lengkap (Bab 1–25, Track 001–087) dengan 3 mode Furigana (*Tampilkan Semua*, *Hover to Reveal*, *Tanpa Furigana*).
 - **進 My Progress**: Pantau statistik belajar Anda (XP, Level, Streak harian, cakupan penguasaan tiap Bab, koleksi Badge) serta laporan evaluasi personal dari **AI Study Advisor**.
 - **復 Perbaiki Skor Saya**: Lihat daftar kartu lemah Anda dan langsung luncurkan sesi drill perbaikan.
 

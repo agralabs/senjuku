@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="color-scheme" content="light dark">
   <title>Senjuku Nihongo (せんじゅく日本語) - Drill Membaca Bahasa Jepang 15 Menit</title>
-  <meta name="description" content="Aplikasi interaktif drill membaca & menulis Kana dan Kanji berbasis transkrip percakapan Minna no Nihongo Bab 1-25. 15 menit per hari, fokus membaca, repetisi SRS, dan scorecard lengkap.">
+  <meta name="description" content="Aplikasi interaktif drill membaca & menulis Kana dan Kanji berbasis transkrip percakapan Bahasa Jepang Bab 1-25. Fokus membaca, repetisi SRS, dan scorecard lengkap.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Klee+One:wght@600&family=Noto+Sans+JP:wght@400;500;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -164,9 +164,21 @@
       <div class="drill-hero-card drill-setup-workbench" id="drillSetupCard">
         <div class="hero-content drill-setup-main">
           <div class="hero-heading-block">
-            <h2 class="hero-title">Latihan Membaca Kana &amp; Kanji</h2>
+            <h2 class="hero-title">Latihan Harian Kana &amp; Kanji</h2>
             <p class="hero-desc">
-              Sesi 15 menit dari <em>Minna no Nihongo</em> Bab 1–25. Tiga langkah, lalu mulai.
+              Minimum 20 menit/hari menuju Nihongo Ninja :)
+              <button type="button" class="ninja-mini-logo-btn" id="btnNinjaClozeShortcut" title="Mulai Kuis Kalimat Rumpang" aria-label="Mulai Kuis Kalimat Rumpang">
+                <svg class="ninja-mini-logo" viewBox="0 0 36 36" width="24" height="24" aria-hidden="true">
+                  <circle cx="18" cy="18" r="15" fill="#10131a"/>
+                  <path d="M4 13h28v5H4z" fill="#b3202f"/>
+                  <path d="M29 15l6-3-2 4 3 3-7-1z" fill="#b3202f"/>
+                  <rect x="7" y="16" width="22" height="8" rx="4" fill="#fde68a"/>
+                  <circle cx="13.5" cy="20" r="2.2" fill="#10131a"/>
+                  <circle cx="23" cy="19.5" r="2.7" fill="#10131a"/>
+                  <circle cx="14.2" cy="19.3" r="0.7" fill="#ffffff"/>
+                  <circle cx="23.8" cy="18.7" r="0.8" fill="#ffffff"/>
+                </svg>
+              </button>
             </p>
           </div>
 
@@ -197,12 +209,12 @@
               <button type="button" class="type-pill-btn" id="btnTypeQuiz" data-type="quiz">
                 <span class="pill-icon">⚡</span>
                 <span class="pill-title">Quiz Mode (Uji Refleks)</span>
-                <span class="pill-desc">Pilihan ganda cepat, combo XP, dan penilaian SRS</span>
+                <span class="pill-desc">Terima tantangan dan raih nilai penuh</span>
               </button>
               <button type="button" class="type-pill-btn" id="btnTypeLearning" data-type="learning">
                 <span class="pill-icon">💡</span>
                 <span class="pill-title">Learning Mode (Flashcard)</span>
-                <span class="pill-desc">Audio, kartu bacaan, dan latihan ketik santai tanpa nilai!</span>
+                <span class="pill-desc">Latihan santai pendalaman materi, bobot nilai 10%</span>
               </button>
             </div>
           </div>
@@ -707,9 +719,6 @@
       <div class="leaderboard-header-card">
         <div>
           <h2 style="margin:0;font-size:1.35rem;">🏆 Papan Peringkat (Leaderboard)</h2>
-          <p style="margin:0.3rem 0 0;font-size:0.86rem;color:var(--text-muted);">
-            Ringkasan progres komunitas Senjuku Nihongo. Detail pribadi &amp; kesalahan kartu tetap rahasia.
-          </p>
         </div>
         <div class="leaderboard-filter-pills">
           <button type="button" class="lb-filter-btn active" id="lbFilterAll">Sepanjang Waktu</button>

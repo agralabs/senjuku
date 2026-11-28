@@ -273,7 +273,7 @@ export class JapaneseApp {
       authUI.openAuthModal('login');
     });
     document.getElementById('btnGuestUnlockLessons')?.addEventListener('click', () => {
-      authUI.openAuthModal('register', '🔒 <strong>Buka Bab 6–25</strong>: Buat akun gratis sekarang untuk membuka seluruh 25 bab Minna no Nihongo!');
+      authUI.openAuthModal('register', '🔒 <strong>Buka Bab 6–25</strong>: Buat akun gratis sekarang untuk membuka seluruh 25 bab latihan!');
     });
 
     // Lesson multi-select preset filter buttons
@@ -403,22 +403,28 @@ export class JapaneseApp {
       });
     }
 
-    // Hardest Mode: Cloze Sentence (Isi Kalimat Rumpang) Button
+    // Hardest Mode: Cloze Sentence (Isi Kalimat Rumpang) Button & Ninja Logo Shortcut
+    const launchClozeQuiz = ({ fallbackAll = false, forceQuiz = false } = {}) => {
+      if (!authUI.user) {
+        authUI.openAuthModal('register', '🔒 <strong>Fitur Siswa Terdaftar</strong>: Mode <em>Kalimat Rumpang</em> memerlukan akun gratis.');
+        return;
+      }
+      const selected = this.getSelectedLessons();
+      if (selected.length === 0 && !fallbackAll) {
+        this.promptLessonSelection();
+        return;
+      }
+      if (this.dom.drillModeSelect) this.dom.drillModeSelect.value = 'sentence_cloze';
+      const lessons = selected.length > 0 ? selected : ['all'];
+      this.launchDrill(forceQuiz ? 'quiz' : (this.currentSessionType || 'quiz'), 'sentence_cloze', lessons, 'mcq');
+    };
+
     if (this.dom.startClozeDrillBtn) {
-      this.dom.startClozeDrillBtn.addEventListener('click', () => {
-        if (!authUI.user) {
-          authUI.openAuthModal('register', '🔒 <strong>Fitur Siswa Terdaftar</strong>: Mode <em>Kalimat Rumpang</em> memerlukan akun gratis.');
-          return;
-        }
-        const selected = this.getSelectedLessons();
-        if (selected.length === 0) {
-          this.promptLessonSelection();
-          return;
-        }
-        if (this.dom.drillModeSelect) this.dom.drillModeSelect.value = 'sentence_cloze';
-        this.launchDrill(this.currentSessionType || 'quiz', 'sentence_cloze', selected, 'mcq');
-      });
+      this.dom.startClozeDrillBtn.addEventListener('click', () => launchClozeQuiz());
     }
+    document.getElementById('btnNinjaClozeShortcut')?.addEventListener('click', () => {
+      launchClozeQuiz({ fallbackAll: true, forceQuiz: true });
+    });
 
     // Weakness Repetition Drill Button (runs on selected lessons, or all weak words if none selected)
     if (this.dom.startWeaknessDrillBtn) {

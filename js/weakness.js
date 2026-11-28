@@ -41,8 +41,7 @@ export class WeaknessView {
               </div>
               <h2 class="card-title">Perbaiki Skor Saya</h2>
               <p class="card-desc">
-                Kata-kata yang paling sering salah saat latihan membaca dalam <strong>1 minggu terakhir</strong>. 
-                Kuis acak ini mengutamakan pengulangan (repetisi) intensif hingga kelemahan berubah menjadi refleks membaca instan!
+                Sistem mendeteksi jawaban yang salah dalam <strong>1 minggu terakhir</strong>. Senjuku App mengutamakan pengulangan (repetisi) hingga kelemahan Kamu berubah menjadi kekuatan baru!
               </p>
             </div>
           </div>
@@ -141,12 +140,17 @@ export class WeaknessView {
               <div class="empty-celebrate-icon">🎉</div>
               <h4>Belum Ada Kata yang Sering Salah!</h4>
               <p>
-                Refleks membaca Anda saat ini sangat bagus! Belum ada kesalahan tercatat dalam 7 hari terakhir.<br>
-                Anda dapat memulai kuis harian, atau langsung menguji kata-kata paling menantang dari Bab 1 sampai 14 dengan tombol di bawah.
+                Refleks Anda saat ini sangat bagus! Belum ada kesalahan tercatat dalam 7 hari terakhir.<br>
+                Yuk, Selesaikan target harian
+                <svg class="target-animated-icon" viewBox="0 0 28 28" width="22" height="22" aria-hidden="true">
+                  <circle class="target-ring-outer" cx="14" cy="14" r="11" fill="none" stroke="#b3202f" stroke-width="2.5"/>
+                  <circle class="target-ring-mid" cx="14" cy="14" r="6.5" fill="none" stroke="#1d3e8a" stroke-width="2.2"/>
+                  <circle class="target-bullseye" cx="14" cy="14" r="2.6" fill="#f59e0b"/>
+                </svg>
               </p>
               <button type="button" class="btn btn-primary btn-large" id="btnWeaknessTrickyDrill">
-                <span class="btn-icon">⚡</span>
-                <span>Uji Kata Menantang (Bab 1-14)</span>
+                <span class="btn-icon">🚀</span>
+                <span>Lanjutkan ke Challenge</span>
               </button>
             </div>
           `}

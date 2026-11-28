@@ -469,7 +469,7 @@ export async function sendGradeUnlockEmail({ to, nickname, blockNum, clearedRang
 
   const nextLine = unlockedRange
     ? `Blok pelajaran baru <strong>${escapeHtml(unlockedRange)}</strong> kini resmi TERBUKA untuk Anda!`
-    : `Anda telah menaklukkan <strong>SELURUH Bab Minna no Nihongo I</strong>!`;
+    : `Anda telah menaklukkan <strong>SELURUH Bab Senjuku Nihongo (Bab 1–25)</strong>!`;
 
   const text = [
     `Selamat atas kenaikan Grade, ${nickname}! 🏆`,

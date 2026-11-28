@@ -2,7 +2,7 @@
 
 # Student User Guide — Senjuku Nihongo (せんじゅく日本語)
 
-Welcome to **Senjuku Nihongo**, a Japanese reading gym and Kana-writing web application inspired by *Minna no Nihongo I* — designed as a classroom teaching companion with a 20-minute daily drill to accelerate classical learning.
+Welcome to **Senjuku Nihongo**, a Japanese reading gym and Kana-writing web application (Lessons 1–25) — designed as a classroom teaching companion with a 20-minute daily drill to accelerate classical learning.
 
 This guide is written from a **student's perspective** to walk you through registration, choosing between Learning and Quiz modes, understanding how scoring and SRS work, and climbing the Leaderboard.
 
@@ -91,7 +91,7 @@ Every Quiz Mode session consists of **8 bite-sized questions** to keep your focu
 ## 5. Additional Study Menus
 
 - **書 Tulis Kana**: Learn animated stroke orders for all 46 Hiragana & 46 Katakana characters with mnemonics, an interactive drawing canvas, and a printable workbook mode.
-- **読 Audio Transcript**: Read and listen to complete *Minna no Nihongo I* dialogues (Lessons 1–25, Tracks 001–087) with 3 Furigana modes (*Show All*, *Hover to Reveal*, *No Furigana*).
+- **読 Audio Transcript**: Read and listen to complete conversation dialogues (Lessons 1–25, Tracks 001–087) with 3 Furigana modes (*Show All*, *Hover to Reveal*, *No Furigana*).
 - **進 My Progress**: Track your XP, Level, daily Streak, per-lesson mastery coverage, Badges, and personalized one-shot coaching from the **AI Study Advisor**.
 - **復 Perbaiki Skor Saya**: Review your weak cards and launch a targeted recovery drill in one click.
 

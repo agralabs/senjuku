@@ -27,7 +27,7 @@ export const BADGE_CATALOG = {
   block_2_clear: { emoji: '🥈', label: 'Grade 2 (Bab 6–10)', desc: 'Lulus seluruh Blok Bab 6–10' },
   block_3_clear: { emoji: '🥇', label: 'Grade 3 (Bab 11–15)', desc: 'Lulus seluruh Blok Bab 11–15' },
   block_4_clear: { emoji: '💎', label: 'Grade 4 (Bab 16–20)', desc: 'Lulus seluruh Blok Bab 16–20' },
-  block_5_clear: { emoji: '👑', label: 'Grade 5 Master', desc: 'Lulus seluruh 25 Bab Minna no Nihongo I' }
+  block_5_clear: { emoji: '👑', label: 'Grade 5 Master', desc: 'Lulus seluruh 25 Bab Senjuku Nihongo' }
 };
 
 export class ProgressManager {

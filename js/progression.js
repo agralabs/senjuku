@@ -103,7 +103,7 @@ export function showBlockUnlockCelebration(block) {
 
   const nextMsg = block.unlocksNext
     ? `<p class="block-unlock-next">🔓 <strong>${escapeHtml(block.unlocksNext)}</strong> kini RESMI TERBUKA!</p>`
-    : `<p class="block-unlock-next">👑 Anda telah menaklukkan seluruh <strong>Bab 1–14 Minna no Nihongo</strong>!</p>`;
+    : `<p class="block-unlock-next">👑 Anda telah menaklukkan seluruh <strong>Bab 1–25</strong>!</p>`;
 
   backdrop.innerHTML = `
     <div class="auth-modal-card block-celebration-card">

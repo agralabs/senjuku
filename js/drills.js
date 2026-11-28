@@ -836,7 +836,6 @@ export class DrillEngine {
           <!-- FRONT: Large Kanji / Katakana -->
           <div class="flashcard-face flashcard-front">
             <div class="large-kanji flashcard-kanji-target">${card.kanji}</div>
-            <p class="flashcard-front-hint">💡 Klik kartu atau tekan <kbd>Spasi</kbd> untuk melihat bacaan & arti</p>
           </div>
 
           <!-- BACK: Kana, Romaji, Meaning, Context Sentence (Revealed) -->
@@ -853,7 +852,7 @@ export class DrillEngine {
 
             <div class="flashcard-context-box">
               <div class="fc-sentence-header">
-                <span>Contoh Kalimat Percakapan Minna no Nihongo:</span>
+                <span>Contoh dalam Kalimat:</span>
                 <button type="button" class="btn-text-audio" id="speakFcSentenceBtn" data-audio-limit-btn="true" title="Dengarkan Kalimat Lengkap">
                   🔊 Putar Kalimat <span class="audio-play-count" data-audio-count></span>
                 </button>
@@ -872,7 +871,7 @@ export class DrillEngine {
 
           <button type="button" class="btn btn-primary btn-fc-reveal" id="toggleRevealBtn">
             <span class="reveal-btn-icon">👁️</span>
-            <span class="reveal-btn-text">Buka Kartu (Spasi)</span>
+            <span class="reveal-btn-text">Tampilkan Kartu (tekan spasi)</span>
           </button>
 
           <button type="button" class="btn ${isLastInByte ? 'btn-primary' : 'btn-secondary'} btn-fc-nav" id="nextCardBtn" title="Kartu Selanjutnya (Panah Kanan / Enter)">
@@ -952,7 +951,7 @@ export class DrillEngine {
       interactiveBox.classList.toggle('revealed', this.isFlashcardRevealed);
     }
     if (toggleBtnText) {
-      toggleBtnText.textContent = this.isFlashcardRevealed ? 'Tutup Kartu' : 'Buka Kartu (Spasi)';
+      toggleBtnText.textContent = this.isFlashcardRevealed ? 'Tutup Kartu' : 'Tampilkan Kartu (tekan spasi)';
     }
 
     if (this.isFlashcardRevealed && this.currentCard && !this.autoRevealedIndices.has(this.currentIndex)) {
@@ -1797,7 +1796,7 @@ export class DrillEngine {
         <!-- Sentence Context -->
         <div class="flashcard-context-box">
           <div class="fc-sentence-header">
-            <span>Contoh Kalimat Percakapan Minna no Nihongo:</span>
+            <span>Contoh dalam Kalimat:</span>
             <button type="button" class="btn-text-audio" id="speakLearningSentenceBtn" data-audio-limit-btn="true">🔊 Putar Kalimat <span class="audio-play-count" data-audio-count></span></button>
           </div>
           <p class="fc-sentence-ja">${card.sentence}</p>
@@ -2278,7 +2277,7 @@ export class DrillEngine {
 
         const isTextbookExtra = left.sourceTag === 'Textbook Extra';
         const sourceTagHtml = isTextbookExtra
-          ? `<span class="vb-source-tag vb-source-extra" title="Kosakata tambahan dari buku teks Minna no Nihongo (tidak diucapkan di transkrip audio)">📘 Textbook Extra</span>`
+          ? `<span class="vb-source-tag vb-source-extra" title="Kosakata tambahan dari materi pelajaran (tidak diucapkan di transkrip audio)">📘 Kosakata Tambahan</span>`
           : `<span class="vb-source-tag vb-source-transcript" title="Muncul langsung di transkrip audio Bab ${left.lesson}">🎧 Transcript</span>`;
 
         return `
@@ -2442,8 +2441,8 @@ export class DrillEngine {
         ` : ''}
 
         <p class="vb-instructions">
-          Pasangkan <strong>3 arti Indonesia (kiri)</strong> dengan <strong>3 ${isKanjiMode ? 'Kanji' : 'Kana'} (kanan)</strong>.
-          Klik 2 kartu kanan untuk menukar, gunakan tombol <strong>▲/▼</strong>, atau seret (drag). Setelah yakin, tekan <strong>Kirim Jawaban</strong> (1× kesempatan).
+          Pasangkan <strong>3 kata Indonesia (kiri)</strong> dengan <strong>3 ${isKanjiMode ? 'Kanji' : 'Kana'} (kanan)</strong>.
+          Gunakan tombol <strong>▲/▼</strong>, atau seret (drag) untuk memindahkan.
         </p>
 
         <div class="vb-col-headers">
