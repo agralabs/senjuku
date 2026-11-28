@@ -28,6 +28,9 @@ function resolveCardCoverageCredit(card) {
   if (typeof card.coverage_credit === 'number' && !Number.isNaN(card.coverage_credit)) {
     return Math.max(0, Math.min(1, card.coverage_credit));
   }
+  if (typeof card.cov === 'number' && !Number.isNaN(card.cov)) {
+    return Math.max(0, Math.min(1, card.cov));
+  }
   if (typeof card.coverageCredit === 'number' && !Number.isNaN(card.coverageCredit)) {
     return Math.max(0, Math.min(1, card.coverageCredit));
   }
@@ -480,10 +483,22 @@ export function syncUserProgress(db, userId, payload = {}, mode = 'merge') {
       INSERT INTO user_srs_cards (user_id, card_id, stage, streak, correct, wrong, coverage_credit, learning_views, next_due, updated_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
       ON CONFLICT(user_id, card_id) DO UPDATE SET
-        stage = excluded.stage,
-        streak = excluded.streak,
-        correct = excluded.correct,
-        wrong = excluded.wrong,
+        stage = CASE
+          WHEN ? = 'merge' THEN MAX(user_srs_cards.stage, excluded.stage)
+          ELSE excluded.stage
+        END,
+        streak = CASE
+          WHEN ? = 'merge' THEN MAX(user_srs_cards.streak, excluded.streak)
+          ELSE excluded.streak
+        END,
+        correct = CASE
+          WHEN ? = 'merge' THEN MAX(user_srs_cards.correct, excluded.correct)
+          ELSE excluded.correct
+        END,
+        wrong = CASE
+          WHEN ? = 'merge' THEN MAX(user_srs_cards.wrong, excluded.wrong)
+          ELSE excluded.wrong
+        END,
         coverage_credit = CASE
           WHEN ? = 'merge' THEN MAX(COALESCE(user_srs_cards.coverage_credit, 0), COALESCE(excluded.coverage_credit, 0))
           ELSE excluded.coverage_credit
@@ -500,8 +515,9 @@ export function syncUserProgress(db, userId, payload = {}, mode = 'merge') {
       if (!cardId || typeof card !== 'object') continue;
       const correctVal = Number(card.correct) || 0;
       const wrongVal = Number(card.wrong) || 0;
-      const creditVal = typeof card.coverageCredit === 'number' && !Number.isNaN(card.coverageCredit)
-        ? Math.max(0, Math.min(1, card.coverageCredit))
+      const rawCredit = typeof card.cov === 'number' ? card.cov : card.coverageCredit;
+      const creditVal = typeof rawCredit === 'number' && !Number.isNaN(rawCredit)
+        ? Math.max(0, Math.min(1, rawCredit))
         : (correctVal > 0 ? 1.0 : (wrongVal === 0 ? 0.1 : 0));
       cardStmt.run(
         userId,
@@ -513,6 +529,10 @@ export function syncUserProgress(db, userId, payload = {}, mode = 'merge') {
         creditVal,
         Number(card.learningViews) || 0,
         card.nextDue || null,
+        mode,
+        mode,
+        mode,
+        mode,
         mode,
         mode
       );
