@@ -14,6 +14,22 @@ export const WORD_TYPING_LIMIT_SEC = 30;
 export const FULL_SENTENCE_TYPING_LIMIT_SEC = 50;
 export const QUIZ_NON_TYPING_LIMIT_SEC = 30;
 
+const CHEER_MASCOT_SVG = `
+  <svg class="correct-cheer-svg" viewBox="0 0 40 40" width="28" height="28" aria-hidden="true">
+    <polygon points="20,3 25,13 36,14.5 28,22 30,33 20,27.5 10,33 12,22 4,14.5 15,13" fill="#fde047" stroke="#10131a" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M12.5 14.5h15v4h-15z" fill="#b3202f"/>
+    <circle cx="16.5" cy="20.5" r="1.8" fill="#10131a"/>
+    <circle cx="23.5" cy="20.5" r="1.8" fill="#10131a"/>
+    <ellipse cx="13.5" cy="23.5" rx="2.2" ry="1.2" fill="#fb7185"/>
+    <ellipse cx="26.5" cy="23.5" rx="2.2" ry="1.2" fill="#fb7185"/>
+    <path d="M17.5 23.5 Q20 26.8 22.5 23.5" fill="none" stroke="#10131a" stroke-width="1.8" stroke-linecap="round"/>
+  </svg>
+`;
+
+function renderCorrectBannerHtml(earnedXP, leadText = 'Hebat', suffixHtml = '') {
+  return `<span class="correct-cheer-wrap"><span class="icon-success">✔</span> <strong>${leadText}, nambah</strong> <span class="xp-tag">+${earnedXP} XP</span>${CHEER_MASCOT_SVG}${suffixHtml}</span>`;
+}
+
 /**
  * Unbiased Fisher-Yates (Knuth) array shuffle.
  * Guarantees uniform 1/N! distribution across all permutations.
@@ -1147,7 +1163,7 @@ export class DrillEngine {
       progress.recordCardReview(card.id, true);
 
       if (status) {
-        status.innerHTML = `<span class="icon-success">✔</span> <strong>Hebat! Benar!</strong> <span class="xp-tag">+${earnedXP} XP</span>`;
+        status.innerHTML = renderCorrectBannerHtml(earnedXP, 'Hebat');
         status.className = 'feedback-status success';
       }
     } else {
@@ -1328,7 +1344,7 @@ export class DrillEngine {
       progress.recordCardReview(card.id, true);
 
       if (status) {
-        status.innerHTML = `<span class="icon-success">✔</span> <strong>正解！ Hebat!</strong> <span class="xp-tag">+${earnedXP} XP</span>`;
+        status.innerHTML = renderCorrectBannerHtml(earnedXP, '正解！ Hebat');
         status.className = 'feedback-status success';
       }
 
@@ -1474,7 +1490,10 @@ export class DrillEngine {
       if (banner) {
         banner.hidden = false;
         banner.className = 'learning-feedback-banner success';
-        banner.innerHTML = `✔ <strong>Jawaban: ${card.targetWord}（${card.correctKana}）</strong>`;
+        const isCorrectPick = chosenOpt && chosenOpt === card.correctKana;
+        banner.innerHTML = isCorrectPick
+          ? renderCorrectBannerHtml(5, 'Hebat', ` <span style="font-weight:600;">(${card.targetWord}・${card.correctKana})</span>`)
+          : `✔ <strong>Jawaban: ${card.targetWord}（${card.correctKana}）</strong>`;
       }
       if (!this.autoRevealedIndices.has(this.currentIndex)) {
         this.autoRevealedIndices.add(this.currentIndex);
@@ -1682,7 +1701,7 @@ export class DrillEngine {
 
       if (input) input.classList.add('correct');
       if (status) {
-        status.innerHTML = `<span class="icon-success">✔</span> <strong>Hebat! Ketikan Tepat!</strong> <span class="xp-tag">+${earnedXP} XP</span>`;
+        status.innerHTML = renderCorrectBannerHtml(earnedXP, 'Hebat');
         status.className = 'feedback-status success';
       }
     } else {
@@ -2123,7 +2142,7 @@ export class DrillEngine {
 
           if (input) input.classList.add('correct');
           if (status) {
-            status.innerHTML = `<span class="icon-success">✔</span> <strong>Hebat! Romaji Tepat!</strong> <span class="xp-tag">+${earnedXP} XP</span>`;
+            status.innerHTML = renderCorrectBannerHtml(earnedXP, 'Hebat');
             status.className = 'feedback-status success';
           }
         } else {
@@ -2534,7 +2553,7 @@ export class DrillEngine {
             leftItems.forEach(item => progress.recordCardReview(item.id, true));
 
             if (status) {
-              status.innerHTML = `<span class="icon-success">✔</span> <strong>Sempurna! Semua 3/3 Pasangan Benar!</strong> <span class="xp-tag">+${earnedXP} XP</span>`;
+              status.innerHTML = renderCorrectBannerHtml(earnedXP, 'Sempurna');
               status.className = 'feedback-status success';
             }
           } else {
@@ -2563,7 +2582,7 @@ export class DrillEngine {
           if (isAllCorrect) {
             sound.playCorrect(1);
             if (status) {
-              status.innerHTML = `<span class="icon-success">✔</span> <strong>Bagus! Semua 3/3 Pasangan Tepat!</strong> <span class="xp-tag">+${earnedXP} XP</span>`;
+              status.innerHTML = renderCorrectBannerHtml(earnedXP, 'Hebat');
               status.className = 'feedback-status success';
             }
           } else {

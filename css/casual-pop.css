@@ -487,6 +487,81 @@ body.light-theme .option-btn:hover:not(:disabled) {
   border-radius: 9999px !important;
 }
 
+/* ==================== 7b. CLOZE STICKER ILLUSTRATION CARD ==================== */
+.cloze-illustration-card {
+  padding: 0.9rem 1.4rem 0.75rem !important;
+  border-radius: 26px !important;
+  border: 2px solid var(--cp-ink) !important;
+  background: linear-gradient(145deg, #ffffff 0%, #fffbeb 100%) !important;
+  box-shadow: 5px 6px 0 rgba(16, 19, 26, 0.14) !important;
+  transition: transform 0.28s var(--cp-ease-bounce), box-shadow 0.28s ease !important;
+}
+
+body:not(.light-theme) .cloze-illustration-card {
+  background: linear-gradient(145deg, rgba(30, 41, 59, 0.92) 0%, rgba(19, 23, 32, 0.95) 100%) !important;
+  border-color: rgba(255, 255, 255, 0.22) !important;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.45) !important;
+}
+
+.cloze-illustration-card:hover {
+  transform: translateY(-4px) rotate(-1.5deg);
+}
+
+.cloze-svg-container {
+  width: 118px !important;
+  height: 118px !important;
+}
+
+.cloze-sticker-svg {
+  filter: drop-shadow(0 5px 8px rgba(16, 19, 26, 0.16)) !important;
+  animation: clozeStickerBob 3s ease-in-out infinite;
+}
+
+.cloze-illustration-card:hover .cloze-sticker-svg {
+  transform: scale(1.1) rotate(3deg);
+}
+
+.cloze-context-tag {
+  font-family: var(--font-display);
+  font-size: 0.7rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.08em !important;
+  padding: 0.2rem 0.7rem;
+  border-radius: 9999px;
+  background: var(--cp-urushi-tint);
+  color: var(--cp-urushi) !important;
+}
+
+body:not(.light-theme) .cloze-context-tag {
+  background: rgba(179, 32, 47, 0.24);
+  color: #fecaca !important;
+}
+
+@keyframes clozeStickerBob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.correct-cheer-wrap {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.correct-cheer-svg {
+  display: inline-block;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 4px rgba(16, 19, 26, 0.22));
+  animation: cheerPop 0.55s var(--cp-ease-bounce) both;
+}
+
+@keyframes cheerPop {
+  0% { transform: scale(0.3) rotate(-25deg); opacity: 0; }
+  65% { transform: scale(1.22) rotate(10deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
 /* ==================== 8. LEADERBOARD, SCORECARD & MODALS ==================== */
 .leaderboard-filter-pills {
   border-radius: 9999px !important;
@@ -652,7 +727,9 @@ body.light-theme .score-guide-item {
 /* ==================== 10. ACCESSIBILITY: REDUCED MOTION ==================== */
 @media (prefers-reduced-motion: reduce) {
   .target-animated-icon .target-ring-outer,
-  .target-animated-icon .target-bullseye {
+  .target-animated-icon .target-bullseye,
+  .cloze-sticker-svg,
+  .correct-cheer-svg {
     animation: none !important;
   }
   .nav-tab-btn,
