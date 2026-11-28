@@ -1,0 +1,450 @@
+/* ============================================================================
+   Senjuku Nihongo — Casual & Dynamic Pop Layer
+   Preserves Dominant Sumi & Urushi Palette (Urushi Red, Aizome Blue, Washi/Obsidian)
+   Adopts Refreshed, Casual, Neo-Brutalist & Glassmorphic Energy
+   ============================================================================ */
+
+:root {
+  --font-display: 'Plus Jakarta Sans', 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+  --cp-ink: #10131a;
+  --cp-urushi: #7a131e;
+  --cp-urushi-bright: #b3202f;
+  --cp-urushi-tint: #fbeff0;
+  --cp-aizome: #1d3e8a;
+  --cp-aizome-bright: #3b82f6;
+  --cp-aizome-tint: #eaf0fb;
+  --cp-shadow-ink: #10131a;
+  --cp-shadow-aizome: #1d3e8a;
+  --cp-shadow-urushi: #7a131e;
+  --cp-ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ==================== 1. AMBIENT BACKGROUND ORBS ==================== */
+body {
+  position: relative;
+  overflow-x: hidden;
+}
+
+.ambient-bg-orbs {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.ambient-orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(120px);
+  opacity: 0.22;
+  transition: opacity 0.4s ease;
+}
+
+.orb-urushi {
+  width: 420px;
+  height: 420px;
+  top: -110px;
+  left: -90px;
+  background: radial-gradient(circle, #b3202f 0%, #5a0f19 70%, transparent 100%);
+}
+
+.orb-aizome {
+  width: 460px;
+  height: 460px;
+  top: 28%;
+  right: -140px;
+  background: radial-gradient(circle, #3b82f6 0%, #1d3e8a 70%, transparent 100%);
+}
+
+body.light-theme .ambient-orb {
+  opacity: 0.11;
+}
+
+.app-header,
+.app-main {
+  position: relative;
+  z-index: 1;
+}
+
+/* ==================== 2. DISPLAY TYPOGRAPHY ==================== */
+.hero-title,
+.card-title,
+.drill-prompt-word,
+h1, h2, h3 {
+  font-family: var(--font-display);
+}
+
+.hero-title {
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+}
+
+.config-label,
+.subheading-tag {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+/* ==================== 3. DYNAMIC PILL HEADER & NAV ==================== */
+.app-header {
+  background: rgba(90, 15, 25, 0.94) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 2px solid rgba(16, 19, 26, 0.85) !important;
+  box-shadow: 0 6px 24px rgba(16, 19, 26, 0.18);
+}
+
+.header-brand-btn .brand-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+@media (min-width: 901px) {
+  .app-header .app-tab-nav {
+    align-items: center !important;
+    gap: 4px !important;
+  }
+
+  .app-header .nav-tab-btn,
+  body.light-theme .app-header .nav-tab-btn,
+  body.dark-theme .app-header .nav-tab-btn {
+    height: 34px !important;
+    min-block-size: 34px !important;
+    padding: 0 12px !important;
+    margin-bottom: 0 !important;
+    border: 1px solid transparent !important;
+    border-radius: 9999px !important;
+    font-family: var(--font-display);
+    font-weight: 700;
+    line-height: 1;
+    transition: transform 0.2s var(--cp-ease-bounce), background-color 0.2s ease, border-color 0.2s ease !important;
+  }
+
+  .app-header .nav-tab-btn:hover,
+  body.light-theme .app-header .nav-tab-btn:hover,
+  body.dark-theme .app-header .nav-tab-btn:hover {
+    transform: translateY(-1px);
+    background: rgba(255, 255, 255, 0.12) !important;
+  }
+
+  .app-header .nav-tab-btn.active,
+  body.light-theme .app-header .nav-tab-btn.active,
+  body.dark-theme .app-header .nav-tab-btn.active {
+    background: rgba(255, 255, 255, 0.2) !important;
+    border-color: rgba(255, 255, 255, 0.42) !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
+  }
+}
+
+.header-toggle-btn,
+.icon-toggle-btn,
+.auth-header-btn,
+.auth-user-pill {
+  border-radius: 9999px !important;
+  font-family: var(--font-display);
+  font-weight: 700;
+  transition: transform 0.2s var(--cp-ease-bounce), background-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.header-toggle-btn:hover,
+.icon-toggle-btn:hover,
+.auth-header-btn:hover,
+.auth-user-pill:hover {
+  transform: translateY(-2px);
+}
+
+/* ==================== 4. NEO-BRUTALIST + GLASS CARDS ==================== */
+.drill-setup-workbench,
+.card,
+.leaderboard-header-card,
+.admin-header-card,
+.admin-stat-card,
+.weakness-hero-card,
+.explorer-card,
+.kana-companion-shell {
+  border-radius: 24px !important;
+  transition: transform 0.25s var(--cp-ease-bounce), box-shadow 0.25s ease, border-color 0.2s ease;
+}
+
+.drill-setup-workbench {
+  padding: 1.75rem 2rem !important;
+}
+
+@media (max-width: 640px) {
+  .drill-setup-workbench {
+    padding: 1.25rem 1.1rem !important;
+  }
+}
+
+body.light-theme .drill-setup-workbench,
+body.light-theme .card,
+body.light-theme .leaderboard-header-card,
+body.light-theme .admin-header-card,
+body.light-theme .admin-stat-card,
+body.light-theme .leaderboard-table-wrap {
+  border: 2px solid var(--cp-ink) !important;
+  box-shadow: 5px 6px 0 rgba(16, 19, 26, 0.12) !important;
+}
+
+body:not(.light-theme) .drill-setup-workbench,
+body:not(.light-theme) .card,
+body:not(.light-theme) .leaderboard-header-card,
+body:not(.light-theme) .admin-header-card,
+body:not(.light-theme) .admin-stat-card,
+body:not(.light-theme) .leaderboard-table-wrap {
+  background: rgba(19, 23, 32, 0.84) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1.5px solid rgba(255, 255, 255, 0.13) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.42) !important;
+}
+
+/* ==================== 5. PLAYFUL MODE & CATEGORY CARDS ==================== */
+.type-pill-btn {
+  border-radius: 24px 16px 28px 16px !important;
+  border-width: 2px !important;
+  transition: transform 0.25s var(--cp-ease-bounce), box-shadow 0.25s ease, border-color 0.2s ease, background-color 0.2s ease !important;
+}
+
+body.light-theme .type-pill-btn {
+  border-color: var(--cp-ink) !important;
+  box-shadow: 4px 5px 0 var(--cp-ink) !important;
+}
+
+body.light-theme #btnTypeQuiz {
+  background: linear-gradient(145deg, #ffffff 0%, #fbeff0 100%);
+}
+
+body.light-theme #btnTypeLearning {
+  background: linear-gradient(145deg, #ffffff 0%, #eaf0fb 100%);
+}
+
+body.light-theme .type-pill-btn:hover {
+  transform: translateY(-4px) rotate(-0.5deg);
+  box-shadow: 6px 8px 0 var(--cp-ink) !important;
+}
+
+body.light-theme #btnTypeQuiz.active {
+  background: var(--cp-urushi-tint) !important;
+  border-color: var(--cp-urushi) !important;
+  box-shadow: 6px 7px 0 var(--cp-urushi) !important;
+}
+
+body.light-theme #btnTypeLearning.active {
+  background: var(--cp-aizome-tint) !important;
+  border-color: var(--cp-aizome) !important;
+  box-shadow: 6px 7px 0 var(--cp-aizome) !important;
+}
+
+body:not(.light-theme) .type-pill-btn {
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  box-shadow: 4px 5px 0 rgba(0, 0, 0, 0.45) !important;
+}
+
+body:not(.light-theme) .type-pill-btn:hover {
+  transform: translateY(-4px) rotate(-0.5deg);
+  box-shadow: 6px 8px 0 rgba(0, 0, 0, 0.6) !important;
+}
+
+body:not(.light-theme) #btnTypeQuiz.active {
+  border-color: #f87171 !important;
+  background: rgba(179, 32, 47, 0.28) !important;
+  box-shadow: 5px 6px 0 #7a131e, 0 0 0 1px rgba(248, 113, 113, 0.35) !important;
+}
+
+body:not(.light-theme) #btnTypeLearning.active {
+  border-color: #60a5fa !important;
+  background: rgba(37, 99, 235, 0.26) !important;
+  box-shadow: 5px 6px 0 #1d3e8a, 0 0 0 1px rgba(96, 165, 250, 0.35) !important;
+}
+
+.type-pill-btn .pill-icon,
+.quiz-cat-card .qcat-icon,
+.format-pill-btn .pill-icon {
+  transform-origin: center;
+  transition: transform 0.25s var(--cp-ease-bounce);
+}
+
+.type-pill-btn:hover .pill-icon,
+.quiz-cat-card:hover .qcat-icon,
+.format-pill-btn:hover .pill-icon {
+  transform: scale(1.14) rotate(-5deg);
+}
+
+.quiz-cat-card,
+.format-pill-btn {
+  border-radius: 18px !important;
+  border-width: 2px !important;
+  transition: transform 0.22s var(--cp-ease-bounce), box-shadow 0.22s ease, border-color 0.2s ease, background-color 0.2s ease !important;
+}
+
+body.light-theme .quiz-cat-card,
+body.light-theme .format-pill-btn,
+body.light-theme .btn-secondary {
+  background: #ffffff !important;
+  color: var(--cp-ink) !important;
+  border-color: var(--cp-ink) !important;
+}
+
+body.light-theme .format-pill-btn .pill-desc,
+body.light-theme .quiz-cat-card .qcat-desc {
+  color: #475569 !important;
+}
+
+.quiz-cat-card:hover,
+.format-pill-btn:hover {
+  transform: translateY(-3px);
+}
+
+body.light-theme .quiz-cat-card:hover,
+body.light-theme .format-pill-btn:hover {
+  box-shadow: 4px 4px 0 var(--cp-ink) !important;
+}
+
+body.light-theme .quiz-cat-card.active,
+body.light-theme .format-pill-btn.active {
+  border-color: var(--cp-urushi) !important;
+  background: var(--cp-urushi-tint) !important;
+  box-shadow: 4px 4px 0 var(--cp-urushi) !important;
+}
+
+body:not(.light-theme) .quiz-cat-card.active,
+body:not(.light-theme) .format-pill-btn.active {
+  border-color: var(--cp-aizome-bright) !important;
+  background: rgba(37, 99, 235, 0.2) !important;
+  box-shadow: 4px 4px 0 var(--cp-aizome) !important;
+}
+
+/* ==================== 6. TACTILE BOUNCY BUTTONS & CTAS ==================== */
+.btn,
+#startDrillBtn,
+.preset-btn,
+.lb-filter-btn {
+  border-radius: 9999px !important;
+  font-family: var(--font-display);
+  font-weight: 800;
+  transition: transform 0.2s var(--cp-ease-bounce), box-shadow 0.2s ease, background-color 0.2s ease !important;
+}
+
+.btn-primary,
+#startDrillBtn {
+  border: 2px solid var(--cp-ink) !important;
+  box-shadow: 4px 5px 0 var(--cp-aizome) !important;
+}
+
+.btn-primary:hover:not(:disabled),
+#startDrillBtn:hover:not(:disabled) {
+  transform: translateY(-3px) !important;
+  box-shadow: 6px 7px 0 var(--cp-aizome) !important;
+}
+
+.btn-primary:active:not(:disabled),
+#startDrillBtn:active:not(:disabled) {
+  transform: translate(2px, 2px) !important;
+  box-shadow: 2px 2px 0 var(--cp-aizome) !important;
+}
+
+body:not(.light-theme) .btn-primary,
+body:not(.light-theme) #startDrillBtn {
+  border: 2px solid rgba(255, 255, 255, 0.85) !important;
+  box-shadow: 4px 5px 0 var(--cp-aizome-bright) !important;
+}
+
+body:not(.light-theme) .btn-primary:hover:not(:disabled),
+body:not(.light-theme) #startDrillBtn:hover:not(:disabled) {
+  box-shadow: 6px 7px 0 var(--cp-aizome-bright) !important;
+}
+
+.preset-btn:hover,
+.lb-filter-btn:hover {
+  transform: translateY(-2px);
+}
+
+/* ==================== 7. ACTIVE DRILL ARENA & FLASHCARDS ==================== */
+.drill-card,
+.flashcard-face,
+.drill-arena-card {
+  border-radius: 28px !important;
+}
+
+body.light-theme .drill-card,
+body.light-theme .flashcard-face {
+  border: 2px solid var(--cp-ink) !important;
+  box-shadow: 6px 7px 0 rgba(16, 19, 26, 0.12) !important;
+}
+
+.option-btn {
+  border-radius: 18px !important;
+  border-width: 2px !important;
+  font-family: var(--font-display);
+  font-weight: 700;
+  transition: transform 0.2s var(--cp-ease-bounce), box-shadow 0.2s ease, border-color 0.2s ease !important;
+}
+
+.option-btn:hover:not(:disabled) {
+  transform: translateY(-3px);
+}
+
+body.light-theme .option-btn:hover:not(:disabled) {
+  box-shadow: 4px 4px 0 var(--cp-ink) !important;
+}
+
+.hud-stat-pill,
+.drill-hud-pill {
+  border-radius: 9999px !important;
+}
+
+/* ==================== 8. LEADERBOARD, SCORECARD & MODALS ==================== */
+.leaderboard-table-wrap {
+  border-radius: 22px !important;
+  overflow: hidden;
+}
+
+.leaderboard-table thead tr {
+  background: linear-gradient(95deg, #5a0f19 0%, #7a131e 55%, #1d3e8a 100%) !important;
+}
+
+.auth-modal-card,
+.modal-card,
+.session-modal-card {
+  border-radius: 28px !important;
+}
+
+body.light-theme .auth-modal-card,
+body.light-theme .modal-card,
+body.light-theme .session-modal-card {
+  border: 2px solid var(--cp-ink) !important;
+  box-shadow: 8px 10px 0 rgba(16, 19, 26, 0.2) !important;
+}
+
+.path-block-mini,
+.sc-lesson-card {
+  border-radius: 20px !important;
+  transition: transform 0.22s var(--cp-ease-bounce), box-shadow 0.22s ease;
+}
+
+.path-block-mini:hover,
+.sc-lesson-card:hover {
+  transform: translateY(-3px);
+}
+
+/* ==================== 9. ACCESSIBILITY: REDUCED MOTION ==================== */
+@media (prefers-reduced-motion: reduce) {
+  .nav-tab-btn,
+  .type-pill-btn,
+  .quiz-cat-card,
+  .format-pill-btn,
+  .btn,
+  #startDrillBtn,
+  .option-btn,
+  .path-block-mini,
+  .sc-lesson-card {
+    transition: none !important;
+    transform: none !important;
+  }
+}

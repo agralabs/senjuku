@@ -4,8 +4,89 @@ import { DatabaseSync } from 'node:sqlite';
 import path from 'node:path';
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { MASTER_DRILL_ITEMS } from '../data/kanji-vocabulary.js';
+import { CLOZE_SENTENCE_ITEMS } from '../data/cloze-sentences.js';
+import { SENTENCE_ROMAJI_ITEMS } from '../data/sentence-romaji.js';
 
 const APP_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const TOTAL_LESSONS = 25;
+const MAX_TOTAL_SCORE = TOTAL_LESSONS * 100;
+const CLOZE_WEIGHT = 2.0;
+
+// Pre-index question banks by lesson (1..25) once for fast, authoritative total score computation
+const LESSON_BANKS = Array.from({ length: TOTAL_LESSONS }, (_, idx) => {
+  const num = idx + 1;
+  const vocabIds = (MASTER_DRILL_ITEMS || []).filter(it => it.lesson === num).map(it => it.id);
+  const sentenceIds = (SENTENCE_ROMAJI_ITEMS || []).filter(it => it.lesson === num).map(it => it.id);
+  const clozeIds = (CLOZE_SENTENCE_ITEMS || []).filter(it => it.lesson === num).map(it => it.id);
+  const maxWeight = (vocabIds.length * 1.0) + (sentenceIds.length * 1.0) + (clozeIds.length * CLOZE_WEIGHT);
+  return { lesson: num, vocabIds, sentenceIds, clozeIds, maxWeight };
+});
+
+function resolveCardCoverageCredit(card) {
+  if (!card) return 0;
+  if (typeof card.coverage_credit === 'number' && !Number.isNaN(card.coverage_credit)) {
+    return Math.max(0, Math.min(1, card.coverage_credit));
+  }
+  if (typeof card.coverageCredit === 'number' && !Number.isNaN(card.coverageCredit)) {
+    return Math.max(0, Math.min(1, card.coverageCredit));
+  }
+  if ((Number(card.correct) || 0) > 0) return 1.0;
+  // Historical Learning Mode rows created before coverage_credit existed have correct=0 & wrong=0
+  if ((Number(card.wrong) || 0) === 0) return 0.1;
+  return 0;
+}
+
+export function computeTotalScoreFromCards(cardsById) {
+  let totalScore = 0;
+  let clearedLessonsCount = 0;
+
+  for (const bank of LESSON_BANKS) {
+    if (bank.maxWeight <= 0) continue;
+
+    let earnedWeight = 0;
+    let clozeQuizCovered = 0;
+
+    for (const id of bank.vocabIds) {
+      earnedWeight += resolveCardCoverageCredit(cardsById[id]) * 1.0;
+    }
+    for (const id of bank.sentenceIds) {
+      earnedWeight += resolveCardCoverageCredit(cardsById[id]) * 1.0;
+    }
+    for (const id of bank.clozeIds) {
+      const credit = resolveCardCoverageCredit(cardsById[id]);
+      earnedWeight += credit * CLOZE_WEIGHT;
+      if (credit >= 1.0) clozeQuizCovered++;
+    }
+
+    const effectiveCredit = Math.round(earnedWeight * 100) / 100;
+    const coverageRatio = Math.min(1, effectiveCredit / bank.maxWeight);
+    const isClozeComplete = (bank.clozeIds.length === 0) || (clozeQuizCovered >= bank.clozeIds.length);
+    const rawScore = Math.min(100, Math.round((coverageRatio / 0.8) * 100));
+    const isFullScore = (coverageRatio >= 0.8) && isClozeComplete;
+    const score = isFullScore ? 100 : (isClozeComplete ? rawScore : Math.min(89, rawScore));
+
+    totalScore += score;
+    if (isFullScore) clearedLessonsCount++;
+  }
+
+  return { totalScore, clearedLessonsCount, maxTotalScore: MAX_TOTAL_SCORE };
+}
+
+function computeUserTotalScoreFromDb(db, userId) {
+  const rows = db.prepare(`
+    SELECT card_id, correct, wrong, coverage_credit
+    FROM user_srs_cards
+    WHERE user_id = ?
+  `).all(userId) || [];
+
+  const cardsById = {};
+  for (const r of rows) {
+    cardsById[r.card_id] = r;
+  }
+  return computeTotalScoreFromCards(cardsById);
+}
+
 let _dbInstance = null;
 
 export function getDb(customPath = null) {
@@ -74,6 +155,8 @@ export function getDb(customPath = null) {
       streak_days INTEGER NOT NULL DEFAULT 0,
       last_active_date TEXT,
       weekly_minutes REAL NOT NULL DEFAULT 0,
+      total_score INTEGER NOT NULL DEFAULT 0,
+      cleared_lessons_count INTEGER NOT NULL DEFAULT 0,
       badges_json TEXT DEFAULT '[]',
       history_json TEXT DEFAULT '{}',
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -87,6 +170,8 @@ export function getDb(customPath = null) {
       streak INTEGER NOT NULL DEFAULT 0,
       correct INTEGER NOT NULL DEFAULT 0,
       wrong INTEGER NOT NULL DEFAULT 0,
+      coverage_credit REAL,
+      learning_views INTEGER NOT NULL DEFAULT 0,
       next_due DATETIME,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       PRIMARY KEY (user_id, card_id),
@@ -185,6 +270,35 @@ export function getDb(customPath = null) {
   ensureColumn('users', 'is_active', "INTEGER NOT NULL DEFAULT 1");
   ensureColumn('users', 'must_change_password', "INTEGER NOT NULL DEFAULT 0");
   ensureColumn('user_progress', 'weekly_minutes', "REAL NOT NULL DEFAULT 0");
+  ensureColumn('user_progress', 'total_score', "INTEGER NOT NULL DEFAULT 0");
+  ensureColumn('user_progress', 'cleared_lessons_count', "INTEGER NOT NULL DEFAULT 0");
+  ensureColumn('user_srs_cards', 'coverage_credit', "REAL");
+  ensureColumn('user_srs_cards', 'learning_views', "INTEGER NOT NULL DEFAULT 0");
+
+  // Backfill total_score for existing users who already have SRS cards in the DB
+  try {
+    const usersWithCards = db.prepare(`
+      SELECT DISTINCT c.user_id
+      FROM user_srs_cards c
+      JOIN user_progress p ON p.user_id = c.user_id
+      WHERE COALESCE(p.total_score, 0) = 0
+    `).all() || [];
+    if (usersWithCards.length > 0) {
+      const updateStmt = db.prepare(`
+        UPDATE user_progress
+        SET total_score = ?, cleared_lessons_count = ?
+        WHERE user_id = ?
+      `);
+      for (const row of usersWithCards) {
+        const { totalScore, clearedLessonsCount } = computeUserTotalScoreFromDb(db, row.user_id);
+        if (totalScore > 0 || clearedLessonsCount > 0) {
+          updateStmt.run(totalScore, clearedLessonsCount, row.user_id);
+        }
+      }
+    }
+  } catch (e) {
+    console.warn('[DB Migration] Backfill total_score notice:', e.message);
+  }
 
   try {
     const sessionCols = db.prepare('PRAGMA table_info(sessions)').all();
@@ -217,13 +331,16 @@ export function getPublicLeaderboard(db, period = 'all', currentUserId = null, l
       p.streak_days,
       p.last_active_date,
       p.weekly_minutes,
+      COALESCE(p.total_score, 0) AS total_score,
+      COALESCE(p.cleared_lessons_count, 0) AS cleared_lessons_count,
       COALESCE(p.badges_json, '[]') AS badges_json,
       (SELECT COUNT(*) FROM user_srs_cards c WHERE c.user_id = u.id AND c.stage >= 3) AS mastered_cards
     FROM users u
     JOIN user_progress p ON u.id = p.user_id
     WHERE u.is_verified = 1 AND (u.is_active IS NULL OR u.is_active = 1)
     ORDER BY 
-      CASE WHEN ? = 'week' THEN p.weekly_minutes ELSE p.xp END DESC,
+      CASE WHEN ? = 'week' THEN p.weekly_minutes ELSE COALESCE(p.total_score, 0) END DESC,
+      p.xp DESC,
       p.streak_days DESC,
       mastered_cards DESC
     LIMIT ?
@@ -241,6 +358,9 @@ export function getPublicLeaderboard(db, period = 'all', currentUserId = null, l
       membershipTier: r.membership_tier || 'free',
       level: Number(r.level) || 1,
       xp: Number(r.xp) || 0,
+      totalScore: Number(r.total_score) || 0,
+      maxTotalScore: MAX_TOTAL_SCORE,
+      clearedLessonsCount: Number(r.cleared_lessons_count) || 0,
       streakDays: Number(r.streak_days) || 0,
       weeklyMinutes: Number((Number(r.weekly_minutes) || 0).toFixed(1)),
       masteredCardsCount: Number(r.mastered_cards) || 0,
@@ -255,24 +375,27 @@ export function getPublicLeaderboard(db, period = 'all', currentUserId = null, l
  */
 export function getUserPrivateProgress(db, userId) {
   const prog = db.prepare(`
-    SELECT xp, level, streak_days, last_active_date, weekly_minutes, badges_json, history_json, updated_at
+    SELECT xp, level, streak_days, last_active_date, weekly_minutes, total_score, cleared_lessons_count, badges_json, history_json, updated_at
     FROM user_progress
     WHERE user_id = ?
   `).get(userId);
 
   const cardsRows = db.prepare(`
-    SELECT card_id, stage, streak, correct, wrong, next_due
+    SELECT card_id, stage, streak, correct, wrong, coverage_credit, learning_views, next_due
     FROM user_srs_cards
     WHERE user_id = ?
   `).all(userId) || [];
 
   const cardsMap = {};
   for (const c of cardsRows) {
+    const coverageCredit = resolveCardCoverageCredit(c);
     cardsMap[c.card_id] = {
       stage: c.stage,
       streak: c.streak,
       correct: c.correct,
       wrong: c.wrong,
+      coverageCredit,
+      learningViews: Number(c.learning_views) || 0,
       nextDue: c.next_due
     };
   }
@@ -288,6 +411,8 @@ export function getUserPrivateProgress(db, userId) {
     streakDays: prog ? Number(prog.streak_days) : 0,
     lastActiveDate: prog?.last_active_date || null,
     weeklyMinutes: prog ? Number((Number(prog.weekly_minutes) || 0).toFixed(1)) : 0,
+    totalScore: prog ? Number(prog.total_score || 0) : 0,
+    clearedLessonsCount: prog ? Number(prog.cleared_lessons_count || 0) : 0,
     badges,
     history,
     cards: cardsMap,
@@ -349,16 +474,71 @@ export function syncUserProgress(db, userId, payload = {}, mode = 'merge') {
   }
   nextWeeklyMinutes = Math.max(nextWeeklyMinutes, Math.round(calculatedWeeklyMinutes * 10) / 10);
 
+  // Merge SRS Cards first so we can compute authoritative total_score from persisted cards
+  if (payload.cards && typeof payload.cards === 'object') {
+    const cardStmt = db.prepare(`
+      INSERT INTO user_srs_cards (user_id, card_id, stage, streak, correct, wrong, coverage_credit, learning_views, next_due, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+      ON CONFLICT(user_id, card_id) DO UPDATE SET
+        stage = excluded.stage,
+        streak = excluded.streak,
+        correct = excluded.correct,
+        wrong = excluded.wrong,
+        coverage_credit = CASE
+          WHEN ? = 'merge' THEN MAX(COALESCE(user_srs_cards.coverage_credit, 0), COALESCE(excluded.coverage_credit, 0))
+          ELSE excluded.coverage_credit
+        END,
+        learning_views = CASE
+          WHEN ? = 'merge' THEN MAX(COALESCE(user_srs_cards.learning_views, 0), COALESCE(excluded.learning_views, 0))
+          ELSE excluded.learning_views
+        END,
+        next_due = excluded.next_due,
+        updated_at = datetime('now')
+    `);
+
+    for (const [cardId, card] of Object.entries(payload.cards)) {
+      if (!cardId || typeof card !== 'object') continue;
+      const correctVal = Number(card.correct) || 0;
+      const wrongVal = Number(card.wrong) || 0;
+      const creditVal = typeof card.coverageCredit === 'number' && !Number.isNaN(card.coverageCredit)
+        ? Math.max(0, Math.min(1, card.coverageCredit))
+        : (correctVal > 0 ? 1.0 : (wrongVal === 0 ? 0.1 : 0));
+      cardStmt.run(
+        userId,
+        cardId,
+        Number(card.stage) || 0,
+        Number(card.streak) || 0,
+        correctVal,
+        wrongVal,
+        creditVal,
+        Number(card.learningViews) || 0,
+        card.nextDue || null,
+        mode,
+        mode
+      );
+    }
+  }
+
+  // Compute authoritative total_score and cleared_lessons_count from persisted SRS cards
+  const computed = computeUserTotalScoreFromDb(db, userId);
+  let nextTotalScore = computed.totalScore;
+  const nextClearedLessons = computed.clearedLessonsCount;
+  if (nextTotalScore === 0 && typeof payload.totalScore === 'number' && payload.totalScore > 0) {
+    nextTotalScore = Math.min(MAX_TOTAL_SCORE, Math.round(payload.totalScore));
+  }
+
   // Upsert user_progress
   db.prepare(`
-    INSERT INTO user_progress (user_id, xp, level, streak_days, last_active_date, weekly_minutes, badges_json, history_json, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+    INSERT INTO user_progress (user_id, xp, level, streak_days, last_active_date, weekly_minutes, total_score, cleared_lessons_count, badges_json, history_json, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
     ON CONFLICT(user_id) DO UPDATE SET
       xp = excluded.xp,
       level = excluded.level,
       streak_days = excluded.streak_days,
       last_active_date = excluded.last_active_date,
       weekly_minutes = excluded.weekly_minutes,
+      total_score = excluded.total_score,
+      cleared_lessons_count = excluded.cleared_lessons_count,
       badges_json = excluded.badges_json,
       history_json = excluded.history_json,
       updated_at = datetime('now')
@@ -369,37 +549,11 @@ export function syncUserProgress(db, userId, payload = {}, mode = 'merge') {
     nextStreak,
     nextLastActive,
     nextWeeklyMinutes,
+    nextTotalScore,
+    nextClearedLessons,
     JSON.stringify(nextBadges),
     JSON.stringify(nextHistory)
   );
-
-  // Merge SRS Cards
-  if (payload.cards && typeof payload.cards === 'object') {
-    const cardStmt = db.prepare(`
-      INSERT INTO user_srs_cards (user_id, card_id, stage, streak, correct, wrong, next_due, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'))
-      ON CONFLICT(user_id, card_id) DO UPDATE SET
-        stage = excluded.stage,
-        streak = excluded.streak,
-        correct = excluded.correct,
-        wrong = excluded.wrong,
-        next_due = excluded.next_due,
-        updated_at = datetime('now')
-    `);
-
-    for (const [cardId, card] of Object.entries(payload.cards)) {
-      if (!cardId || typeof card !== 'object') continue;
-      cardStmt.run(
-        userId,
-        cardId,
-        Number(card.stage) || 0,
-        Number(card.streak) || 0,
-        Number(card.correct) || 0,
-        Number(card.wrong) || 0,
-        card.nextDue || null
-      );
-    }
-  }
 
   return getUserPrivateProgress(db, userId);
 }

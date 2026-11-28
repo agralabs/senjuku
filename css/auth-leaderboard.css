@@ -542,6 +542,25 @@ body.light-theme .leaderboard-table tbody tr.is-me {
   font-weight: 700;
 }
 
+.lb-score-cell {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.lb-score-cell strong {
+  color: var(--accent-gold, #fbbf24);
+}
+
+body.light-theme .lb-score-cell strong {
+  color: #b45309;
+}
+
+.lb-score-max {
+  font-size: 0.78rem;
+  color: var(--text-muted, #94a3b8);
+  margin-left: 0.2rem;
+}
+
 .lb-empty-state {
   text-align: center;
   padding: 2.5rem 1rem;

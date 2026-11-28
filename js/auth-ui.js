@@ -773,7 +773,14 @@ class AuthUIController {
     const tbody = document.getElementById('leaderboardTableBody');
     if (!tbody) return;
 
-    tbody.innerHTML = `<tr><td colspan="6" class="lb-empty-state">Memuat papan peringkat...</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" class="lb-empty-state">Memuat papan peringkat...</td></tr>`;
+
+    // Flush any pending debounced progress sync so the user's latest score is reflected immediately
+    if (this.user && this.syncTimer) {
+      clearTimeout(this.syncTimer);
+      this.syncTimer = null;
+      await this.pushProgressToCloud(progress.data, 'replace');
+    }
 
     try {
       const res = await fetch(`/api/leaderboard?period=${encodeURIComponent(this.leaderboardPeriod)}`, {
@@ -786,7 +793,7 @@ class AuthUIController {
       if (entries.length === 0) {
         tbody.innerHTML = `
           <tr>
-            <td colspan="6" class="lb-empty-state">
+            <td colspan="7" class="lb-empty-state">
               Belum ada peserta terdaftar di papan peringkat. Daftar sekarang untuk menjadi #1! 🏆
             </td>
           </tr>
@@ -799,6 +806,8 @@ class AuthUIController {
         const tierBadge = entry.membershipTier === 'pro' ? `<span class="auth-tier-badge pro">PRO</span>` : '';
         const meTag = entry.isCurrentUser ? `<span class="auth-role-badge">ANDA</span>` : '';
         const badgesHtml = renderBadgeIconsHtml(entry.badges || []);
+        const totalScore = Number(entry.totalScore || 0);
+        const maxTotalScore = Number(entry.maxTotalScore || 2500);
         return `
           <tr class="${entry.isCurrentUser ? 'is-me' : ''}">
             <td class="lb-rank-cell">${medal}</td>
@@ -811,6 +820,10 @@ class AuthUIController {
               </div>
               ${badgesHtml}
             </td>
+            <td class="lb-score-cell">
+              <strong>🏆 ${totalScore.toLocaleString('id-ID')}</strong>
+              <span class="lb-score-max">/ ${maxTotalScore.toLocaleString('id-ID')}</span>
+            </td>
             <td>Lv. ${entry.level}</td>
             <td><strong>${entry.xp.toLocaleString('id-ID')} XP</strong></td>
             <td>🔥 ${entry.streakDays} hr</td>
@@ -821,7 +834,7 @@ class AuthUIController {
     } catch {
       tbody.innerHTML = `
         <tr>
-          <td colspan="6" class="lb-empty-state">
+          <td colspan="7" class="lb-empty-state">
             Papan peringkat membutuhkan server lokal aktif (<code>node server.js</code>).
           </td>
         </tr>
